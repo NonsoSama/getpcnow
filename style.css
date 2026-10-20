@@ -121,6 +121,10 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
 .sc b{display:block;font:700 22px/1.25 Manrope,system-ui,sans-serif;letter-spacing:-.5px}
 .dsec{margin-bottom:36px}
 .b.sale{background:var(--acc);color:#fff}
+/* deals: badge and price layout */
+.dbuy>.b{font-size:12px;padding:4px 10px}
+.dprice{display:flex;flex-direction:column}.dprice small{color:var(--mute);font-size:13px}
+.card .note{margin:0 4px 4px}.off{color:var(--acc)}
 .vt{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px}
 .vt .btn{gap:8px;padding:11px 18px}.vt .btn svg{width:18px;height:18px}
 .vw{display:grid;grid-template-columns:1fr;gap:18px;align-items:start}

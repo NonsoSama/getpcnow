@@ -3,6 +3,7 @@
    1. RATE, CATS, DEALS ... exchange rate and the category cards
    2. P ..................... the laptops (one line each)
    3. LINUX, SELL ........... which laptops count as Linux, and the Jiji / Jumia links
+   3b. OFFERS ............... the real discounts: old price, price now, seller and link
    4. VARS .................. extra configurations shown on each laptop page
    5. RL, RCPU, RGPU ........ performance ratings (1 Low, 2 Average, 3 Solid)
    6. SOCIALS ............... footer social links
@@ -32,6 +33,22 @@ var P=[
 var LINUX=["Lenovo ThinkPad T14 Gen 2","Dell Latitude 7420"];
 /* Sellers: edit here. Jumia only shows for New laptops. To link one laptop to an exact listing, add  url:{Jiji:"https://…",Jumia:"https://…"}  to that laptop above. */
 var SELL={NG:[["Jiji","https://jiji.ng/laptops?query="],["Jumia","https://www.jumia.com.ng/catalog/?q="]],GH:[["Jiji","https://jiji.com.gh/laptops?query="],["Jumia","https://www.jumia.com.gh/catalog/?q="]]};
+/* OFFERS: the discounts. The best deals on the site come from this list (Jumia, Jiji, Tonaton).
+   One line per offer. Fields:
+   n = laptop name, exactly as written in P above
+   c = country: "NG" (prices in naira) or "GH" (prices in cedis)
+   was = the old price, now = the price today (the site works out the % off)
+   src = the seller: "Jumia", "Jiji" or "Tonaton"
+   url = link to that exact listing
+   upd = the date you checked it, so old deals can be hidden later
+   Jiji and Tonaton listings have no old price, so use the laptop's typical price (t) as "was".
+   A laptop with no offer here still shows at its normal price.
+   Only add real, checked offers. A laptop with no offer here still shows at its normal price. */
+var OFFERS=[
+/* Example (copy this line, remove the slashes and fill it in):
+{n:"HP Pavilion 15",c:"NG",was:780000,now:690000,src:"Jumia",url:"https://www.jumia.com.ng/...",upd:"2026-10-20"},
+*/
+];
 /* Configurations shown on each laptop page. Format: [RAM, storage, processor, graphics, price multiplier, on sale?]. The first row on the page is always the laptop's standard config. Prices and sales are sample placeholders. */
 var VARS={
  "Lenovo ThinkPad T14 Gen 2":[["16 GB","256 GB","Core i5-1145G7","Intel Iris Xe",.9,1],["16 GB","512 GB","Core i7-1185G7","Intel Iris Xe",1.15]],
