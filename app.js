@@ -23,7 +23,7 @@ function ep(p){var o=offerFor(p);return o?o.nowN:p.t}
 function budN(){return st.cur==="GH"?st.bud/RATE:st.bud}
 function dk(p){var o=offerFor(p);return o?1+o.x:(p.avg-p.t)/p.avg}
 function when(d){var t=new Date(d);return isNaN(t)?"":t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
-function sellersHtml(p){var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&alive(p.url[s[0]])&&p.url[s[0]])||s[1]+encodeURIComponent(p.n))]});
+function sellersHtml(p){var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur):s[1]+encodeURIComponent(p.n)))]});
  if(o&&o.url&&!S.some(function(s){return s[0]===o.src}))S.push([o.src,o.url]);
  if(o)S.sort(function(a,b){return(b[0]===o.src)-(a[0]===o.src)});
  return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+"</a>"}).join("")}

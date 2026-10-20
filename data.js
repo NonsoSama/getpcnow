@@ -35,6 +35,21 @@ var LINUX=["Lenovo ThinkPad T14 Gen 2","Dell Latitude 7420"];
    match:["thinkpad","t14"] = words a seller's title must contain for the finder to count it as this laptop. */
 /* Sellers: edit here. Jumia only shows for New laptops. To link one laptop to an exact listing, add  url:{Jiji:"https://…",Jumia:"https://…"}  to that laptop above. */
 var SELL={NG:[["Jiji","https://jiji.ng/laptops?query="],["Jumia","https://www.jumia.com.ng/catalog/?q="]],GH:[["Jiji","https://jiji.com.gh/laptops?query="],["Jumia","https://www.jumia.com.gh/catalog/?q="]]};
+/* JJ: Jiji price bands. For a laptop listed here, its Jiji button opens Jiji search with the price range already
+   filled in, so the customer only sees listings near the real going price. Prices are in the country's own money
+   (cedis for GH, naira for NG). Laptops not listed here keep the plain Jiji search, exactly as before.
+   Format:  "Laptop name exactly as in P":{GH:[min,max],NG:[min,max]}   (either country can be left out)
+   Why not work it out from t? t is a typical price in naira and mostly reflects NEW prices, while Jiji is mostly used. */
+var JJ={
+ "Apple MacBook Air M2":{GH:[8000,8700]}
+};
+/* jijiLink(laptop, country) gives the Jiji link for the buy button. The site should use it instead of building the Jiji link itself. */
+function jijiLink(p,c){
+  var b=(JJ[p.n]||{})[c], row=SELL[c].filter(function(x){return x[0]==="Jiji";})[0];
+  if(!b) return row[1]+encodeURIComponent(p.n);                       // no band yet: plain search, as before
+  var host={GH:"https://jiji.com.gh",NG:"https://jiji.ng"}[c];
+  return host+"/search?query="+encodeURIComponent(p.n)+"&sort=rel&price_min="+b[0]+"&price_max="+b[1];
+}
 /* OFFERS: the discounts. The best deals on the site come from this list (Jumia, Jiji, Tonaton).
    One line per offer. Fields:
    n = laptop name, exactly as written in P above
