@@ -34,7 +34,8 @@ function topDeals(){var L=P.map(function(p){return{p:p,o:offerFor(p)}}).filter(f
  return'<h2>Best deals right now</h2><div class="grid g1">'+L.map(function(x){return'<a class="card" href="#/laptop/'+slug(x.p.n)+'">'+lapImg(x.p.n)+"<h3>"+x.p.n+'</h3><p class="note"><b class="off">'+x.o.pct+"% off</b> · "+fmt(x.o.now)+" on "+x.o.src+(x.o.test?" · SAMPLE":"")+"</p></a>"}).join("")+"</div>"}
 function toast(m){var t=$("toast");t.textContent=m;t.className="on";clearTimeout(toast.t);toast.t=setTimeout(function(){t.className=""},2200)}
 function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
-function img(src){return'<div class="im"><svg aria-hidden="true"><use href="#lap"/></svg><img src="'+src+'" alt="" loading="lazy" onerror="this.remove()"></div>'}
+/* img(src, eager): eager=1 loads straight away (front page, visible on arrival); eager=2 also gets top priority (hero). No flag = lazy, for images further down. */
+function img(src,eager){return'<div class="im"><svg aria-hidden="true"><use href="#lap"/></svg><img src="'+src+'" alt="" '+(eager?'loading="eager"'+(eager>1?' fetchpriority="high"':''):'loading="lazy"')+' decoding="async" onerror="this.remove()"></div>'}
 function chart(p){var w=300,h=90,mn=Math.min.apply(null,p.h),mx=Math.max.apply(null,p.h),d=(mx-mn)||1;
  var pts=p.h.map(function(v,i){return[(i*(w-20)/11+10).toFixed(1),(h-14-((v-mn)/d)*(h-34)).toFixed(1)]});
  var line=pts.map(function(q){return q.join(",")}).join(" ");
@@ -57,8 +58,8 @@ function bindMore(){
   var l=b.querySelector(".lbl");l.textContent=moreOpen?"View Less":"View More";l.classList.remove("swap");void l.offsetWidth;l.classList.add("swap");
   if(moreOpen)setTimeout(function(){d.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})},350)}}
 function home(){
- $("app").innerHTML='<section class="hero"><div><h1>Find the right laptop for what you do.</h1><p>Pick how you will use it. We show the laptops that fit, what is good and bad about each, and where to buy.</p><a class="btn dark" href="#/all">Browse all laptops</a></div>'+img("images/hero.jpg")+'</section>'
- +topDeals()+'<h2>Choose your use</h2><div class="grid g1">'+CATS.map(function(c){return'<a class="card" href="#/'+c[0]+'">'+img("images/"+c[0]+".jpg")+'<h3>Best Laptops for '+c[1]+"</h3></a>"}).join("")+'<a class="card" href="#/all">'+img("images/all.jpg")+"<h3>All laptops</h3></a></div>"
+ $("app").innerHTML='<section class="hero"><div><h1>Find the right laptop for what you do.</h1><p>Pick how you will use it. We show the laptops that fit, what is good and bad about each, and where to buy.</p><a class="btn dark" href="#/all">Browse all laptops</a></div>'+img("images/hero.jpg",2)+'</section>'
+ +topDeals()+'<h2>Choose your use</h2><div class="grid g1">'+CATS.map(function(c){return'<a class="card" href="#/'+c[0]+'">'+img("images/"+c[0]+".jpg",1)+'<h3>Best Laptops for '+c[1]+"</h3></a>"}).join("")+'<a class="card" href="#/all">'+img("images/all.jpg",1)+"<h3>All laptops</h3></a></div>"
  +'<div class="more"><button class="btn dark more-btn" id="more" aria-expanded="'+moreOpen+'" aria-controls="deals"><span class="lbl">'+(moreOpen?"View Less":"View More")+'</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>'
  +'<div class="deals'+(moreOpen?" open":"")+'" id="deals"><div class="deals-in"><h2>Deals by system</h2><div class="grid">'+DEALS.map(function(c){return'<a class="card" href="#/'+c[0]+'">'+dealImg(c)+"<h3>"+c[1]+"</h3></a>"}).join("")+"</div></div></div>";
  bindMore();
