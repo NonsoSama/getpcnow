@@ -34,7 +34,7 @@ var LINUX=["Lenovo ThinkPad T14 Gen 2","Dell Latitude 7420"];
 /* Optional fields on a laptop: ad:true = this laptop exists only for one listing, so hide it when that listing dies (needs url:{...}).
    match:["thinkpad","t14"] = words a seller's title must contain for the finder to count it as this laptop. */
 /* Sellers: edit here. Jumia only shows for New laptops. To link one laptop to an exact listing, add  url:{Jiji:"https://…",Jumia:"https://…"}  to that laptop above. */
-var SELL={NG:[["Jiji","https://jiji.ng/laptops?query="],["Jumia","https://www.jumia.com.ng/catalog/?q="]],GH:[["Jiji","https://jiji.com.gh/laptops?query="],["Jumia","https://www.jumia.com.gh/catalog/?q="]]};
+var SELL={NG:[["Jiji","https://jiji.ng/search?query="],["Jumia","https://www.jumia.com.ng/catalog/?q="]],GH:[["Jiji","https://jiji.com.gh/search?query="],["Jumia","https://www.jumia.com.gh/catalog/?q="]]};
 /* JJ: Jiji price bands (hand-set). A laptop listed here gets exactly this band. Prices are in the country's own money
    (cedis for GH, naira for NG). Format:  "Laptop name exactly as in P":{GH:[min,max],NG:[min,max]}
    You normally do NOT need to touch this: the script  tools/jiji-range.js  checks Jiji for every laptop in P, looks at the
@@ -44,8 +44,9 @@ var JJ={
  "Apple MacBook Air M2":{GH:[8000,8700]}
 };
 /* jijiLink(laptop, country) = the Jiji link for the buy button.
-   Jiji's working search address is a PATH, not a query string:  jiji.com.gh/computers-and-laptops/<words-with-dashes>
-   (the old /search?query=... address is what gave the 404 page). */
+   It uses Jiji's search address:  jiji.com.gh/search?query=Laptop+Name
+   This works for every laptop. (The /computers-and-laptops/<name> path only exists on Jiji for some models and gave 404 for the rest;
+   the old /laptops?query=... address was also a 404.) */
 function jijiSlug(n){return String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
 function jijiBand(p,c){
   var h=(JJ[p.n]||{})[c]; if(h) return h;
@@ -57,8 +58,8 @@ function jijiBand(p,c){
 var JIJI_FILTER=false;
 function jijiLink(p,c){
   var host={GH:"https://jiji.com.gh",NG:"https://jiji.ng"}[c], b=JIJI_FILTER?jijiBand(p,c):null;
-  var u=host+"/computers-and-laptops/"+jijiSlug(p.n);
-  return b? u+"?price_min="+b[0]+"&price_max="+b[1] : u}
+  var u=host+"/search?query="+encodeURIComponent(p.n).replace(/%20/g,"+");
+  return b? u+"&price_min="+b[0]+"&price_max="+b[1] : u}
 /* OFFERS: the discounts. The best deals on the site come from this list (Jumia, Jiji, Tonaton).
    One line per offer. Fields:
    n = laptop name, exactly as written in P above
