@@ -1,4 +1,12 @@
 /* getpcnow APP. The page logic: routing, lists, laptop pages, footer. Loads after data.js and art.js. */
+/* Listing health. DEAD (dead.js) = links the checker found gone. AUTO (offers-auto.js) = offers found by the finder.
+   Dead links never show, auto offers older than 5 days never show, and an ad-only laptop (ad:true) disappears when its listing dies. */
+var DEADL=typeof DEAD!=="undefined"?DEAD:[];
+function nq(u){return String(u||"").replace(/(\.html)\?.*/,"$1")}
+function alive(u){return!u||DEADL.indexOf(nq(u))<0}
+function fresh(o){return!o.auto||(Date.now()-new Date(o.upd))/864e5<=5}
+var ALLOFF=(typeof OFFERS!=="undefined"?OFFERS:[]).concat(typeof AUTO!=="undefined"?AUTO:[]).filter(function(o){return alive(o.url)&&fresh(o)});
+P=P.filter(function(p){var u=p.url?Object.keys(p.url).map(function(k){return p.url[k]}):[];return!(p.ad&&u.length&&u.every(function(x){return!alive(x)}))});
 P.forEach(function(p){p.o=[/^Apple/.test(p.n)?"mac":"win"];if(LINUX.indexOf(p.n)>-1)p.o.push("linux")});
 var MAX=Math.max.apply(null,P.map(function(p){return p.hi}));
 P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(Math.round(v/1000)*1000);x=(x*9301+49297)%233280;v=v*(1+((x/233280)-0.42)*0.05)}
@@ -8,14 +16,14 @@ var $=function(i){return document.getElementById(i)};
 function money(n){return st.cur==="NG"?"₦"+Math.round(n).toLocaleString("en-NG"):"GH₵"+(Math.round(n*RATE/10)*10).toLocaleString("en-GH")}
 /* OFFERS (from data.js): only offers for the country now selected are used. */
 function fmt(n){return st.cur==="NG"?"₦"+Math.round(n).toLocaleString("en-NG"):"GH₵"+Math.round(n).toLocaleString("en-GH")}
-function offerFor(p){var b=null;(typeof OFFERS!=="undefined"?OFFERS:[]).forEach(function(o){
+function offerFor(p){var b=null;ALLOFF.forEach(function(o){
  if(o.n!==p.n||o.c!==st.cur||!(o.was>o.now))return;var x=1-o.now/o.was,pc=Math.round(x*100);if(pc<1)return;
  if(!b||x>b.x)b={x:x,pct:pc,was:o.was,now:o.now,src:o.src,url:o.url,upd:o.upd,test:o.test,nowN:st.cur==="GH"?o.now/RATE:o.now}});return b}
 function ep(p){var o=offerFor(p);return o?o.nowN:p.t}
 function budN(){return st.cur==="GH"?st.bud/RATE:st.bud}
 function dk(p){var o=offerFor(p);return o?1+o.x:(p.avg-p.t)/p.avg}
 function when(d){var t=new Date(d);return isNaN(t)?"":t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
-function sellersHtml(p){var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&p.url[s[0]])||s[1]+encodeURIComponent(p.n))]});
+function sellersHtml(p){var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&alive(p.url[s[0]])&&p.url[s[0]])||s[1]+encodeURIComponent(p.n))]});
  if(o&&o.url&&!S.some(function(s){return s[0]===o.src}))S.push([o.src,o.url]);
  if(o)S.sort(function(a,b){return(b[0]===o.src)-(a[0]===o.src)});
  return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+"</a>"}).join("")}

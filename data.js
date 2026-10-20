@@ -31,6 +31,8 @@ var P=[
 ];
 /* Operating system tags used by the Deals pages. Apple = mac, everything else = win. Add a laptop name to LINUX to list it under Linux Deals. */
 var LINUX=["Lenovo ThinkPad T14 Gen 2","Dell Latitude 7420"];
+/* Optional fields on a laptop: ad:true = this laptop exists only for one listing, so hide it when that listing dies (needs url:{...}).
+   match:["thinkpad","t14"] = words a seller's title must contain for the finder to count it as this laptop. */
 /* Sellers: edit here. Jumia only shows for New laptops. To link one laptop to an exact listing, add  url:{Jiji:"https://…",Jumia:"https://…"}  to that laptop above. */
 var SELL={NG:[["Jiji","https://jiji.ng/laptops?query="],["Jumia","https://www.jumia.com.ng/catalog/?q="]],GH:[["Jiji","https://jiji.com.gh/laptops?query="],["Jumia","https://www.jumia.com.gh/catalog/?q="]]};
 /* OFFERS: the discounts. The best deals on the site come from this list (Jumia, Jiji, Tonaton).

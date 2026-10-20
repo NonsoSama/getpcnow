@@ -1,0 +1,41 @@
+name: Check listings and find offers
+
+on:
+  schedule:
+    - cron: "0 6,18 * * *"     # twice a day, 06:00 and 18:00 UTC (same as Accra time)
+  workflow_dispatch:           # lets you press "Run workflow" by hand to test
+
+permissions:
+  contents: write              # so it can save dead.js and offers-auto.js back to the repo
+
+concurrency:
+  group: listings
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 1. Find new discounted laptops (rebuilds offers-auto.js)
+      - name: Find offers
+        run: node scripts/find-offers.mjs
+
+      # 2. Check that your hand-added links are still live (rebuilds dead.js)
+      - name: Check listings
+        run: node scripts/check-listings.mjs
+        env:
+          STRIKES: 3
+          # EXTRA_GONE: "sold|expired"   # add the exact wording a sold ad shows, if the defaults miss it
+
+      - name: Save results
+        run: |
+          git config user.name  "getpcnow bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add dead.js offers-auto.js listing-status.json
+          git diff --staged --quiet || (git commit -m "Update listings [skip ci]" && git push)
