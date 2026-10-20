@@ -23,10 +23,12 @@ function ep(p){var o=offerFor(p);return o?o.nowN:p.t}
 function budN(){return st.cur==="GH"?st.bud/RATE:st.bud}
 function dk(p){var o=offerFor(p);return o?1+o.x:(p.avg-p.t)/p.avg}
 function when(d){var t=new Date(d);return isNaN(t)?"":t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
+/* Jiji button shows the going price range (from data.js JJ or jiji-bands.js), e.g. ' · GH₵8,000–8,700'. */
+function jijiTag(p){var b=jijiBand(p,st.cur);return b?' · '+fmt(b[0])+'–'+fmt(b[1]).replace(/^[^\d]+/,''):''}
 function sellersHtml(p){var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur):s[1]+encodeURIComponent(p.n)))]});
  if(o&&o.url&&!S.some(function(s){return s[0]===o.src}))S.push([o.src,o.url]);
  if(o)S.sort(function(a,b){return(b[0]===o.src)-(a[0]===o.src)});
- return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+"</a>"}).join("")}
+ return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+(s[0]==="Jiji"?jijiTag(p):"")+"</a>"}).join("")}
 function topDeals(){var L=P.map(function(p){return{p:p,o:offerFor(p)}}).filter(function(x){return x.o}).sort(function(a,b){return b.o.x-a.o.x}).slice(0,3);
  if(!L.length)return"";
  return'<h2>Best deals right now</h2><div class="grid g1">'+L.map(function(x){return'<a class="card" href="#/laptop/'+slug(x.p.n)+'">'+lapImg(x.p.n)+"<h3>"+x.p.n+'</h3><p class="note"><b class="off">'+x.o.pct+"% off</b> · "+fmt(x.o.now)+" on "+x.o.src+(x.o.test?" · SAMPLE":"")+"</p></a>"}).join("")+"</div>"}

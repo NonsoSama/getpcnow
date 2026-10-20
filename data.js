@@ -35,21 +35,30 @@ var LINUX=["Lenovo ThinkPad T14 Gen 2","Dell Latitude 7420"];
    match:["thinkpad","t14"] = words a seller's title must contain for the finder to count it as this laptop. */
 /* Sellers: edit here. Jumia only shows for New laptops. To link one laptop to an exact listing, add  url:{Jiji:"https://…",Jumia:"https://…"}  to that laptop above. */
 var SELL={NG:[["Jiji","https://jiji.ng/laptops?query="],["Jumia","https://www.jumia.com.ng/catalog/?q="]],GH:[["Jiji","https://jiji.com.gh/laptops?query="],["Jumia","https://www.jumia.com.gh/catalog/?q="]]};
-/* JJ: Jiji price bands. For a laptop listed here, its Jiji button opens Jiji search with the price range already
-   filled in, so the customer only sees listings near the real going price. Prices are in the country's own money
-   (cedis for GH, naira for NG). Laptops not listed here keep the plain Jiji search, exactly as before.
-   Format:  "Laptop name exactly as in P":{GH:[min,max],NG:[min,max]}   (either country can be left out)
-   Why not work it out from t? t is a typical price in naira and mostly reflects NEW prices, while Jiji is mostly used. */
+/* JJ: Jiji price bands (hand-set). A laptop listed here gets exactly this band. Prices are in the country's own money
+   (cedis for GH, naira for NG). Format:  "Laptop name exactly as in P":{GH:[min,max],NG:[min,max]}
+   You normally do NOT need to touch this: the script  tools/jiji-range.js  checks Jiji for every laptop in P, looks at the
+   5 to 10 cheapest matching listings and writes the bands into jiji-bands.js (JJAUTO). A hand-set band here wins over the script.
+   A laptop with neither keeps a plain Jiji search with no price filter. */
 var JJ={
  "Apple MacBook Air M2":{GH:[8000,8700]}
 };
-/* jijiLink(laptop, country) gives the Jiji link for the buy button. The site should use it instead of building the Jiji link itself. */
+/* jijiLink(laptop, country) = the Jiji link for the buy button.
+   Jiji's working search address is a PATH, not a query string:  jiji.com.gh/computers-and-laptops/<words-with-dashes>
+   (the old /search?query=... address is what gave the 404 page). */
+function jijiSlug(n){return String(n).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
+function jijiBand(p,c){
+  var h=(JJ[p.n]||{})[c]; if(h) return h;
+  var a=(typeof JJAUTO!=="undefined"&&JJAUTO[c]||{})[p.n];
+  if(a&&a.b&&(Date.now()-new Date(a.upd))/864e5<=14) return a.b;   // script bands older than 14 days are ignored
+  return null}
+/* JIJI_FILTER: false = the Jiji button opens the plain results page (always works) and the price range is shown on the button.
+   true = also add price_min / price_max to the address. Turn it on only after you have opened such a link and seen it work. */
+var JIJI_FILTER=false;
 function jijiLink(p,c){
-  var b=(JJ[p.n]||{})[c], row=SELL[c].filter(function(x){return x[0]==="Jiji";})[0];
-  if(!b) return row[1]+encodeURIComponent(p.n);                       // no band yet: plain search, as before
-  var host={GH:"https://jiji.com.gh",NG:"https://jiji.ng"}[c];
-  return host+"/search?query="+encodeURIComponent(p.n)+"&sort=rel&price_min="+b[0]+"&price_max="+b[1];
-}
+  var host={GH:"https://jiji.com.gh",NG:"https://jiji.ng"}[c], b=JIJI_FILTER?jijiBand(p,c):null;
+  var u=host+"/computers-and-laptops/"+jijiSlug(p.n);
+  return b? u+"?price_min="+b[0]+"&price_max="+b[1] : u}
 /* OFFERS: the discounts. The best deals on the site come from this list (Jumia, Jiji, Tonaton).
    One line per offer. Fields:
    n = laptop name, exactly as written in P above
