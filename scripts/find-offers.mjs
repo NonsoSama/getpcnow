@@ -12,6 +12,9 @@ import vm from "node:vm";
 
 const MIN_OFF = +(process.env.MIN_OFF || 0.10);       // smallest discount worth showing (0.10 = 10%)
 const DELAY_MS = +(process.env.DELAY_MS || 1500);
+// Sellers the script must NOT fetch. Jiji blocks automated requests (HTTP 403), so it is left to the
+// manual search links on the site. To try it again later: set SKIP_SOURCES="" before running.
+const SKIP_SRC = (process.env.SKIP_SOURCES ?? "Jiji").split("|").map(s => s.trim()).filter(Boolean);
 const FIXTURE_DIR = process.env.FIXTURE_DIR || "";    // tests only: read saved pages instead of the internet
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
@@ -78,6 +81,7 @@ const out = []; let read = 0, failed = 0;
 for (const c of Object.keys(SELL)) {
   const cur = n => c === "GH" ? Math.round(n * RATE) : n;                 // laptop prices in data.js are naira
   for (const [src, base] of SELL[c]) {
+    if (SKIP_SRC.includes(src)) { console.log(`skip   ${c} ${src}: not checked automatically (use the manual links)`); continue; }
     for (const p of P) {
       if (src === "Jumia" && p.c !== "New") continue;                     // same rule as the buy buttons
       const html = await page(src, c, p, base); await sleep(FIXTURE_DIR ? 0 : DELAY_MS);
