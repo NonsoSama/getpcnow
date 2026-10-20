@@ -55,14 +55,16 @@ function readJiji(html, base) {      // best effort: Jiji shows one price and no
 }
 const READ = { Jumia: readJumia, Jiji: readJiji };
 
+let why = "";   // the last reason a page could not be read, shown in the log
 async function page(src, c, p, base) {
   if (FIXTURE_DIR) { const f = path.join(FIXTURE_DIR, `${src}-${c}.html`); return fs.existsSync(f) ? fs.readFileSync(f, "utf8") : null; }
   const url = base + encodeURIComponent(p.n);
   for (let i = 0; i < 2; i++) {
     try {
       const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": "text/html", "Accept-Language": "en" }, signal: AbortSignal.timeout(20000) });
-      if (r.ok) { const b = await r.text(); return /captcha|access denied|just a moment|verify you are human/i.test(b) ? null : b; }
-    } catch {}
+      if (!r.ok) why = "HTTP " + r.status + (r.status === 403 || r.status === 429 ? " (seller is blocking this computer)" : "");
+      else { const b = await r.text(); if (/captcha|access denied|just a moment|verify you are human/i.test(b)) why = "bot check page"; else return b; }
+    } catch (e) { why = "network error: " + e.message; }
     await sleep(3000);
   }
   return null;
@@ -82,7 +84,7 @@ for (const c of Object.keys(SELL)) {
       const all = html ? READ[src](html, base) : [], items = all.filter(i => fits(i.title, p));
       if (!all.length) {   // blocked, error, or the page layout changed: we learned nothing, so keep what we had
         failed++; const keep = prev.filter(o => o.n === p.n && o.c === c && o.src === src);
-        out.push(...keep); console.log(`skip   ${c} ${src} ${p.n}: ${html ? "page had no products we could read" : "page not readable"} (kept ${keep.length} old)`); continue;
+        out.push(...keep); console.log(`skip   ${c} ${src} ${p.n}: ${html ? "page had no products we could read" : "page not readable - " + why} (kept ${keep.length} old)`); continue;
       }
       read++;   // the page was read fine. If our laptop is not on it, it is gone and its old offer is dropped.
       // Reference price. Never trust an old price above the top of the range we know (fake "was" prices).

@@ -1,8 +1,8 @@
 name: Check listings and find offers
 
 on:
-  schedule:
-    - cron: "0 6,18 * * *"     # twice a day, 06:00 and 18:00 UTC (same as Accra time)
+  # schedule:   # turned off: the sellers block GitHub servers. Run  node scripts/update.mjs  on your own computer instead.
+  #  - cron: "0 6,18 * * *"     # twice a day, 06:00 and 18:00 UTC (same as Accra time)
   workflow_dispatch:           # lets you press "Run workflow" by hand to test
 
 permissions:
