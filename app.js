@@ -78,10 +78,11 @@ function list(){
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
   el.innerHTML='<div class="top"><a class="imlink" href="#/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="#/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["ph","Price history"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
-  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div><div class="range" aria-hidden="true"><i style="left:'+(p.lo/MAX*100)+'%;width:'+((p.hi-p.lo)/MAX*100)+'%"></i><u style="left:'+(p.t/MAX*100)+'%"></u></div><div class="rl"><span>'+money(p.lo)+'</span><span>'+money(p.hi)+'</span></div></div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[i]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[i]+'">🔔</button></div></div></div>'
+  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div><div class="range" aria-hidden="true"><i style="left:'+(p.lo/MAX*100)+'%;width:'+((p.hi-p.lo)/MAX*100)+'%"></i><u style="left:'+(p.t/MAX*100)+'%"></u></div><div class="rl"><span>'+money(p.lo)+'</span><span>'+money(p.hi)+'</span></div></div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div></div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
-  el.querySelector(".bell").onclick=function(){alerts[i]=!alerts[i];toast(alerts[i]?"Alert set for "+p.n+" (demo)":"Alert removed");list();if(alerts[i]){var bl=$("items").children[L.indexOf(p)].querySelector(".bell");bl.classList.add("ring")}};
+  el.querySelector(".bell").onclick=function(){if(alerts[p.n]){toast("You already have an alert for this laptop");return}
+   openAlert(p,function(){alerts[p.n]=true;list();var bl=$("items").children[L.indexOf(p)].querySelector(".bell");bl.classList.add("ring")})};
   box.appendChild(el)})}
 
 function category(c){
@@ -100,7 +101,7 @@ function variants(p){var b=p.s,o=offerFor(p),l=[{r:b[1],s:b[2],c:b[3],g:b[4],t:o
 var DV={n:"",open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},spec:{}};
 function vkey(v){return[v.r,v.s,v.c,v.g].join("|")}
 function vrow(p,v){
- var key=vkey(v),on=DV.spec[key],al=alerts[p.n+key],
+ var key=vkey(v),on=DV.spec[key],al=alerts[p.n],
  lbl=v.o?v.o.pct+"% off":v.was?"On Sale":v.base?(p.deal?"Great Deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c):p.c,
  cls=v.o||v.was?" sale":v.base?(p.deal?" deal":p.chg<-0.03?" drop":""):"",
  sellers=sellersHtml(p);
@@ -150,7 +151,8 @@ function detail(p){
   if(a==="opt"){var l=DV.sel[t.dataset.g],i=l.indexOf(t.dataset.v);i>-1?l.splice(i,1):l.push(t.dataset.v)}
   else if(a==="clr"){DV.sel={c:[],g:[],r:[],s:[]}}
   else if(a==="spec"){DV.spec[t.dataset.k]=!DV.spec[t.dataset.k]}
-  else if(a==="bell"){var k=p.n+t.dataset.k;alerts[k]=!alerts[k];toast(alerts[k]?"Alert set for "+p.n+" (demo)":"Alert removed")}
+  else if(a==="bell"){if(alerts[p.n]){toast("You already have an alert for this laptop");return}
+   openAlert(p,function(){alerts[p.n]=true;vrender(p)});return}
   vrender(p)};
  vrender(p);
  document.title=p.n+" – getpcnow"}
