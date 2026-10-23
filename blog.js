@@ -10,7 +10,7 @@ var POSTS=[
   date:"2026-10-20",      // YYYY-MM-DD
   reads:131,              // update this number whenever you like
   // mins:6,              // optional. If left out, it is worked out from the article length
-  img:"",                 // headline image, e.g. "images/ram.jpg". Empty = grey placeholder
+  img:"images/blog/ram.jpg",                 // headline image, e.g. "images/ram.jpg". Empty = grey placeholder
   caption:"",             // optional small line under the headline image
   summary:"A plain guide to choosing between 8GB and 16GB of RAM, based on what you actually do on your laptop.", // optional. Shows under the image as 'Summary'
   body:"<p>Memory is one of the easiest specs to overspend on. More RAM does not make a laptop faster by itself. It only helps when your work needs more than you have.</p><p>If you mostly browse, watch videos, write documents and join video calls, 8GB is enough for many people. The moment you keep dozens of browser tabs open or run heavy apps next to each other, 16GB starts to feel much smoother.</p><h2>Who should pick 16GB?</h2><p>Programmers, video editors, designers and anyone who likes to keep many apps open at once. If you plan to keep the laptop for four years or more, 16GB also gives you room as apps grow.</p><h2>Who can save money with 8GB?</h2><p>Students and office users with simple needs. Put the money you save into a bigger SSD or a better screen instead.</p><ul><li>Check if the RAM can be upgraded later.</li><li>Check if it is soldered to the board.</li><li>Always prefer an SSD over a hard drive.</li></ul>"
