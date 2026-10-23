@@ -8,7 +8,7 @@ var POSTS=[
   title:"8GB or 16GB RAM? What you actually need in 2026",
   excerpt:"Most people overspend on specs they never use. Here is a simple way to pick the right amount of memory for how you work.",
   date:"2026-10-20",      // YYYY-MM-DD
-  reads:131,              // update this number whenever you like
+  reads:0,              // update this number whenever you like
   // mins:6,              // optional. If left out, it is worked out from the article length
   img:"images/blog/ram.jpg",                 // headline image, e.g. "images/ram.jpg". Empty = grey placeholder
   caption:"",             // optional small line under the headline image
@@ -20,7 +20,7 @@ var POSTS=[
   category:"Buying used",
   title:"The 10-minute checklist before you pay for a used laptop",
   excerpt:"Battery health, screen, keyboard and ports. What to test in the seller's shop so you do not get stuck with a problem.",
-  date:"2026-10-14",reads:98,img:"",
+  date:"2026-10-14",reads:0,img:"images/blog/usedlaptops.jpg",
   body:"<p>Your article goes here.</p>"
 },
 {
@@ -28,15 +28,15 @@ var POSTS=[
   category:"Guides",
   title:"Laptops that survive four years of campus life",
   excerpt:"Light, tough and fair on price. What to look for when you are buying for school.",
-  date:"2026-10-08",reads:204,img:"",
+  date:"2026-10-08",reads:0,img:"image/blog/laptopstudent.jpg",
   body:"<p>Your article goes here.</p>"
 },
 {
-  slug:"chromebook-vs-windows",
+  slug:"windows-vs-macs",
   category:"Tips",
-  title:"Windows, Mac or Chromebook: which suits your budget?",
+  title:"Windows or Macbooks: which suits your budget?",
   excerpt:"A plain comparison for first-time buyers, with no jargon.",
-  date:"2026-09-30",reads:75,img:"",
+  date:"2026-09-30",reads:0,img:"image/blog/windowsmac.jpg",
   body:"<p>Your article goes here.</p>"
 }
 ];
