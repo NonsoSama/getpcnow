@@ -28,7 +28,7 @@ var POSTS=[
   category:"Guides",
   title:"Laptops that survive four years of campus life",
   excerpt:"Light, tough and fair on price. What to look for when you are buying for school.",
-  date:"2026-10-08",reads:0,img:"image/blog/laptopstudent.jpg",
+  date:"2026-10-08",reads:0,img:"images/blog/laptopstudent.jpg",
   body:"<p>Your article goes here.</p>"
 },
 {
@@ -36,7 +36,7 @@ var POSTS=[
   category:"Tips",
   title:"Windows or Macbooks: which suits your budget?",
   excerpt:"A plain comparison for first-time buyers, with no jargon.",
-  date:"2026-09-30",reads:0,img:"image/blog/windowsmac.jpg",
+  date:"2026-09-30",reads:0,img:"images/blog/windowsmac.jpg",
   body:"<p>Your article goes here.</p>"
 }
 ];
