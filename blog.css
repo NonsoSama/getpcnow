@@ -1,21 +1,20 @@
 /* getpcnow blog section. Add <link rel="stylesheet" href="blog.css"> after style.css */
 @import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&display=swap");
 
-.blog{background:#efefef;border-radius:28px;padding:44px 28px 36px;margin:0 0 48px;scroll-margin-top:16px}
+.blog{padding:8px 0 0;margin:0 0 48px;scroll-margin-top:16px}
 .blog-head{text-align:center;margin-bottom:32px}
-.blog-pill{display:inline-block;background:#fff;border-radius:99px;padding:5px 16px;font-weight:700;font-size:14px;margin-bottom:18px}
+.blog-pill{display:inline-block;background:#efefef;border-radius:99px;padding:5px 16px;font-weight:700;font-size:14px;margin-bottom:18px}
 .blog-head h2{font-size:clamp(28px,4.6vw,46px);line-height:1.08;letter-spacing:-1.6px;margin:0}
 .blog-head h2 em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.5px;font-size:1.08em}
 
-/* cards: white, thick soft rim like the reference */
-.bcard{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:#fff;border:0;border-radius:24px;padding:6px;box-shadow:0 0 0 4px rgba(255,255,255,.7),0 6px 18px rgba(0,0,0,.06);transition:transform .22s ease,box-shadow .22s ease}
-.bcard:hover{transform:translateY(-3px);box-shadow:0 0 0 4px rgba(255,255,255,.9),0 16px 32px rgba(0,0,0,.1)}
-.bcard:active{transform:scale(.99)}
-.bpic{position:relative;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#d9dde3,#f4f4f4);display:grid;place-items:center}
+/* cards: same look as the category cards (.card in style.css) */
+.bcard{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:#fff;border:1.5px solid var(--line,#e3e3e3);border-radius:18px;padding:12px;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.bcard:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.1);border-color:var(--acc,#1e90ff)}
+.bcard:active{transform:scale(.98)}
+.bpic{position:relative;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#d9dde3,#f4f4f4);display:grid;place-items:center}
 .bpic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
 .bcard:hover .bpic img{transform:scale(1.04)}
 .bpic svg{width:26%;color:rgba(0,0,0,.28);position:relative}
-.bpic:after{content:"";position:absolute;inset:auto 0 0 0;height:30%;background:linear-gradient(transparent,#fff);opacity:.9;pointer-events:none}
 .bcat{display:inline-block;background:#efefef;border-radius:99px;padding:3px 12px;font-size:13px;font-weight:500}
 .bcard h3{font-size:19px;line-height:1.25;letter-spacing:-.4px;margin:0 0 6px}
 .bex{color:#777;font-size:15px;line-height:1.45;margin:0}
@@ -23,9 +22,9 @@
 .bmeta span+span:before{content:"";display:inline-block;width:4px;height:4px;border-radius:50%;background:#000;margin-right:14px;vertical-align:middle}
 
 /* featured */
-.bfeat{display:grid;grid-template-columns:1.05fr 1fr;gap:0;margin-bottom:22px;border-radius:28px;padding:6px}
-.bfeat .bpic{min-height:340px;border-radius:22px}
-.bfeat .bbody{display:flex;flex-direction:column;padding:26px 30px 22px}
+.bfeat{display:grid;grid-template-columns:1.05fr 1fr;gap:0;margin-bottom:16px}
+.bfeat .bpic{min-height:340px}
+.bfeat .bbody{display:flex;flex-direction:column;padding:18px 22px 10px 28px}
 .bfeat .bcat{align-self:flex-start;margin-bottom:22px}
 .bfeat h3{font-size:clamp(24px,3.2vw,36px);letter-spacing:-1.2px;line-height:1.1;margin-bottom:14px}
 .bfeat .bex{font-size:17px;max-width:44ch}
@@ -33,10 +32,10 @@
 .bby{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:22px;font-weight:400}
 
 /* grid */
-.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .bgrid .bpic{aspect-ratio:4/3.1}
 .bgrid .bcat{position:absolute;top:12px;right:12px;z-index:1;background:#fff;font-size:13px}
-.bgrid .bbody{padding:18px 14px 14px}
+.bgrid .bbody{padding:14px 4px 4px}
 .bgrid .bmeta{margin-top:14px}
 .bempty{text-align:center;color:#777;margin:0}
 
@@ -65,7 +64,6 @@
   .bgrid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:560px){
-  .blog{padding:32px 14px 24px;border-radius:22px}
   .bgrid{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){.bcard,.bpic img{transition:none}}
