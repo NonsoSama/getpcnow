@@ -36,7 +36,7 @@ var POSTS=[
   category:"Tips",
   title:"Windows or Macbooks: which suits your budget?",
   excerpt:"A plain comparison for first-time buyers, with no jargon.",
-  date:"2026-09-30",reads:0,img:"images/blog/windowsmac.jpg",
+  date:"2026-09-30",reads:0,img:"images/blog/windowsvsmac.jpg",
   body:"<p>Your article goes here.</p>"
 }
 ];
