@@ -45,46 +45,72 @@ function fmtDate(iso){var p=iso.split("-");return MON[+p[1]-1]+" "+(+p[2])+", "+
 function mins(p){if(p.mins)return p.mins;var w=p.body.replace(/<[^>]+>/g," ").split(/\s+/).filter(Boolean).length;return Math.max(1,Math.round(w/200))}
 function fmtReads(n){return n>=1000?(n/1000).toFixed(1).replace(".0","")+"k":String(n)}
 function meta(p){return '<div class="bmeta"><span>'+fmtDate(p.date)+'</span><span>'+fmtReads(p.reads||0)+' reads</span><span>'+mins(p)+' min read</span></div>'}
-function pic(p){return '<div class="bpic">'+(p.img?'<img src="'+esc(p.img)+'" alt="" loading="lazy">':'<svg aria-hidden="true"><use href="#lap"/></svg>')+'</div>'}
+function pic(p,extra){return '<div class="bpic">'+(p.img?'<img src="'+esc(p.img)+'" alt="" loading="lazy">':'<svg aria-hidden="true"><use href="#lap"/></svg>')+(extra||'')+'</div>'}
+function href(p){return '#/post/'+p.slug}
 
 function card(p,feat){
-  if(feat)return '<button type="button" class="bcard bfeat" data-s="'+p.slug+'">'+pic(p)+'<div class="bbody"><span class="bcat">'+esc(p.category)+'</span><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p><div class="bfoot">'+meta(p)+'<b class="bby">by '+BRAND+'</b></div></div></button>';
-  return '<button type="button" class="bcard" data-s="'+p.slug+'"><div class="bpic">'+(p.img?'<img src="'+esc(p.img)+'" alt="" loading="lazy">':'<svg aria-hidden="true"><use href="#lap"/></svg>')+'<span class="bcat">'+esc(p.category)+'</span></div><div class="bbody"><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p>'+meta(p)+'</div></button>';
+  if(feat)return '<a class="bcard bfeat" href="'+href(p)+'">'+pic(p)+'<div class="bbody"><span class="bcat">'+esc(p.category)+'</span><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p><div class="bfoot">'+meta(p)+'<b class="bby">by '+BRAND+'</b></div></div></a>';
+  return '<a class="bcard" href="'+href(p)+'">'+pic(p,'<span class="bcat">'+esc(p.category)+'</span>')+'<div class="bbody"><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p>'+meta(p)+'</div></a>';
 }
+function grid(list){return '<div class="bgrid">'+list.map(function(p){return card(p)}).join("")+'</div>'}
 
+/* ---- home section (under View More) ---- */
+var SHOW=4; // how many posts show on the home page (1 big + 3 small)
 function build(){
   var sec=document.createElement("section");sec.id="blog";sec.className="blog";sec.setAttribute("aria-labelledby","blog-h");
   var html='<div class="blog-head"><span class="blog-pill">Blog</span><h2 id="blog-h">Practical reads to help you buy <em>smarter.</em></h2></div>';
   if(!POSTS.length)html+='<p class="bempty">New articles are coming soon.</p>';
   else{
     html+=card(POSTS[0],true);
-    if(POSTS.length>1)html+='<div class="bgrid">'+POSTS.slice(1).map(function(p){return card(p)}).join("")+'</div>';
+    if(POSTS.length>1)html+=grid(POSTS.slice(1,SHOW));
+    if(POSTS.length>SHOW)html+='<p class="bmore"><a class="btn dark" href="#/blog">See all articles</a></p>';
   }
-  sec.innerHTML=html;
-  sec.addEventListener("click",function(e){var b=e.target.closest("[data-s]");if(b)openPost(b.getAttribute("data-s"),b)});
-  return sec;
+  sec.innerHTML=html;return sec;
 }
-
-var last=null;
-function openPost(slug,from){
-  var p=POSTS.filter(function(x){return x.slug===slug})[0];if(!p)return;
-  last=from;
-  var r=document.createElement("div");r.className="reader";r.setAttribute("role","dialog");r.setAttribute("aria-modal","true");r.setAttribute("aria-label",p.title);
-  r.innerHTML='<article class="reader-in"><button type="button" class="reader-x" aria-label="Close">×</button><span class="bcat">'+esc(p.category)+'</span><h1>'+esc(p.title)+'</h1>'+meta(p)+(p.img?pic(p):'')+'<div class="prose">'+p.body+'</div></article>';
-  document.body.appendChild(r);document.body.style.overflow="hidden";
-  var x=r.querySelector(".reader-x");x.focus();
-  function close(){r.remove();document.body.style.overflow="";document.removeEventListener("keydown",key);if(last)last.focus()}
-  function key(e){if(e.key==="Escape")close()}
-  r.addEventListener("click",function(e){if(e.target===r||e.target===x)close()});
-  document.addEventListener("keydown",key);
-}
-
 function mount(){
   if(document.getElementById("blog"))return;
   var anchor=document.querySelector("#app .deals")||document.querySelector("#app .more");
-  if(!anchor)return;                      // not on the home page
+  if(!anchor)return;
   anchor.parentNode.insertBefore(build(),anchor.nextSibling);
 }
+
+/* ---- pages ---- */
+function setToggle(){ // keep the Nigeria/Ghana buttons in sync, as app.js does
+  if(typeof st==="undefined")return;
+  var n=document.getElementById("NG"),g=document.getElementById("GH");
+  if(n)n.className="btn"+(st.cur==="NG"?" on":"");if(g)g.className="btn"+(st.cur==="GH"?" on":"");
+}
+function blogIndex(){
+  setToggle();
+  document.getElementById("app").innerHTML='<section class="page"><a class="back" href="#/">← Home</a><h1>Blog</h1><p>Advice, guides and tips for buying the right laptop.</p>'+(POSTS.length?grid(POSTS):'<p class="bempty">New articles are coming soon.</p>')+'</section>';
+  document.title="Blog – getpcnow";
+}
+function postPage(slug){
+  var p=POSTS.filter(function(x){return x.slug===slug})[0];
+  if(!p)return blogIndex();
+  setToggle();
+  var more=POSTS.filter(function(x){return x!==p}).slice(0,3);
+  document.getElementById("app").innerHTML='<article class="page post"><a class="back" href="#/">← Home</a><span class="bcat">'+esc(p.category)+'</span><h1>'+esc(p.title)+'</h1>'+meta(p)+(p.img?pic(p):'')+'<div class="prose">'+p.body+'</div>'+(more.length?'<h2 class="postmore">More reads</h2>'+grid(more):'')+'</article>';
+  document.title=p.title+" – getpcnow";
+}
+
+/* ---- hook into app.js routing ---- */
+if(typeof route==="function"){
+  var baseRoute=route;
+  route=function(){
+    var h=location.hash.replace(/^#\/?/,"");
+    if(h==="blog")return blogIndex();
+    if(h.indexOf("post/")===0)return postPage(h.slice(5));
+    baseRoute();
+  };
+}
+/* header + footer links */
+var nav=document.querySelector("header nav");
+if(nav){var a=document.createElement("a");a.href="#/blog";a.textContent="Blog";nav.appendChild(a)}
+var fl=document.querySelector("#foot .foot-grid > div:nth-child(2) ul");
+if(fl){var li=document.createElement("li");li.innerHTML='<a href="#/blog">Blog</a>';fl.appendChild(li)}
+
 var app=document.getElementById("app");
-if(app){new MutationObserver(mount).observe(app,{childList:true,subtree:true});mount()}
+if(app){new MutationObserver(mount).observe(app,{childList:true,subtree:true})}
+route(); /* re-run once so a link like #/post/... works on first load */
 })();
