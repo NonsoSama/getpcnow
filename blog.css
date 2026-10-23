@@ -5,7 +5,7 @@
 .blog-head{text-align:center;margin-bottom:32px}
 .blog-pill{display:inline-block;background:#efefef;border-radius:99px;padding:5px 16px;font-weight:700;font-size:14px;margin-bottom:18px}
 .blog-head h2{font-size:clamp(28px,4.6vw,46px);line-height:1.08;letter-spacing:-1.6px;margin:0}
-.blog-head h2 em{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.5px;font-size:1.08em}
+.blog-brand{color:var(--acc,#1e90ff)}
 
 /* cards: same look as the category cards (.card in style.css) */
 .bcard{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:#fff;border:1.5px solid var(--line,#e3e3e3);border-radius:18px;padding:12px;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
@@ -29,7 +29,7 @@
 .bfeat h3{font-size:clamp(24px,3.2vw,36px);letter-spacing:-1.2px;line-height:1.1;margin-bottom:14px}
 .bfeat .bex{font-size:17px;max-width:44ch}
 .bfeat .bfoot{margin-top:auto;padding-top:24px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.bby{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-size:22px;font-weight:400}
+.bby{font:500 13px/1 "DM Sans",system-ui,sans-serif;color:#555}
 
 /* grid */
 .bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -41,19 +41,29 @@
 
 /* article page */
 .bcard{text-decoration:none}
-.post{max-width:720px;margin:0 auto;padding-bottom:20px}
-.post .bcat{margin-top:6px}
-.post h1{font-size:clamp(30px,4.6vw,44px);letter-spacing:-1.6px;line-height:1.06;margin:14px 0 12px}
-.post .bmeta{margin-bottom:24px}
-.post .bpic{aspect-ratio:16/8;margin-bottom:26px}
-.prose{font-size:18px;line-height:1.7;color:#222}
-.prose h3{font-size:23px;letter-spacing:-.5px;margin:30px 0 8px}
+.post{max-width:860px;margin:0 auto;padding-bottom:20px}
+.post h1{font-size:clamp(28px,4.4vw,42px);letter-spacing:-1.3px;line-height:1.1;margin:10px 0 14px}
+.postbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin-bottom:22px}
+.postbar .bmeta{font-size:14px;color:#555}
+.shr{display:inline-flex;align-items:center;gap:6px;border:0;background:none;font:500 14px "DM Sans",sans-serif;color:#555;cursor:pointer;padding:4px 8px;border-radius:8px}
+.shr:hover{background:#efefef;color:#000}
+.hero-img{margin:0 0 26px}
+.hero-img .bpic{aspect-ratio:16/9;border-radius:14px}
+.hero-img figcaption{text-align:center;color:#777;font-size:15px;margin-top:10px}
+.sumh{font-size:22px;letter-spacing:-.4px;margin:0 0 6px}
+.sum{margin:0 0 28px;font-size:17px;color:#222}
+.prose{font-size:17px;line-height:1.75;color:#222}
+.prose h2{font-size:clamp(23px,3vw,28px);letter-spacing:-.7px;line-height:1.2;margin:34px 0 10px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:21px;letter-spacing:-.4px;margin:26px 0 8px}
 .prose p{margin:0 0 16px}
 .prose a{color:var(--acc,#1e90ff)}
 .prose ul,.prose ol{padding-left:22px;margin:0 0 16px}
+.prose li{margin-bottom:6px}
 .prose img{max-width:100%;border-radius:14px}
-.postmore{margin:48px 0 16px}
-.post .bgrid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.byline{color:#777;font-size:14px;margin:28px 0 0;padding-top:16px;border-top:1px solid var(--line,#e3e3e3)}
+.postmore{margin:44px 0 16px}
+.post .bgrid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
 .page .bgrid{margin-top:8px;margin-bottom:40px}
 .bmore{text-align:center;margin:26px 0 0}
 

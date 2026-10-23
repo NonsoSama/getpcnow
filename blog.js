@@ -10,8 +10,10 @@ var POSTS=[
   date:"2026-10-20",      // YYYY-MM-DD
   reads:131,              // update this number whenever you like
   // mins:6,              // optional. If left out, it is worked out from the article length
-  img:"",                 // optional: "images/ram.jpg". Leave empty for the placeholder
-  body:"<p>Write your article here using normal HTML.</p><h3>A sub-heading</h3><p>Another paragraph. You can add <a href='#/all'>links</a> too.</p><ul><li>Point one</li><li>Point two</li></ul>"
+  img:"",                 // headline image, e.g. "images/ram.jpg". Empty = grey placeholder
+  caption:"",             // optional small line under the headline image
+  summary:"A plain guide to choosing between 8GB and 16GB of RAM, based on what you actually do on your laptop.", // optional. Shows under the image as 'Summary'
+  body:"<h2>8GB or 16GB RAM? What you actually need in 2026</h2><p>Memory is one of the easiest specs to overspend on. More RAM does not make a laptop faster by itself. It only helps when your work needs more than you have.</p><p>If you mostly browse, watch videos, write documents and join video calls, 8GB is enough for many people. The moment you keep dozens of browser tabs open or run heavy apps next to each other, 16GB starts to feel much smoother.</p><h2>Who should pick 16GB?</h2><p>Programmers, video editors, designers and anyone who likes to keep many apps open at once. If you plan to keep the laptop for four years or more, 16GB also gives you room as apps grow.</p><h2>Who can save money with 8GB?</h2><p>Students and office users with simple needs. Put the money you save into a bigger SSD or a better screen instead.</p><ul><li>Check if the RAM can be upgraded later.</li><li>Check if it is soldered to the board.</li><li>Always prefer an SSD over a hard drive.</li></ul>"
 },
 {
   slug:"used-laptop-checklist",
@@ -38,7 +40,7 @@ var POSTS=[
   body:"<p>Your article goes here.</p>"
 }
 ];
-var BRAND="getpcnow";
+var BY="getpcwriters";
 var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function fmtDate(iso){var p=iso.split("-");return MON[+p[1]-1]+" "+(+p[2])+", "+p[0]}
@@ -49,7 +51,7 @@ function pic(p,extra){return '<div class="bpic">'+(p.img?'<img src="'+esc(p.img)
 function href(p){return '#/post/'+p.slug}
 
 function card(p,feat){
-  if(feat)return '<a class="bcard bfeat" href="'+href(p)+'">'+pic(p)+'<div class="bbody"><span class="bcat">'+esc(p.category)+'</span><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p><div class="bfoot">'+meta(p)+'<b class="bby">by '+BRAND+'</b></div></div></a>';
+  if(feat)return '<a class="bcard bfeat" href="'+href(p)+'">'+pic(p)+'<div class="bbody"><span class="bcat">'+esc(p.category)+'</span><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p><div class="bfoot">'+meta(p)+'<b class="bby">by '+BY+'</b></div></div></a>';
   return '<a class="bcard" href="'+href(p)+'">'+pic(p,'<span class="bcat">'+esc(p.category)+'</span>')+'<div class="bbody"><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p>'+meta(p)+'</div></a>';
 }
 function grid(list){return '<div class="bgrid">'+list.map(function(p){return card(p)}).join("")+'</div>'}
@@ -58,7 +60,7 @@ function grid(list){return '<div class="bgrid">'+list.map(function(p){return car
 var SHOW=4; // how many posts show on the home page (1 big + 3 small)
 function build(){
   var sec=document.createElement("section");sec.id="blog";sec.className="blog";sec.setAttribute("aria-labelledby","blog-h");
-  var html='<div class="blog-head"><span class="blog-pill">Blog</span><h2 id="blog-h">Practical reads to help you buy <em>smarter.</em></h2></div>';
+  var html='<div class="blog-head"><span class="blog-pill">Blog</span><h2 id="blog-h">Practical reads before purchase on <span class="blog-brand">getpcnow</span></h2></div>';
   if(!POSTS.length)html+='<p class="bempty">New articles are coming soon.</p>';
   else{
     html+=card(POSTS[0],true);
@@ -85,12 +87,27 @@ function blogIndex(){
   document.getElementById("app").innerHTML='<section class="page"><a class="back" href="#/">← Home</a><h1>Blog</h1><p>Advice, guides and tips for buying the right laptop.</p>'+(POSTS.length?grid(POSTS):'<p class="bempty">New articles are coming soon.</p>')+'</section>';
   document.title="Blog – getpcnow";
 }
+function share(p){
+  var url=location.href;
+  if(navigator.share){navigator.share({title:p.title,url:url}).catch(function(){});return}
+  var done=function(){if(typeof toast==="function")toast("Link copied")};
+  if(navigator.clipboard)navigator.clipboard.writeText(url).then(done,function(){});else done();
+}
 function postPage(slug){
   var p=POSTS.filter(function(x){return x.slug===slug})[0];
   if(!p)return blogIndex();
   setToggle();
   var more=POSTS.filter(function(x){return x!==p}).slice(0,3);
-  document.getElementById("app").innerHTML='<article class="page post"><a class="back" href="#/">← Home</a><span class="bcat">'+esc(p.category)+'</span><h1>'+esc(p.title)+'</h1>'+meta(p)+(p.img?pic(p):'')+'<div class="prose">'+p.body+'</div>'+(more.length?'<h2 class="postmore">More reads</h2>'+grid(more):'')+'</article>';
+  var shareIc='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4.2M8.6 13.4l6.8 4.2"/></svg>';
+  document.getElementById("app").innerHTML='<article class="page post"><a class="back" href="#/">← Home</a>'
+   +'<h1>'+esc(p.title)+'</h1>'
+   +'<div class="postbar">'+meta(p)+'<button type="button" class="shr" id="shr">'+shareIc+'Share</button></div>'
+   +'<figure class="hero-img">'+pic(p)+(p.caption?'<figcaption>'+esc(p.caption)+'</figcaption>':'')+'</figure>'
+   +(p.summary?'<h2 class="sumh">Summary</h2><p class="sum">'+esc(p.summary)+'</p>':'')
+   +'<div class="prose">'+p.body+'</div>'
+   +'<p class="byline">Written by '+BY+'</p>'
+   +(more.length?'<h2 class="postmore">More reads</h2>'+grid(more):'')+'</article>';
+  document.getElementById("shr").onclick=function(){share(p)};
   document.title=p.title+" – getpcnow";
 }
 
@@ -112,5 +129,10 @@ if(fl){var li=document.createElement("li");li.innerHTML='<a href="#/blog">Blog</
 
 var app=document.getElementById("app");
 if(app){new MutationObserver(mount).observe(app,{childList:true,subtree:true})}
-route(); /* re-run once so a link like #/post/... works on first load */
+function handle(){
+  var h=location.hash.replace(/^#\/?/,"");
+  if(h==="blog")blogIndex();else if(h.indexOf("post/")===0)postPage(h.slice(5));
+}
+window.addEventListener("hashchange",handle); /* app.js's own listener runs first, then this one takes over for blog pages */
+handle(); /* so a direct link like #/post/... works on first load */
 })();
