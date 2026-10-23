@@ -13,7 +13,7 @@ var POSTS=[
   img:"",                 // headline image, e.g. "images/ram.jpg". Empty = grey placeholder
   caption:"",             // optional small line under the headline image
   summary:"A plain guide to choosing between 8GB and 16GB of RAM, based on what you actually do on your laptop.", // optional. Shows under the image as 'Summary'
-  body:"<h2>8GB or 16GB RAM? What you actually need in 2026</h2><p>Memory is one of the easiest specs to overspend on. More RAM does not make a laptop faster by itself. It only helps when your work needs more than you have.</p><p>If you mostly browse, watch videos, write documents and join video calls, 8GB is enough for many people. The moment you keep dozens of browser tabs open or run heavy apps next to each other, 16GB starts to feel much smoother.</p><h2>Who should pick 16GB?</h2><p>Programmers, video editors, designers and anyone who likes to keep many apps open at once. If you plan to keep the laptop for four years or more, 16GB also gives you room as apps grow.</p><h2>Who can save money with 8GB?</h2><p>Students and office users with simple needs. Put the money you save into a bigger SSD or a better screen instead.</p><ul><li>Check if the RAM can be upgraded later.</li><li>Check if it is soldered to the board.</li><li>Always prefer an SSD over a hard drive.</li></ul>"
+  body:"<p>Memory is one of the easiest specs to overspend on. More RAM does not make a laptop faster by itself. It only helps when your work needs more than you have.</p><p>If you mostly browse, watch videos, write documents and join video calls, 8GB is enough for many people. The moment you keep dozens of browser tabs open or run heavy apps next to each other, 16GB starts to feel much smoother.</p><h2>Who should pick 16GB?</h2><p>Programmers, video editors, designers and anyone who likes to keep many apps open at once. If you plan to keep the laptop for four years or more, 16GB also gives you room as apps grow.</p><h2>Who can save money with 8GB?</h2><p>Students and office users with simple needs. Put the money you save into a bigger SSD or a better screen instead.</p><ul><li>Check if the RAM can be upgraded later.</li><li>Check if it is soldered to the board.</li><li>Always prefer an SSD over a hard drive.</li></ul>"
 },
 {
   slug:"used-laptop-checklist",
@@ -104,10 +104,27 @@ function postPage(slug){
    +'<div class="postbar">'+meta(p)+'<button type="button" class="shr" id="shr">'+shareIc+'Share</button></div>'
    +'<figure class="hero-img">'+pic(p)+(p.caption?'<figcaption>'+esc(p.caption)+'</figcaption>':'')+'</figure>'
    +(p.summary?'<h2 class="sumh">Summary</h2><p class="sum">'+esc(p.summary)+'</p>':'')
-   +'<div class="prose">'+p.body+'</div>'
+   +'<div id="toc"></div>'
+   +'<div class="prose" id="prose">'+p.body+'</div>'
    +'<p class="byline">Written by '+BY+'</p>'
    +(more.length?'<h2 class="postmore">More reads</h2>'+grid(more):'')+'</article>';
   document.getElementById("shr").onclick=function(){share(p)};
+  /* table of contents from the article's h2 headings */
+  var hs=document.querySelectorAll("#prose h2");
+  if(hs.length>1){
+    var items="";
+    Array.prototype.forEach.call(hs,function(h,i){h.id="sec-"+(i+1);items+='<li><a href="#" data-t="sec-'+(i+1)+'">'+esc(h.textContent)+'</a></li>'});
+    var toc=document.getElementById("toc");
+    toc.className="toc";
+    toc.innerHTML='<h2 class="sumh">In this article</h2><ol>'+items+'</ol>';
+    /* scroll without touching the URL hash, because the hash is what the router uses */
+    toc.onclick=function(e){
+      var a=e.target.closest("a[data-t]");if(!a)return;
+      e.preventDefault();
+      var el=document.getElementById(a.getAttribute("data-t"));
+      if(el)el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+    };
+  }
   document.title=p.title+" – getpcnow";
 }
 
@@ -129,10 +146,10 @@ if(fl){var li=document.createElement("li");li.innerHTML='<a href="#/blog">Blog</
 
 var app=document.getElementById("app");
 if(app){new MutationObserver(mount).observe(app,{childList:true,subtree:true})}
-function handle(){
-  var h=location.hash.replace(/^#\/?/,"");
-  if(h==="blog")blogIndex();else if(h.indexOf("post/")===0)postPage(h.slice(5));
-}
-window.addEventListener("hashchange",handle); /* app.js's own listener runs first, then this one takes over for blog pages */
-handle(); /* so a direct link like #/post/... works on first load */
+/* blog.js must load AFTER app.js (see index.html). The patched route() above handles blog pages
+   on every hash change. app.js has already drawn the first page, so handle direct links here. */
+var h0=location.hash.replace(/^#\/?/,"");
+if(h0==="blog")blogIndex();
+else if(h0.indexOf("post/")===0)postPage(h0.slice(5));
+else mount();
 })();
