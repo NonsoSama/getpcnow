@@ -31,11 +31,12 @@ function sellersHtml(p){var o=offerFor(p),S=SELL[st.cur].filter(function(s){retu
  return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+(s[0]==="Jiji"?jijiTag(p):"")+"</a>"}).join("")}
 function topDeals(){var L=P.map(function(p){return{p:p,o:offerFor(p)}}).filter(function(x){return x.o}).sort(function(a,b){return b.o.x-a.o.x}).slice(0,3);
  if(!L.length)return"";
- return'<h2>Best deals right now</h2><div class="grid g1">'+L.map(function(x){return'<a class="card" href="#/laptop/'+slug(x.p.n)+'">'+lapImg(x.p.n)+"<h3>"+x.p.n+'</h3><p class="note"><b class="off">'+x.o.pct+"% off</b> · "+fmt(x.o.now)+" on "+x.o.src+(x.o.test?" · SAMPLE":"")+"</p></a>"}).join("")+"</div>"}
+ return'<h2>Best deals right now</h2><div class="grid g1">'+L.map(function(x){return'<a class="card" href="/laptop/'+slug(x.p.n)+'">'+lapImg(x.p.n)+"<h3>"+x.p.n+'</h3><p class="note"><b class="off">'+x.o.pct+"% off</b> · "+fmt(x.o.now)+" on "+x.o.src+(x.o.test?" · SAMPLE":"")+"</p></a>"}).join("")+"</div>"}
 function toast(m){var t=$("toast");t.textContent=m;t.className="on";clearTimeout(toast.t);toast.t=setTimeout(function(){t.className=""},2200)}
 function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 /* img(src, eager): eager=1 loads straight away (front page, visible on arrival); eager=2 also gets top priority (hero). No flag = lazy, for images further down. */
-function img(src,eager){return'<div class="im"><svg aria-hidden="true"><use href="#lap"/></svg><img src="'+src+'" alt="" '+(eager?'loading="eager"'+(eager>1?' fetchpriority="high"':''):'loading="lazy"')+' decoding="async" onerror="this.remove()"></div>'}
+function abs(u){return/^(https?:|\/|data:)/.test(u)?u:"/"+u}
+function img(src,eager){src=abs(src);return'<div class="im"><svg aria-hidden="true"><use href="#lap"/></svg><img src="'+src+'" alt="" '+(eager?'loading="eager"'+(eager>1?' fetchpriority="high"':''):'loading="lazy"')+' decoding="async" onerror="this.remove()"></div>'}
 function chart(p){var w=300,h=90,mn=Math.min.apply(null,p.h),mx=Math.max.apply(null,p.h),d=(mx-mn)||1;
  var pts=p.h.map(function(v,i){return[(i*(w-20)/11+10).toFixed(1),(h-14-((v-mn)/d)*(h-34)).toFixed(1)]});
  var line=pts.map(function(q){return q.join(",")}).join(" ");
@@ -58,15 +59,15 @@ function bindMore(){
   var l=b.querySelector(".lbl");l.textContent=moreOpen?"View Less":"View More";l.classList.remove("swap");void l.offsetWidth;l.classList.add("swap");
   if(moreOpen)setTimeout(function(){d.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})},350)}}
 function home(){
- $("app").innerHTML='<section class="hero"><div><h1>Find the right laptop for what you do.</h1><p>Pick how you will use it. We show the laptops that fit, what is good and bad about each, and where to buy.</p><a class="btn dark" href="#/all">Browse all laptops</a></div>'+img("images/hero.jpg",2)+'</section>'
- +topDeals()+'<h2>Choose your use</h2><div class="grid g1">'+CATS.map(function(c){return'<a class="card" href="#/'+c[0]+'">'+img("images/"+c[0]+".jpg",1)+'<h3>Best Laptops for '+c[1]+"</h3></a>"}).join("")+'<a class="card" href="#/all">'+img("images/all.jpg",1)+"<h3>All laptops</h3></a></div>"
+ $("app").innerHTML='<section class="hero"><div><h1>Find the right laptop for what you do.</h1><p>Pick how you will use it. We show the laptops that fit, what is good and bad about each, and where to buy.</p><a class="btn dark" href="/all">Browse all laptops</a></div>'+img("images/hero.jpg",2)+'</section>'
+ +topDeals()+'<h2>Choose your use</h2><div class="grid g1">'+CATS.map(function(c){return'<a class="card" href="/'+c[0]+'">'+img("images/"+c[0]+".jpg",1)+'<h3>Best Laptops for '+c[1]+"</h3></a>"}).join("")+'<a class="card" href="/all">'+img("images/all.jpg",1)+"<h3>All laptops</h3></a></div>"
  +'<div class="more"><button class="btn dark more-btn" id="more" aria-expanded="'+moreOpen+'" aria-controls="deals"><span class="lbl">'+(moreOpen?"View Less":"View More")+'</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>'
- +'<div class="deals'+(moreOpen?" open":"")+'" id="deals"><div class="deals-in"><h2>Deals by system</h2><div class="grid">'+DEALS.map(function(c){return'<a class="card" href="#/'+c[0]+'">'+dealImg(c)+"<h3>"+c[1]+"</h3></a>"}).join("")+"</div></div></div>";
+ +'<div class="deals'+(moreOpen?" open":"")+'" id="deals"><div class="deals-in"><h2>Deals by system</h2><div class="grid">'+DEALS.map(function(c){return'<a class="card" href="/'+c[0]+'">'+dealImg(c)+"<h3>"+c[1]+"</h3></a>"}).join("")+"</div></div></div>";
  bindMore();
  document.title="getpcnow – find the right laptop at the right price"}
 
 function tips(){
- $("app").innerHTML='<section class="page"><a class="back" href="#/">← Home</a><h1>Buying used? Check these first</h1><p>A little caution goes a long way.</p><ol class="tips"><li>Meet in a public place and test the laptop before paying.</li><li>Check battery health and charge cycles.</li><li>Look for dead pixels, a loose hinge and keyboard faults.</li><li>Confirm the serial number matches the box or the sticker.</li><li>Never send money before you have seen the laptop.</li></ol></section>';
+ $("app").innerHTML='<section class="page"><a class="back" href="/">← Home</a><h1>Buying used? Check these first</h1><p>A little caution goes a long way.</p><ol class="tips"><li>Meet in a public place and test the laptop before paying.</li><li>Check battery health and charge cycles.</li><li>Look for dead pixels, a loose hinge and keyboard faults.</li><li>Confirm the serial number matches the box or the sticker.</li><li>Never send money before you have seen the laptop.</li></ol></section>';
  document.title="Buying used – getpcnow"}
 
 function list(){
@@ -77,7 +78,7 @@ function list(){
  var box=$("items");box.innerHTML=L.length?"":'<div class="item"><div class="top" style="grid-template-columns:1fr"><div><h3 class="name">No laptops match yet</h3><p class="spec">Try a higher budget or set condition to All.</p></div></div></div>';
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
-  el.innerHTML='<div class="top"><a class="imlink" href="#/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="#/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["ph","Price history"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
+  el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["ph","Price history"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
   +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div><div class="range" aria-hidden="true"><i style="left:'+(p.lo/MAX*100)+'%;width:'+((p.hi-p.lo)/MAX*100)+'%"></i><u style="left:'+(p.t/MAX*100)+'%"></u></div><div class="rl"><span>'+money(p.lo)+'</span><span>'+money(p.hi)+'</span></div></div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div></div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
@@ -88,7 +89,7 @@ function list(){
 function category(c){
  if(!lastCat||c[0]!==lastCat[0])st.sort="deal";lastCat=c;
  cat=c[0]==="all"?null:c;var t=cat?(c[3]?c[1]:"Best Laptops for "+c[1]):"All laptops";
- $("app").innerHTML='<section class="page"><a class="back" href="#/">← All categories</a><h1>'+t+'</h1><p>'+c[2]+'</p><div class="filters">'+seg(["All","New","Used","Refurbished"],"cond")+budgetSel()
+ $("app").innerHTML='<section class="page"><a class="back" href="/">← All categories</a><h1>'+t+'</h1><p>'+c[2]+'</p><div class="filters">'+seg(["All","New","Used","Refurbished"],"cond")+budgetSel()
  +'<select id="sort" aria-label="Sort"><option value="score">Top rated</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="deal">Best deals</option></select></div><p class="count" id="count"></p><div id="items"></div></section>';
  $("sort").value=st.sort;
  $("budget").onchange=function(){st.bud=+this.value;list()};$("sort").onchange=function(){st.sort=this.value;list()};
@@ -134,7 +135,7 @@ function detail(p){
  var sellers=sellersHtml(p),ofr=offerFor(p);
  var C=[["screen","Screen Size",p.s[0]],["ram","Memory (RAM)",p.s[1]],["storage","Storage",p.s[2]],["cpu","Processor",p.s[3]],["gpu","Graphics",p.s[4]],["tag","Condition",p.c],["star","Our Score",p.sc.toFixed(1)+" / 10"],["users","Best For",p.u.join(", ")]];
  var chev='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
- $("app").innerHTML='<section class="page"><a class="back" href="#/'+(lastCat?lastCat[0]:"all")+'">← Back to laptops</a>'
+ $("app").innerHTML='<section class="page"><a class="back" href="/'+(lastCat?lastCat[0]:"all")+'">← Back to laptops</a>'
   +'<div class="dz">'+lapImg(p.n)+'<div><h1>'+p.n+'</h1><p class="lead">A '+p.c.toLowerCase()+' laptop that suits '+p.u.join(", ").replace(/, ([^,]*)$/," and $1")+'. Rated '+p.sc.toFixed(1)+' out of 10.</p>'
   +'<button class="rm" id="rm" aria-expanded="false" aria-controls="rmb">Read More '+chev+'</button><div class="rmb" id="rmb" hidden>'+panel(p,"pc")+'</div>'
   +'<div class="dlinks"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(p.n+" review")+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg>Watch Review</a></div>'
@@ -157,21 +158,49 @@ function detail(p){
  vrender(p);
  document.title=p.n+" – getpcnow"}
 
+/* ---- routing: real URLs (/all, /laptop/acer-nitro-5, /blog/ram-8-vs-16) using the History API ---- */
+var SITE="https://getpcnow.shop",DESC0="Find the best laptop deals in Nigeria and Ghana. Compare prices from Jumia and Jiji and see discounts first.",ROUTES=[];
+/* ROUTES: other scripts (blog.js) add a function here. It gets the path (like "blog/ram-8-vs-16"), draws the page and returns {d:description,noindex:bool}, or returns false if the path is not theirs. */
+function seo(desc,noindex){ /* keeps canonical, description and robots right for the page on screen */
+ var path=location.pathname.replace(/\/+$/,"")||"/";
+ var c=document.querySelector('link[rel="canonical"]');if(!c){c=document.createElement("link");c.rel="canonical";document.head.appendChild(c)}
+ c.href=SITE+(noindex?"/":path);
+ var m=document.querySelector('meta[name="description"]');if(m)m.setAttribute("content",desc||DESC0);
+ var r=document.querySelector('meta[name="robots"]');
+ if(noindex){if(!r){r=document.createElement("meta");r.name="robots";document.head.appendChild(r)}r.setAttribute("content","noindex")}else if(r)r.remove()}
 function route(){
- var h=location.hash.replace(/^#\/?/,"");
+ var h=location.pathname.replace(/^\/+|\/+$/g,""),d=DESC0,bad=false,x=false;
  $("NG").className="btn"+(st.cur==="NG"?" on":"");$("GH").className="btn"+(st.cur==="GH"?" on":"");
- if(!h)home();else if(h==="tips")tips();else if(h==="all")category(["all","","Every laptop we track, in one list."]);
- else if(h.indexOf("laptop/")===0){var q=P.filter(function(x){return slug(x.n)===h.slice(7)})[0];q?detail(q):home()}
- else{var c=CATS.concat(DEALS).filter(function(x){return x[0]===h})[0];c?category(c):home()}}
-window.addEventListener("hashchange",function(){route();window.scrollTo(0,0)});
+ for(var i=0;i<ROUTES.length&&!x;i++)x=ROUTES[i](h);
+ if(x){seo(x.d,x.noindex);return}
+ if(!ROUTES.length&&/^blog(\/|$)/.test(h))return; /* blog.js loads right after this file and draws the blog pages */
+ if(!h)home();
+ else if(h==="tips"){tips();d="Simple checks before you buy a used or refurbished laptop: battery, screen, keyboard, serial number and safe payment."}
+ else if(h==="all"){category(["all","","Every laptop we track, in one list."]);d="Every laptop we track in Nigeria and Ghana in one list, with prices, discounts and where to buy."}
+ else if(h.indexOf("laptop/")===0){var q=P.filter(function(x){return slug(x.n)===h.slice(7)})[0];if(q){detail(q);d=q.n+": specs, pros and cons, price range and where to buy in Ghana and Nigeria."}else{home();bad=true}}
+ else{var c=CATS.concat(DEALS).filter(function(x){return x[0]===h})[0];if(c){category(c);d=c[2]||d}else{home();bad=true}}
+ seo(d,bad)}
+function go(u){history.pushState(null,"",u);route();window.scrollTo(0,0)}
+/* internal links change the page without a reload */
+document.addEventListener("click",function(e){
+ if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+ var a=e.target.closest&&e.target.closest("a[href]");
+ if(!a||a.target||a.hasAttribute("download"))return;
+ var u=a.getAttribute("href");
+ if(u.charAt(0)!=="/"||u.charAt(1)==="/"||/\.[a-z0-9]+$/i.test(u))return; /* not a page of ours (file, other site) */
+ e.preventDefault();
+ if(u===location.pathname)window.scrollTo(0,0);else go(u)});
+window.addEventListener("popstate",function(){route();window.scrollTo(0,0)});
+/* old links like getpcnow.shop/#/laptop/x or /#/post/x still work: turn them into the new address */
+(function(){var m=location.hash.match(/^#\/(.*)$/);if(m)history.replaceState(null,"","/"+m[1].replace(/^post\//,"blog/"))})();
 ["NG","GH"].forEach(function(k){$(k).onclick=function(){if(st.cur!==k)st.bud=0;st.cur=k;route()}});
 function footer(){
- var q=[["Home","#/"],["All laptops","#/all"],["Buying used","#/tips"]],
- d=DEALS.map(function(c){return[c[1],"#/"+c[0]]});
+ var q=[["Home","/"],["All laptops","/all"],["Buying used","/tips"]],
+ d=DEALS.map(function(c){return[c[1],"/"+c[0]]});
  function col(t,a){return"<div><h4>"+t+'</h4><ul>'+a.map(function(x){return'<li><a href="'+x[1]+'">'+x[0]+"</a></li>"}).join("")+"</ul></div>"}
  var soc=SOCIALS.map(function(x){var live=!!x.url,mail=/^mailto:/.test(x.url);
   return'<li><a href="'+(live?x.url:"#")+'"'+(live&&!mail?' target="_blank" rel="noopener noreferrer"':"")+(live?"":' data-soon="'+x.label+'"')+' aria-label="'+x.label+(live&&!mail?" (opens in a new tab)":"")+'">'+ICO[x.k]+"<span>"+x.label+"</span></a></li>"}).join("");
- $("foot").innerHTML='<div class="wrap"><div class="foot-grid"><div class="foot-brand"><a class="foot-logo" href="#/" aria-label="getpcnow home"><div><span>get</span><span><b>pc</b></span><span>now</span></div></a></div>'
+ $("foot").innerHTML='<div class="wrap"><div class="foot-grid"><div class="foot-brand"><a class="foot-logo" href="/" aria-label="getpcnow home"><div><span>get</span><span><b>pc</b></span><span>now</span></div></a></div>'
   +col("Quick Links",q)+col("Deals by system",d)+'<div><h4>Get In Touch</h4><ul>'+soc+"</ul></div></div>"
   +'<div class="foot-note"><span>Prototype with sample data. Prices, scores and exchange rate are placeholders, not live market prices.</span><button class="to-top" id="top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div></div>';
  $("foot").onclick=function(e){var a=e.target.closest("a[data-soon]");if(a){e.preventDefault();toast(a.getAttribute("data-soon")+" is coming soon")}};
