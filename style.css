@@ -66,8 +66,8 @@ select{padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;backgr
 select:hover{border-color:var(--acc)}
 .count{color:var(--mute);font-size:14px;margin:0 0 12px}
 
-.item{border:1.5px solid var(--line);border-radius:18px;margin-bottom:14px;overflow:hidden;transition:box-shadow .22s}
-.item:hover{box-shadow:0 10px 26px rgba(0,0,0,.08)}
+.item{border:1.5px solid var(--line);border-radius:18px;margin-bottom:14px;overflow:hidden;transition:box-shadow .22s,border-color .22s}
+.item:hover{box-shadow:0 10px 26px rgba(0,0,0,.08);border-color:var(--acc)}
 .top{display:grid;grid-template-columns:140px 1fr 240px;gap:22px;padding:18px;align-items:start}
 .top .im{aspect-ratio:4/3;border-radius:10px}
 .name{font-size:20px;letter-spacing:-.5px;margin:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -134,8 +134,8 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
 .opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:14px;cursor:pointer;transition:border-color .18s,background .18s}
 .opt:hover{border-color:var(--acc)}.opt.on{border-color:var(--acc);background:var(--accs);font-weight:700}.opt.on:after{content:"✓";float:right;color:var(--acc)}
 .clr{border:0;background:none;color:var(--acc);font-weight:700;font-size:14px;cursor:pointer;padding:4px 0 10px}
-.vr{display:grid;grid-template-columns:130px 1fr 260px;border:1.5px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;transition:box-shadow .22s}
-.vr:hover{box-shadow:0 10px 24px rgba(0,0,0,.07)}
+.vr{display:grid;grid-template-columns:130px 1fr 260px;border:1.5px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;transition:box-shadow .22s,border-color .22s}
+.vr:hover{box-shadow:0 10px 24px rgba(0,0,0,.07);border-color:var(--acc)}
 .vi{background:var(--soft);padding:12px;border-right:1.5px solid var(--line);display:grid;place-items:center}.vi .im{width:100%;aspect-ratio:4/3;border-radius:8px}
 .vm{padding:18px 20px;min-width:0}.vm h3{margin:0;font-size:20px;letter-spacing:-.5px}
 .chips{display:flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:12px 0;width:fit-content;max-width:100%}
