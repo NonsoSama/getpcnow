@@ -18,13 +18,14 @@ function fmt(n){return st.cur==="NG"?"₦"+Math.round(n).toLocaleString("en-NG")
 function offerFor(p){var b=null;ALLOFF.forEach(function(o){
  if(o.n!==p.n||o.c!==st.cur||!(o.was>o.now))return;var x=1-o.now/o.was,pc=Math.round(x*100);if(pc<1)return;
  if(!b||x>b.x)b={x:x,pct:pc,was:o.was,now:o.now,src:o.src,url:o.url,upd:o.upd,test:o.test,nowN:st.cur==="GH"?o.now/RATE:o.now}});return b}
+function here(p){return!p.cn||p.cn.indexOf(st.cur)>-1}
 function ep(p){var o=offerFor(p);return o?o.nowN:p.t}
 function budN(){return st.cur==="GH"?st.bud/RATE:st.bud}
 function dk(p){var o=offerFor(p);return o?1+o.x:(p.avg-p.t)/p.avg}
 function when(d){var t=new Date(d);return isNaN(t)?"":t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
 /* Jiji button shows the going price range (from data.js JJ or jiji-bands.js), e.g. ' · GH₵8,000–8,700'. */
 function jijiTag(p){var b=jijiBand(p,st.cur);return b?' · '+fmt(b[0])+'–'+fmt(b[1]).replace(/^[^\d]+/,''):''}
-function sellersHtml(p){var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur):s[1]+encodeURIComponent(p.n)))]});
+function sellersHtml(p){if(!here(p))return'<p class="note">Not listed in '+(st.cur==="NG"?"Nigeria":"Ghana")+' right now. Switch country to see where to buy.</p>';var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur):s[1]+encodeURIComponent(p.n)))]});
  if(o&&o.url&&!S.some(function(s){return s[0]===o.src}))S.push([o.src,o.url]);
  if(o)S.sort(function(a,b){return(b[0]===o.src)-(a[0]===o.src)});
  return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+(s[0]==="Jiji"?jijiTag(p):"")+"</a>"}).join("")}
@@ -80,7 +81,7 @@ function tips(){
  document.title="Buying used – getpcnow"}
 
 function list(){
- var L=P.filter(function(p){return(!cat||(cat[3]?p.o.indexOf(cat[3])>-1:p.u.indexOf(cat[1])>-1))&&(st.cond==="All"||p.c===st.cond)&&(!st.bud||ep(p)<=budN())});
+ var L=P.filter(function(p){return here(p)&&(!cat||(cat[3]?p.o.indexOf(cat[3])>-1:p.u.indexOf(cat[1])>-1))&&(st.cond==="All"||p.c===st.cond)&&(!st.bud||ep(p)<=budN())});
  L.sort(function(a,b){return st.sort==="low"?ep(a)-ep(b):st.sort==="high"?ep(b)-ep(a):st.sort==="deal"?dk(b)-dk(a):b.sc-a.sc});
  var nd=L.filter(function(p){return offerFor(p)}).length;
  $("count").textContent=L.length+(L.length===1?" laptop":" laptops")+(nd?" · "+nd+" on offer":"");
@@ -211,7 +212,7 @@ function footer(){
   return'<li><a href="'+(live?x.url:"#")+'"'+(live&&!mail?' target="_blank" rel="noopener noreferrer"':"")+(live?"":' data-soon="'+x.label+'"')+' aria-label="'+x.label+(live&&!mail?" (opens in a new tab)":"")+'">'+ICO[x.k]+"<span>"+x.label+"</span></a></li>"}).join("");
  $("foot").innerHTML='<div class="wrap"><div class="foot-grid"><div class="foot-brand"><a class="foot-logo" href="/" aria-label="getpcnow home"><div><span>get</span><span><b>pc</b></span><span>now</span></div></a></div>'
   +col("Quick Links",q)+col("Deals by system",d)+'<div><h4>Get In Touch</h4><ul>'+soc+"</ul></div></div>"
-  +'<div class="foot-note"><span>Prototype with sample data. Prices, scores and exchange rate are placeholders, not live market prices.</span><button class="to-top" id="top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div></div>';
+  +'<div class="foot-note"><span>Prices are ballpark figures from Jiji and Jumia listings and change often. Check the seller page before you pay.</span><button class="to-top" id="top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div></div>';
  $("foot").onclick=function(e){var a=e.target.closest("a[data-soon]");if(a){e.preventDefault();toast(a.getAttribute("data-soon")+" is coming soon")}};
  $("top").onclick=function(){window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}}
 footer();
