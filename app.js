@@ -8,7 +8,6 @@ function fresh(o){return!o.auto||(Date.now()-new Date(o.upd))/864e5<=5}
 var ALLOFF=(typeof OFFERS!=="undefined"?OFFERS:[]).concat(typeof AUTO!=="undefined"?AUTO:[]).filter(function(o){return alive(o.url)&&fresh(o)});
 P=P.filter(function(p){var u=p.url?Object.keys(p.url).map(function(k){return p.url[k]}):[];return!(p.ad&&u.length&&u.every(function(x){return!alive(x)}))});
 P.forEach(function(p){p.o=[/^Apple/.test(p.n)?"mac":"win"];if(LINUX.indexOf(p.n)>-1)p.o.push("linux")});
-var MAX=Math.max.apply(null,P.map(function(p){return p.hi}));
 P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(Math.round(v/1000)*1000);x=(x*9301+49297)%233280;v=v*(1+((x/233280)-0.42)*0.05)}
  p.h=h;p.avg=h.reduce(function(a,b){return a+b},0)/12;p.deal=p.t<=p.avg*0.95;p.chg=(p.t-h[7])/h[7]});
 var st={cur:"GH",cond:"All",bud:0,sort:"deal"},open={},alerts={},cat=null,moreOpen=false,lastCat=null;
@@ -37,14 +36,24 @@ function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-
 /* img(src, eager): eager=1 loads straight away (front page, visible on arrival); eager=2 also gets top priority (hero). No flag = lazy, for images further down. */
 function abs(u){return/^(https?:|\/|data:)/.test(u)?u:"/"+u}
 function img(src,eager){src=abs(src);return'<div class="im"><svg aria-hidden="true"><use href="#lap"/></svg><img src="'+src+'" alt="" '+(eager?'loading="eager"'+(eager>1?' fetchpriority="high"':''):'loading="lazy"')+' decoding="async" onerror="this.remove()"></div>'}
-function chart(p){var w=300,h=90,mn=Math.min.apply(null,p.h),mx=Math.max.apply(null,p.h),d=(mx-mn)||1;
- var pts=p.h.map(function(v,i){return[(i*(w-20)/11+10).toFixed(1),(h-14-((v-mn)/d)*(h-34)).toFixed(1)]});
- var line=pts.map(function(q){return q.join(",")}).join(" ");
- return'<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Price over the last 12 weeks"><polygon points="10,'+(h-4)+' '+line+' '+(w-10)+','+(h-4)+'" fill="#1e90ff" opacity=".12"/><polyline points="'+line+'" fill="none" stroke="#1e90ff" stroke-width="2.5" stroke-linejoin="round"/><circle cx="'+pts[11][0]+'" cy="'+pts[11][1]+'" r="4" fill="#1e90ff"/><text x="10" y="12" font-size="10" fill="#555">High '+money(mx)+'</text><text x="'+(w-10)+'" y="12" font-size="10" text-anchor="end" fill="#555">Low '+money(mn)+'</text></svg><p class="note">Last 12 weeks. Today’s typical price is '+(p.t<=p.avg?Math.round((1-p.t/p.avg)*100)+"% below":Math.round((p.t/p.avg-1)*100)+"% above")+' the 12-week average.</p>'}
+/* Price range selector: bars = how many listings sit at each price, blue bar + two handles = the usual low-to-high range. Prices go through money(), so it follows the Nigeria / Ghana toggle. */
+function rangeUI(p){
+ var n=26,sp=p.hi-p.lo,a=p.lo-sp*.3,b=p.hi+sp*.3,w=b-a,x=0,bars=[],mx=0,k,c,z,r;
+ for(k=0;k<p.n.length;k++)x+=p.n.charCodeAt(k)*(k+3);
+ for(k=0;k<n;k++){c=a+(k+.5)*w/n;z=(c-p.t)/(sp*.3);x=(x*9301+49297)%233280;r=.6+.4*(x/233280);
+  c=Math.exp(-z*z/2)*r;bars.push(c);if(c>mx)mx=c}
+ function at(v){return((v-a)/w*100).toFixed(2)}
+ return'<div class="rs" role="img" aria-label="Typical price range '+money(p.lo)+' to '+money(p.hi)+'">'
+  +'<h4>Price range</h4><p class="rs-s">What this laptop usually sells for</p>'
+  +'<div class="rs-chart"><div class="rs-bars">'+bars.map(function(v){return'<i style="height:'+Math.max(6,Math.round(v/mx*100))+'%"></i>'}).join("")+'</div>'
+  +'<div class="rs-track"><i class="rs-fill" style="left:'+at(p.lo)+'%;width:'+((p.hi-p.lo)/w*100).toFixed(2)+'%"></i></div>'
+  +'<span class="rs-pin" style="left:'+at(p.lo)+'%"><em>'+money(p.lo)+'</em></span>'
+  +'<span class="rs-pin" style="left:'+at(p.hi)+'%"><em>'+money(p.hi)+'</em></span></div>'
+  +'<p class="note">Most listings fall between '+money(p.lo)+' and '+money(p.hi)+'. Typical price is '+money(p.t)+'.</p></div>'}
 function panel(p,k){
  if(k==="pc")return'<div class="pc"><div><h4>Pros</h4><ul class="pros">'+p.pro.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div><div><h4>Cons</h4><ul class="cons">'+p.con.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div></div>';
  if(k==="sp"){var L=["Screen","Memory","Storage","Processor","Graphics"];return"<table>"+L.map(function(l,i){return"<tr><td>"+l+"</td><td>"+p.s[i]+"</td></tr>"}).join("")+"<tr><td>Condition</td><td>"+p.c+"</td></tr></table>"}
- return'<div class="chart">'+chart(p)+"</div>"}
+ return rangeUI(p)}
 
 function seg(items,key,id){return'<div class="seg" role="group">'+items.map(function(v){return'<button class="btn'+(st[key]===v?" on":"")+'" data-k="'+key+'" data-v="'+v+'">'+v+"</button>"}).join("")+"</div>"}
 function budgetSel(){var n=st.cur==="NG"?[500000,800000,1200000,1600000]:[3500,5000,7500,10000],o=[[0,"Any budget"]].concat(n.map(function(v){return[v,"Under "+fmt(v)]}));
@@ -78,8 +87,8 @@ function list(){
  var box=$("items");box.innerHTML=L.length?"":'<div class="item"><div class="top" style="grid-template-columns:1fr"><div><h3 class="name">No laptops match yet</h3><p class="spec">Try a higher budget or set condition to All.</p></div></div></div>';
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
-  el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["ph","Price history"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
-  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div><div class="range" aria-hidden="true"><i style="left:'+(p.lo/MAX*100)+'%;width:'+((p.hi-p.lo)/MAX*100)+'%"></i><u style="left:'+(p.t/MAX*100)+'%"></u></div><div class="rl"><span>'+money(p.lo)+'</span><span>'+money(p.hi)+'</span></div></div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div></div></div>'
+  el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["pr","Price range"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
+  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div></div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
   el.querySelector(".bell").onclick=function(){if(alerts[p.n]){toast("You already have an alert for this laptop");return}

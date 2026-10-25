@@ -81,9 +81,6 @@ select:hover{border-color:var(--acc)}
 .b{align-self:flex-start;font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px;background:var(--soft)}
 .b.deal{background:var(--bad);color:#fff}.b.drop{background:var(--warn)}
 .price{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.1}.price small{display:block;font:500 12px "DM Sans";color:var(--mute);letter-spacing:0}
-.range{position:relative;height:6px;border-radius:9px;background:var(--line)}
-.range i{position:absolute;top:0;height:6px;border-radius:9px;background:var(--acc);opacity:.35}.range u{position:absolute;top:-4px;width:4px;height:14px;border-radius:3px;background:var(--acc)}
-.rl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
 .btns{display:flex;gap:8px;flex-wrap:wrap}.btns .btn{flex:1}
 .bell{flex:0 0 44px!important;padding:0!important;font-size:17px}
 .bell.on{background:var(--warn);border-color:var(--warn)}.bell.ring{animation:ring .5s}
@@ -94,7 +91,17 @@ select:hover{border-color:var(--acc)}
 .pc li{padding-left:26px;position:relative}.pc li:before{position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;text-align:center;font-weight:700;font-size:13px;line-height:18px;color:#fff}
 .pros li:before{content:"+";background:var(--acc)}.cons li:before{content:"–";background:var(--bad)}
 table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padding:8px 0;border-bottom:1px solid var(--line)}td:first-child{color:var(--mute);width:38%}
-.chart{max-width:560px}.chart svg{width:100%;display:block}.note{font-size:13px;color:var(--mute);margin:8px 0 0}
+/* price range selector (replaces the old price history chart) */
+.rs{max-width:640px}.rs h4{margin:0;font-size:17px}.rs-s{margin:2px 0 0;font-size:13px;color:var(--mute)}
+.rs-chart{position:relative;height:118px;margin-top:8px}
+.rs-bars{position:absolute;left:0;right:0;bottom:17px;height:72px;display:flex;align-items:flex-end}
+.rs-bars i{flex:1;background:#dcdcdc;border-radius:2px 2px 0 0}
+.rs-track{position:absolute;left:0;right:0;bottom:9px;height:8px;border-radius:9px;background:#cfcfcf}
+.rs-fill{position:absolute;top:0;bottom:0;background:var(--acc);border-radius:9px}
+.rs-pin{position:absolute;bottom:0;width:26px;height:26px;margin-left:-13px;border-radius:50%;background:#fff;border:2px solid var(--acc);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.rs-pin em{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);background:#fff;border:1.5px solid var(--acc);border-radius:8px;padding:3px 9px;font:700 13px "DM Sans",system-ui,sans-serif;font-style:normal;white-space:nowrap;color:#222}
+.rs-pin em:after{content:"";position:absolute;left:50%;bottom:-6px;width:8px;height:8px;background:#fff;border:solid var(--acc);border-width:0 1.5px 1.5px 0;transform:translateX(-50%) rotate(45deg)}
+.note{font-size:13px;color:var(--mute);margin:8px 0 0}
 .tips{max-width:640px;padding-left:20px;display:grid;gap:10px;font-size:17px}
 /* Laptop detail page */
 .nl{text-decoration:none;color:inherit;transition:color .18s}.nl:hover{color:var(--acc);text-decoration:underline}
