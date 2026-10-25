@@ -13,7 +13,7 @@ var RATE=0.00888;
 var CATS=[
  ["students","Students","Light, long battery life and easy on the budget."],
  ["programmers","Programmers","Fast processors, plenty of memory and a keyboard you can type on all day."],
- ["gamers","Gamers","A dedicated graphics card and enough cooling to run modern games."],
+ ["gamers","Gamers","Value gaming laptops from GH₵5,000 to GH₵10,000 with a real graphics card, not overpriced ones."],
  ["creators","Creators","Strong screens and power for photo, video and design work."],
  ["home-work","Home & Work","Reliable everyday laptops for documents, email and video calls."]];
 var DEALS=[
@@ -26,6 +26,8 @@ var DEALS=[
    u = categories, sc = our score, lo / t / hi = low, typical and high price in NAIRA (cedis are worked out with RATE)
    cn = countries where we found it listed ("GH", "NG"). It only shows, and only gets Buy buttons, in those countries.
         Remove cn to show a laptop in both countries. */
+/* CAP: price limits for a category page, in CEDIS, checked against each laptop's typical price (t x RATE). Gamers: GH 5,000 to 10,000. Typical picks sit at 5,500 to 8,000; 9,000 to 9,500 is the extreme. A laptop outside the limit does not show on that page. */
+var CAP={Gamers:[5000,10000]};
 var P=[
 /* ---- Used business laptops ---- */
 {n:"HP EliteBook 840 G7",c:"Used",s:["14 in","16 GB","512 GB","Core i5","Intel UHD"],u:["Students","Home & Work"],sc:8.3,lo:360000,t:430000,hi:510000,cn:["GH","NG"],pro:["Sturdy build and a good keyboard","14 in full HD screen","Cheap to upgrade"],con:["Battery wear varies by unit","Check the exact RAM and SSD on the listing"]},
@@ -49,13 +51,13 @@ var P=[
 {n:"Apple MacBook Air M4",c:"New",s:["13.6 in","16 GB","256 GB","Apple M4","8-core GPU"],u:["Creators"],sc:9.1,lo:1150000,t:1200000,hi:1350000,cn:["GH"],pro:["Great value for a new MacBook","16 GB of RAM"],con:["256 GB fills up fast","Much dearer on Jumia Ghana"]},
 {n:"Apple MacBook Air M5",c:"New",s:["13.6 in","16 GB","512 GB","Apple M5","10-core GPU"],u:["Creators"],sc:9.3,lo:1450000,t:1550000,hi:1650000,cn:["GH"],pro:["Best all-round creator laptop in range"],con:["At or above the N1.5M ceiling","Jumia Ghana price is over the cap"]},
 /* ---- Gaming ---- */
-{n:"HP Victus 15 RTX 4050",c:"New",s:["15.6 in","16 GB","512 GB","Ryzen 5 8645HS","RTX 4050"],u:["Gamers"],sc:8.2,lo:1100000,t:1250000,hi:1500000,cn:["GH","NG"],pro:["Best proven value for gaming","DDR5 memory"],con:["Prices differ a lot between sellers"]},
-{n:"HP Victus 15 RTX 5050",c:"New",s:["15.6 in","16 GB","512 GB","Core i5","RTX 5050"],u:["Gamers"],sc:8.0,lo:1200000,t:1350000,hi:1500000,cn:["GH","NG"],pro:["Easy to find","Newer RTX 5050 graphics"],con:["Check the GPU wattage, a starved 5050 can trail an RTX 4060","Often near the N1.5M ceiling"]},
-{n:"Lenovo LOQ 15 RTX 4050",c:"New",s:["15.6 in","16 GB","512 GB","Ryzen 7 7735HS","RTX 4050"],u:["Gamers"],sc:8.1,lo:1000000,t:1120000,hi:1250000,cn:["GH"],pro:["Good cooling","Solid CPU"],con:["Check the exact CPU and GPU on the listing"]},
-{n:"Lenovo LOQ 15 RTX 5050",c:"New",s:["15.6 in","16 GB","512 GB","Core i5","RTX 5050"],u:["Gamers","Creators"],sc:8.3,lo:1200000,t:1350000,hi:1500000,cn:["GH"],pro:["The RTX 5050 gets a 100W power budget","NVIDIA acceleration for Premiere and DaVinci"],con:["Often near the N1.5M ceiling"]},
-{n:"Acer Nitro V 15",c:"New",s:["15.6 in","16 GB","512 GB","Core i5-13420H","RTX 5050"],u:["Gamers"],sc:8.2,lo:1150000,t:1270000,hi:1400000,cn:["GH"],pro:["Newer GPU with 8 GB GDDR7"],con:["Check the price is under the N1.5M cap","Check the GPU wattage"]},
-{n:"ASUS TUF Gaming A15",c:"New",s:["15.6 in","16 GB","512 GB","Ryzen 7","RTX 4050"],u:["Gamers"],sc:8.1,lo:1000000,t:1250000,hi:1550000,cn:["GH","NG"],pro:["Tough build","Good battery"],con:["Some versions go over the N1.5M cap, like the F16 on Jumia Nigeria"]},
-{n:"Lenovo Legion 5",c:"New",s:["15 in","16 GB","512 GB","Ryzen 7","RTX 4060"],u:["Gamers","Creators"],sc:8.6,lo:1350000,t:1520000,hi:1700000,cn:["GH"],pro:["Best thermals and build on the list","NVIDIA acceleration for Premiere and DaVinci"],con:["Often above the N1.5M cap"]}
+{n:"Lenovo LOQ 15 RTX 5050",c:"New",s:["15.6 in","16 GB","512 GB","Core i5","RTX 5050"],u:["Creators"],sc:8.3,lo:1200000,t:1350000,hi:1500000,cn:["GH"],pro:["The RTX 5050 gets a 100W power budget","NVIDIA acceleration for Premiere and DaVinci"],con:["Often near the N1.5M ceiling"]},,
+/* ---- Gaming: value picks only. Gamers page range is GH 5,000 to 10,000 (see CAP below) ---- */
+{n:"MSI GF63",c:"Used",s:["15.6 in","16 GB","512 GB","Core i5","RTX 3050"],u:["Gamers"],sc:8.0,lo:660000,t:730000,hi:840000,cn:["GH"],pro:["The cheapest RTX laptop on the list","Backlit keyboard"],con:["Only 4 GB of graphics memory","Used, check battery and fans"]},
+{n:"Acer Nitro 5",c:"Used",s:["15.6 in","16 GB","512 GB","Core i5","RTX 3050 Ti"],u:["Gamers"],sc:8.3,lo:845000,t:910000,hi:1100000,cn:["GH","NG"],pro:["Real RTX graphics at a used price","Easy to upgrade RAM and storage"],con:["Used, check battery and fan noise","Some listings are RTX 3050, others 3050 Ti"]},
+{n:"ASUS TUF Gaming A15",c:"Used",s:["15.6 in","16 GB","512 GB","Ryzen 5","GTX 1650"],u:["Gamers"],sc:7.6,lo:810000,t:900000,hi:1035000,cn:["NG"],pro:["Tough build","Good battery"],con:["Older GTX 1650: fine for esports and older games, no ray tracing","Used, check fan noise and heat"]},
+{n:"HP Victus 15",c:"New",s:["15.6 in","16 GB","512 GB","Core i5","RTX 3050"],u:["Gamers"],sc:8.1,lo:885000,t:955000,hi:1120000,cn:["GH"],pro:["Sold brand new","Runs modern games at 1080p"],con:["Check the GPU, cheaper listings may carry an RTX 2050","Check the RAM, some versions are only 8 GB"]},
+{n:"Lenovo Legion 5",c:"Used",s:["15.6 in","16 GB","512 GB","Ryzen 5","RTX 3060"],u:["Gamers"],sc:8.6,lo:900000,t:955000,hi:1070000,cn:["GH"],pro:["RTX 3060, the strongest graphics in this price range","Good cooling"],con:["Used, check battery and fans","Many sellers ask above the cap, so check the GPU and price"]}
 ];
 /* Operating system tags used by the Deals pages. Apple = mac, everything else = win. Add a laptop name to LINUX to list it under Linux Deals. */
 var LINUX=["Lenovo ThinkPad T14 Gen 2","HP EliteBook 840 G8"];
@@ -108,12 +110,11 @@ var OFFERS=[
 var VARS={
  "HP EliteBook 840 G7":[["8 GB","256 GB","Core i5","Intel UHD",.88],["16 GB","256 GB","Core i5","Intel UHD",.94]],
  "Dell Latitude 5420":[["16 GB","512 GB","Core i7","Intel Iris Xe",1.3],["8 GB","256 GB","Core i5","Intel Iris Xe",.78]],
- "Acer Aspire 16":[["16 GB","512 GB","Ryzen 7","AMD Radeon",1.12]],
- "ASUS TUF Gaming A15":[["16 GB","512 GB","Ryzen 7","RTX 5060",1.25]]};
+ "Acer Aspire 16":[["16 GB","512 GB","Ryzen 7","AMD Radeon",1.12]]};
 /* Performance ratings: 1 = Low, 2 = Average, 3 = Solid. Memory and storage are rated by size; processors and graphics by this list (anything not listed counts as Average). */
 var RL=["","Low","Average","Solid"];
 var RCPU={"Apple M1":3,"Apple M4":3,"Apple M5":3,"Core i5-13420H":3,"Ryzen 7 7735HS":3,"Ryzen 5 8645HS":3,"Ryzen 7":3,"Core i7":3,"Core i5":2,"Ryzen 5":2,"Ryzen 5 Pro":2};
-var RGPU={"RTX 4050":3,"RTX 4060":3,"RTX 5050":3,"RTX 5060":3,"10-core GPU":3,"Intel Iris Xe":2,"Nvidia Quadro":2,"7-core GPU":2,"8-core GPU":2,"AMD Radeon":2,"Intel UHD":1};
+var RGPU={"RTX 3060":3,"RTX 3050":2,"RTX 3050 Ti":2,"GTX 1650":1,"RTX 4050":3,"RTX 4060":3,"RTX 5050":3,"RTX 5060":3,"10-core GPU":3,"Intel Iris Xe":2,"Nvidia Quadro":2,"7-core GPU":2,"8-core GPU":2,"AMD Radeon":2,"Intel UHD":1};
 /* Footer. SOCIALS: paste each profile link between the quotes. Empty = shows "coming soon" when tapped. */
 var SOCIALS=[
  {k:"email",label:"Email",url:"getpcnow.alert@gmail.com"},          /* e.g. "mailto:hello@yourdomain.com" */

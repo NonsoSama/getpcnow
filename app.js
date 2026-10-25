@@ -18,6 +18,7 @@ function fmt(n){return st.cur==="NG"?"₦"+Math.round(n).toLocaleString("en-NG")
 function offerFor(p){var b=null;ALLOFF.forEach(function(o){
  if(o.n!==p.n||o.c!==st.cur||!(o.was>o.now))return;var x=1-o.now/o.was,pc=Math.round(x*100);if(pc<1)return;
  if(!b||x>b.x)b={x:x,pct:pc,was:o.was,now:o.now,src:o.src,url:o.url,upd:o.upd,test:o.test,nowN:st.cur==="GH"?o.now/RATE:o.now}});return b}
+function capOk(p){var c=cat&&CAP[cat[1]];if(!c)return true;var v=p.t*RATE;return v>=c[0]&&v<=c[1]}
 function here(p){return!p.cn||p.cn.indexOf(st.cur)>-1}
 function ep(p){var o=offerFor(p);return o?o.nowN:p.t}
 function budN(){return st.cur==="GH"?st.bud/RATE:st.bud}
@@ -81,7 +82,7 @@ function tips(){
  document.title="Buying used – getpcnow"}
 
 function list(){
- var L=P.filter(function(p){return here(p)&&(!cat||(cat[3]?p.o.indexOf(cat[3])>-1:p.u.indexOf(cat[1])>-1))&&(st.cond==="All"||p.c===st.cond)&&(!st.bud||ep(p)<=budN())});
+ var L=P.filter(function(p){return here(p)&&capOk(p)&&(!cat||(cat[3]?p.o.indexOf(cat[3])>-1:p.u.indexOf(cat[1])>-1))&&(st.cond==="All"||p.c===st.cond)&&(!st.bud||ep(p)<=budN())});
  L.sort(function(a,b){return st.sort==="low"?ep(a)-ep(b):st.sort==="high"?ep(b)-ep(a):st.sort==="deal"?dk(b)-dk(a):b.sc-a.sc});
  var nd=L.filter(function(p){return offerFor(p)}).length;
  $("count").textContent=L.length+(L.length===1?" laptop":" laptops")+(nd?" · "+nd+" on offer":"");
