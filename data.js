@@ -34,7 +34,6 @@ var P=[
 {n:"Lenovo ThinkPad T14 Gen 2",c:"Used",s:["14 in","16 GB","512 GB","Core i5","Intel Iris Xe"],u:["Students","Programmers","Home & Work"],sc:8.5,lo:450000,t:520000,hi:620000,cn:["GH","NG"],pro:["Best keyboard on the list","Reliable and easy to service","Linux-friendly"],con:["Battery wear varies by unit","Check the exact CPU and RAM on the listing"]},
 {n:"Lenovo ThinkPad X1 Carbon Gen 8",c:"Used",s:["14 in","16 GB","512 GB","Core i7","Intel UHD"],u:["Home & Work","Programmers"],sc:8.2,lo:380000,t:420000,hi:500000,cn:["GH","NG"],pro:["Very light for travel","Top keyboard"],con:["RAM is soldered, so no upgrade later","Check battery health"]},
 {n:"Dell Latitude 5420",c:"Used",s:["14 in","16 GB","512 GB","Core i5","Intel Iris Xe"],u:["Students","Home & Work","Programmers"],sc:8.0,lo:340000,t:450000,hi:710000,cn:["GH"],pro:["Tough and easy to repair","Parts are easy to find","Can be upgraded to 32 GB"],con:["Price swings with RAM and CPU","Check battery health"]},
-{n:"HP ProBook 455 G7",c:"Used",s:["15.6 in","16 GB","256 GB","Ryzen 5 Pro","AMD Radeon"],u:["Students","Programmers"],sc:7.8,lo:380000,t:410000,hi:445000,cn:["GH"],pro:["Strong multitasking for the price","Good CPU for the money"],con:["Check battery health and the screen"]},
 {n:"HP ProBook 450 G8",c:"Used",s:["15.6 in","8 GB","256 GB","Core i5","Intel Iris Xe"],u:["Home & Work"],sc:7.4,lo:305000,t:350000,hi:395000,cn:["GH"],pro:["Cheap","Add a second RAM stick later"],con:["Only 8 GB as sold","Check battery health"]},
 {n:"Dell Inspiron 14 7420",c:"Used",s:["14 in","16 GB","256 GB","Core i5","Intel Iris Xe"],u:["Students"],sc:7.6,lo:365000,t:405000,hi:470000,cn:["GH"],pro:["16 GB and a good display for the price"],con:["Only 256 GB of storage"]},
 {n:"HP ZBook Firefly G8",c:"Used",s:["14 in","16 GB","256 GB","Core i5","Intel Iris Xe"],u:["Programmers"],sc:8.0,lo:405000,t:450000,hi:520000,cn:["GH"],pro:["Workstation build","Handles Docker and VMs well"],con:["Only 256 GB of storage"]},
@@ -83,9 +82,11 @@ function jijiBand(p,c){
 /* JIJI_FILTER: false = the Jiji button opens the plain results page (always works) and the price range is shown on the button.
    true = also add price_min / price_max to the address. Turn it on only after you have opened such a link and seen it work. */
 var JIJI_FILTER=false;
-function jijiLink(p,c){
+/* qtext(laptop, ram, storage) = the words sent to the seller search: name + RAM + SSD, e.g. "HP EliteBook 840 G8 16GB 512GB". Without ram/storage it uses the laptop's standard ones. */
+function qtext(p,r,s){return p.n+" "+String(r||p.s[1]).replace(/\s+/g,"")+" "+String(s||p.s[2]).replace(/\s+/g,"")}
+function jijiLink(p,c,r,s){
   var host={GH:"https://jiji.com.gh",NG:"https://jiji.ng"}[c], b=JIJI_FILTER?jijiBand(p,c):null;
-  var u=host+"/search?query="+encodeURIComponent(p.n).replace(/%20/g,"+");
+  var u=host+"/search?query="+encodeURIComponent(qtext(p,r,s)).replace(/%20/g,"+");
   return b? u+"&price_min="+b[0]+"&price_max="+b[1] : u}
 /* OFFERS: the discounts. The best deals on the site come from this list (Jumia, Jiji, Tonaton).
    One line per offer. Fields:

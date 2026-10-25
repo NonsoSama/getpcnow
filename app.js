@@ -25,7 +25,7 @@ function dk(p){var o=offerFor(p);return o?1+o.x:(p.avg-p.t)/p.avg}
 function when(d){var t=new Date(d);return isNaN(t)?"":t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
 /* Jiji button shows the going price range (from data.js JJ or jiji-bands.js), e.g. ' · GH₵8,000–8,700'. */
 function jijiTag(p){var b=jijiBand(p,st.cur);return b?' · '+fmt(b[0])+'–'+fmt(b[1]).replace(/^[^\d]+/,''):''}
-function sellersHtml(p){if(!here(p))return'<p class="note">Not listed in '+(st.cur==="NG"?"Nigeria":"Ghana")+' right now. Switch country to see where to buy.</p>';var o=offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur):s[1]+encodeURIComponent(p.n)))]});
+function sellersHtml(p,v){if(!here(p))return'<p class="note">Not listed in '+(st.cur==="NG"?"Nigeria":"Ghana")+' right now. Switch country to see where to buy.</p>';var x=v&&!v.base,r=v?v.r:null,q=v?v.s:null,o=x?null:offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((!x&&p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur,r,q):s[1]+encodeURIComponent(qtext(p,r,q))))]});
  if(o&&o.url&&!S.some(function(s){return s[0]===o.src}))S.push([o.src,o.url]);
  if(o)S.sort(function(a,b){return(b[0]===o.src)-(a[0]===o.src)});
  return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+(s[0]==="Jiji"?jijiTag(p):"")+"</a>"}).join("")}
@@ -115,7 +115,7 @@ function vrow(p,v){
  var key=vkey(v),on=DV.spec[key],al=alerts[p.n],
  lbl=v.o?v.o.pct+"% off":v.was?"On Sale":v.base?(p.deal?"Great Deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c):p.c,
  cls=v.o||v.was?" sale":v.base?(p.deal?" deal":p.chg<-0.03?" drop":""):"",
- sellers=sellersHtml(p);
+ sellers=sellersHtml(p,v);
  return'<article class="vr"><div class="vi">'+lapImg(p.n)+'</div><div class="vm"><h3>'+p.n+'</h3><div class="chips"><span>'+v.r+"</span><span>"+v.s+"</span><span>"+v.c+"</span><span>"+v.g+'</span></div>'
   +'<button class="tab" data-a="spec" data-k="'+key+'" aria-expanded="'+!!on+'">'+GEAR+"Specs</button>"
   +(on?"<table><tr><td>Screen</td><td>"+p.s[0]+"</td></tr><tr><td>Memory</td><td>"+v.r+"</td></tr><tr><td>Storage</td><td>"+v.s+"</td></tr><tr><td>Processor</td><td>"+v.c+"</td></tr><tr><td>Graphics</td><td>"+v.g+"</td></tr><tr><td>Condition</td><td>"+p.c+"</td></tr></table>":"")+"</div>"
