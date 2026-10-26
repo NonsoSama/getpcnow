@@ -117,7 +117,7 @@ var RCPU={"Apple M1":3,"Apple M4":3,"Apple M5":3,"Core i5-13420H":3,"Ryzen 7 773
 var RGPU={"RTX 3060":3,"RTX 3050":2,"RTX 3050 Ti":2,"GTX 1650":1,"RTX 4050":3,"RTX 4060":3,"RTX 5050":3,"RTX 5060":3,"10-core GPU":3,"Intel Iris Xe":2,"Nvidia Quadro":2,"7-core GPU":2,"8-core GPU":2,"AMD Radeon":2,"Intel UHD":1};
 /* Footer. SOCIALS: paste each profile link between the quotes. Empty = shows "coming soon" when tapped. */
 var SOCIALS=[
- {k:"email",label:"Email",url:"getpcnow.alert@gmail.com"},          /* e.g. "mailto:hello@yourdomain.com" */
+ {k:"email",label:"Email",url:"mailto:getpcnow.alerts@gmail.com?subject=Hello%20getpcnow"},          /* e.g. "mailto:hello@yourdomain.com" */
  {k:"youtube",label:"YouTube",url:""},      /* e.g. "https://youtube.com/@getpcnow" */
  {k:"x",label:"X (Twitter)",url:""},        /* e.g. "https://x.com/getpcnow" */
  {k:"instagram",label:"Instagram",url:""},  /* e.g. "https://instagram.com/getpcnow" */
