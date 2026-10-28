@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>getpcnow price helper</title>
+<style>
+:root{--bg:#eef3f9;--cd:#fff;--tx:#12171f;--mu:#586273;--ln:#d9e0ea;--ac:#1e90ff;--on:#fff;--ok:#0f7a55;--wa:#a76100;--er:#b83a3a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e131a;--cd:#161d27;--tx:#e8edf4;--mu:#9aa6b8;--ln:#293242;--ok:#42d19c;--wa:#f0b24a;--er:#ff8080}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e131a;--cd:#161d27;--tx:#e8edf4;--mu:#9aa6b8;--ln:#293242;--ok:#42d19c;--wa:#f0b24a;--er:#ff8080}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:20px 14px 60px}h1{font-size:26px;margin:0 0 4px}h2{font-size:18px;margin:0 0 8px}
+.mu{color:var(--mu)}.card{background:var(--cd);border:1px solid var(--ln);border-radius:14px;padding:16px;margin:14px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.seg{display:inline-flex;border:1px solid var(--ln);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:none;color:var(--tx);padding:9px 16px;font:inherit;cursor:pointer}.seg .on{background:var(--ac);color:var(--on)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.chip{border:1px solid var(--ln);background:none;color:var(--tx);border-radius:99px;padding:5px 11px;font:inherit;font-size:14px;cursor:pointer}
+.chip.done{border-color:var(--ok);color:var(--ok)}.chip.cur{background:var(--ac);color:var(--on);border-color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}label{font-size:14px;color:var(--mu);display:block}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--ln);border-radius:9px;background:var(--bg);color:var(--tx);font:inherit}
+textarea{height:130px;margin-bottom:10px;font-size:13px}.btn{display:inline-block;border:1px solid var(--ac);color:var(--ac);background:none;border-radius:10px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none}
+.btn.pri{background:var(--ac);color:var(--on)}:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.big{font-size:34px;font-weight:700;margin:4px 0}.tag{display:inline-block;border-radius:99px;padding:2px 10px;font-size:14px;font-weight:600;border:1px solid currentColor}
+.Solid{color:var(--ok)}.Wide{color:var(--wa)}.Thin,.Few{color:var(--er)}details{margin-top:10px;font-size:14px}summary{cursor:pointer;color:var(--mu)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--ln)}.sc{overflow-x:auto}
+pre{background:var(--bg);border:1px solid var(--ln);border-radius:9px;padding:10px;overflow-x:auto;font-size:13px;max-height:240px}
+</style></head><body><main>
+<h1>getpcnow price helper</h1>
+<p class="mu">You browse, it does the maths. For each laptop: open the search, copy the page, paste it here, save the result.</p>
+<section class="card"><div class="row"><div class="seg" id="cc"><button data-v="GH" class="on">Ghana ₵</button><button data-v="NG">Nigeria ₦</button></div>
+<div class="seg" id="mk"><button data-v="Jiji" class="on">Jiji</button><button data-v="Jumia">Jumia</button></div></div>
+<p style="margin:12px 0 0">Laptops to check <span class="mu" id="prog"></span></p><div class="chips" id="chips"></div></section>
+<section class="card"><h2>1. Choose the laptop, then open the search</h2><div class="grid">
+<div><label for="nm">Laptop name</label><input id="nm" placeholder="Dell Latitude 5430"></div>
+<div><label for="ram">RAM (GB)</label><input id="ram" type="number" value="16"></div>
+<div><label for="sto">Storage (GB, 1 TB = 1000)</label><input id="sto" type="number" value="512"></div>
+<div><label for="cd">Condition (Jiji)</label><select id="cd"><option>Used</option><option>New</option><option>Any</option></select></div>
+<div><label for="mu">Title must contain</label><input id="mu" placeholder="latitude 5430"></div>
+<div><label for="ex">Title must not contain</label><input id="ex" placeholder="intel"></div></div>
+<a class="btn" id="go" target="_blank" rel="noopener">Open search ↗</a></section>
+<section class="card"><h2>2. Paste the results page</h2><p class="mu" style="margin-top:0">On the results page press Ctrl+A then Ctrl+C (phone: select all, copy). Scroll down first if you want more listings. Then paste here.</p>
+<textarea id="ps" placeholder="Paste here"></textarea><button class="btn pri" id="calc">Calculate</button></section>
+<section class="card" id="res" hidden></section>
+<section class="card"><h2>Saved results</h2><div class="sc"><table id="tb"></table></div>
+<p class="mu">Only laptops with 5 or more matching listings go into the code below.</p>
+<h2>Paste into data.js, replacing <code>var JJ={};</code></h2><pre id="o1"></pre><button class="btn" data-c="o1">Copy</button>
+<h2 style="margin-top:16px">Expected prices (for the next site update)</h2><pre id="o2"></pre><button class="btn" data-c="o2">Copy</button>
+<p><button class="btn" id="clr">Clear all saved</button></p></section>
+<script>
+const $=i=>document.getElementById(i);let cc='GH',mk='Jiji',saved=[],cur=null,last=null;
+try{saved=JSON.parse(localStorage.getItem('gpn')||'[]')}catch(e){}
+const store=()=>{try{localStorage.setItem('gpn',JSON.stringify(saved))}catch(e){}};
+const H={GH:{Jiji:'https://jiji.com.gh/search?query=',Jumia:'https://www.jumia.com.gh/catalog/?q='},NG:{Jiji:'https://jiji.ng/search?query=',Jumia:'https://www.jumia.com.ng/catalog/?q='}};
+const Q={GH:[["HP EliteBook 840 G7",16,512],["HP EliteBook 840 G8",16,512],["HP EliteBook x360 1040 G8",16,512],["Lenovo ThinkPad T14 Gen 2",16,512],["Lenovo ThinkPad X1 Carbon Gen 8",16,512],["Dell Latitude 5420",16,512],["HP ProBook 450 G8",8,256],["Dell Inspiron 14 7420",16,256],["HP ZBook Firefly G8",16,256],["Dell Precision 5530",16,512],["Lenovo V15 G4",16,512],["ASUS Vivobook 16",16,512],["Acer Aspire 16",16,512],["Lenovo IdeaPad Slim 3",16,512],["Dell Inspiron 14 Plus 7440",16,1000],["Apple MacBook Air M1",16,256],["Apple MacBook Air M4",16,256],["Apple MacBook Air M5",16,512],["Lenovo LOQ 15 RTX 5050",16,512],["MSI GF63",16,512],["Acer Nitro 5",16,512],["ASUS TUF Gaming A15",16,512],["HP Victus 15",16,512],["Lenovo Legion 5",16,512]],
+NG:[["HP EliteBook 840 G7",16,512],["HP EliteBook 840 G8",16,512],["HP EliteBook x360 1040 G8",16,512],["Lenovo ThinkPad T14 Gen 2",16,512],["Lenovo ThinkPad X1 Carbon Gen 8",16,512],["Acer Nitro 5",16,512],["ASUS TUF Gaming A15",16,512],["Dell Latitude 5430",16,512],["Dell Latitude 7420",16,512],["Dell Latitude 3440",8,256],["Lenovo ThinkPad E14 Gen 2",16,512],["Lenovo ThinkPad X13 Gen 2",16,512],["Apple MacBook Pro M1",16,512],["Apple MacBook Air M1",16,256],["Dell G15 5535",16,512],["HP Victus 15",16,512]]};
+const norm=s=>s.toLowerCase().replace(/gen\s?(\d)/g,'g$1').replace(/[^a-z0-9]/g,'');
+const step=()=>cc==='GH'?10:1000,rd=x=>Math.round(x/step())*step();
+const sym=()=>cc==='GH'?'GH₵':'₦',fm=n=>sym()+Math.round(n).toLocaleString('en');
+const key=(n,c,m)=>n+'|'+c+'|'+m;
+function q(v,p){const i=(v.length-1)*p,l=Math.floor(i);return v[l]+(v[Math.min(l+1,v.length-1)]-v[l])*(i-l)}
+function parse(text,m){const L=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean),out=[],idx=[];
+ const R=/(?:GH[₵¢C]|GHS|₵|₦|NGN|(?<![A-Za-z])N)\s*(\d{1,3}(?:,\d{3})+|\d{3,})/i;
+ const isP=s=>{const x=s.match(R);return x&&s.replace(R,'').trim().length<14?+x[1].replace(/,/g,''):null};
+ L.forEach((s,i)=>{const v=isP(s);if(v!=null)idx.push([i,v])});
+ idx.forEach(([i,v],k)=>{let t='';
+  if(m==='Jiji'){const e=idx[k+1]?idx[k+1][0]:L.length;for(let j=i+1;j<e;j++)if(L[j].length>14&&/[a-z]/i.test(L[j])){t=L[j];break}}
+  else{if(k&&i-idx[k-1][0]<=2)return;for(let j=i-1;j>=Math.max(0,i-4);j--)if(L[j].length>14&&isP(L[j])==null){t=L[j];break}}
+  out.push({t,v})});return out}
+function specs(t){let r=t.match(/(\d{1,3})\s?gb\s?(?:ram|ddr|memory|unified)/i)||t.match(/(\d{1,3})\s?gb/i),ram=r&&+r[1]<=128?+r[1]:null,sv=null;
+ let s=t.match(/(?:ssd|hdd|nvme|emmc)\s?(\d{1,4})\s?(gb|tb|t)\b/i)||t.match(/(\d{1,4})\s?(gb|tb)\s?(?:ssd|hdd|nvme)/i);
+ if(s){sv=/^g/i.test(s[2])?+s[1]:+s[1]*1000;if(sv===1024)sv=1000}return{ram,sto:sv}}
+function read(){return{n:$('nm').value.trim(),ram:+$('ram').value||0,sto:+$('sto').value||0,cd:$('cd').value,mu:$('mu').value,ex:$('ex').value}}
+function link(){const f=read();$('go').href=H[cc][mk]+encodeURIComponent((f.n+' '+(f.ram?f.ram+'GB ':'')+(f.sto?f.sto+'GB':'')).trim()).replace(/%20/g,'+')}
+function pick(i){const [n,r,s]=Q[cc][i];cur=i;$('nm').value=n;$('ram').value=r;$('sto').value=s;
+ $('mu').value=n.split(/\s+/).filter(w=>!/^(apple|laptop)$/i.test(w)).join(' ').toLowerCase();$('ex').value=/macbook/i.test(n)?'intel':'';
+ $('cd').value=/New/.test('')?'Any':'Used';$('ps').value='';$('res').hidden=true;link();chips()}
+function chips(){const d=new Set(saved.filter(s=>s.cc===cc&&s.mk===mk).map(s=>s.n));let c=0;
+ $('chips').innerHTML=Q[cc].map((a,i)=>{const dn=d.has(a[0]);if(dn)c++;return`<button class="chip${dn?' done':''}${cur===i?' cur':''}" data-i="${i}">${dn?'✓ ':''}${a[0]}</button>`}).join('');
+ $('prog').textContent='· '+c+' of '+Q[cc].length+' saved for '+mk}
+function calc(){const f=read(),P=parse($('ps').value,mk),tk=f.mu.split(/\s+/).map(norm).filter(Boolean),ex=f.ex.split(/[\s,]+/).map(norm).filter(Boolean),ok=[],no=[],seen=new Set();
+ P.forEach(p=>{const nt=norm(p.t),sp=specs(p.t);let w='';
+  if(!p.t)w='no title found';else if(tk.some(x=>!nt.includes(x)))w='different model';else if(ex.some(x=>nt.includes(x)))w='has an excluded word';
+  else if(f.ram&&sp.ram!==f.ram)w=sp.ram?'RAM '+sp.ram+'GB':'RAM not in title';else if(f.sto&&sp.sto!==f.sto)w=sp.sto?'storage '+sp.sto+'GB':'storage not in title';
+  else if(mk==='Jiji'&&f.cd!=='Any'&&(/^new\b/i.test(p.t)?'New':'Used')!==f.cd)w='condition';
+  const k=p.t+p.v;if(!w&&seen.has(k))w='duplicate';seen.add(k);(w?no:ok).push({...p,w})});
+ let v=ok.map(x=>x.v).sort((a,b)=>a-b);
+ if(v.length>=4){const m=q(v,.5);for(let i=ok.length-1;i>=0;i--)if(ok[i].v<m*.6||ok[i].v>m*1.6){ok[i].w='price far from the middle';no.push(ok.splice(i,1)[0])}v=ok.map(x=>x.v).sort((a,b)=>a-b)}
+ const n=v.length;last=null;let h=`<h2>${f.n||'Result'} · ${cc==='GH'?'Ghana':'Nigeria'} · ${mk}</h2>`;
+ if(!P.length)h+='<p class="Thin">No prices found. Check that you copied the whole results page, and that the country and site buttons match the page.</p>';
+ else if(!n)h+=`<p class="Thin">Read ${P.length} prices but none matched. See the skipped list below to loosen a filter.</p>`;
+ else{const t=rd(q(v,.5)),lo=rd(q(v,.25)),hi=rd(q(v,.75)),vd=n<3?'Few':n<5?'Thin':hi/lo<=1.25?'Solid':'Wide';
+  const lab={Solid:'Solid',Wide:'Wide spread',Thin:'Thin',Few:'Too few'}[vd];
+  last={n:f.n,cc,mk,ram:f.ram,sto:f.sto,cnt:n,t,lo,hi,min:v[0],max:v[n-1],vd,upd:new Date().toISOString().slice(0,10)};
+  h+=`<div class="big">${fm(t)}</div><p style="margin:0">Expected price (median of ${n} listings) · range ${fm(lo)} to ${fm(hi)} · cheapest ${fm(v[0])}, dearest ${fm(v[n-1])}</p><p><span class="tag ${vd}">${lab}</span> <span class="mu">${vd==='Solid'?'Enough listings, tightly grouped.':vd==='Wide'?'Enough listings, but prices vary a lot. Check the matched list for mixed specs.':vd==='Thin'?'Only '+n+' listings. Scroll the page further and paste again, or skip this laptop.':'Too few to trust. Skip this laptop for this country.'}</span></p><button class="btn pri" id="sv">Save result</button>`}
+ h+=`<details><summary>${ok.length} matched</summary>${ok.map(x=>`<div>${fm(x.v)} · ${x.t}</div>`).join('')}</details><details><summary>${no.length} skipped</summary>${no.slice(0,40).map(x=>`<div>${x.v?fm(x.v):''} · ${x.w} · ${x.t||'(no title)'}</div>`).join('')}</details>`;
+ $('res').innerHTML=h;$('res').hidden=false;$('res').scrollIntoView({behavior:'smooth'})}
+function out(){const g=saved.filter(s=>s.cnt>=5),a={},b={};
+ g.forEach(s=>{if(s.mk==='Jiji'){(a[s.n]=a[s.n]||{})[s.cc]=[s.lo,s.hi]}(b[s.n]=b[s.n]||{});(b[s.n][s.cc]=b[s.n][s.cc]||{})[s.mk]={t:s.t,lo:s.lo,hi:s.hi,n:s.cnt,upd:s.upd}});
+ const j=o=>Object.keys(o).map(k=>' "'+k+'":'+JSON.stringify(o[k]).replace(/"(GH|NG|Jiji|Jumia|t|lo|hi|n|upd)":/g,'$1:')).join(',\n');
+ const sk=saved.filter(s=>s.cnt<5).map(s=>s.n+' ('+s.cc+' '+s.mk+')');
+ $('o1').textContent='var JJ={\n'+j(a)+'\n};'+(sk.length?'\n/* not included, fewer than 5 listings: '+sk.join(', ')+' */':'');
+ $('o2').textContent='var EXP={\n'+j(b)+'\n};';
+ $('tb').innerHTML='<tr><th>Laptop</th><th>Country</th><th>Site</th><th>Listings</th><th>Expected</th><th>Range</th><th></th></tr>'+(saved.length?saved.map((s,i)=>`<tr><td>${s.n}</td><td>${s.cc}</td><td>${s.mk}</td><td>${s.cnt}</td><td>${s.cc==='GH'?'GH₵':'₦'}${s.t.toLocaleString('en')}</td><td>${s.lo.toLocaleString('en')}–${s.hi.toLocaleString('en')}</td><td><button class="chip" data-d="${i}" aria-label="Remove">×</button></td></tr>`).join(''):'<tr><td colspan="7" class="mu">Nothing saved yet.</td></tr>')}
+function seg(id,fn){$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$(id).children].forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v)}}
+seg('cc',v=>{cc=v;cur=null;chips();link();$('res').hidden=true});seg('mk',v=>{mk=v;chips();link();$('res').hidden=true});
+$('chips').onclick=e=>{const b=e.target.closest('[data-i]');if(b)pick(+b.dataset.i)};
+['nm','ram','sto'].forEach(i=>$(i).oninput=link);$('calc').onclick=calc;
+$('res').onclick=e=>{if(e.target.id==='sv'&&last){saved=saved.filter(s=>key(s.n,s.cc,s.mk)!==key(last.n,last.cc,last.mk));saved.push(last);store();chips();out();e.target.textContent='Saved ✓';if(cur!=null&&cur<Q[cc].length-1)setTimeout(()=>{pick(cur+1);window.scrollTo({top:0,behavior:'smooth'})},500)}};
+$('tb').onclick=e=>{const b=e.target.closest('[data-d]');if(b){saved.splice(+b.dataset.d,1);store();chips();out()}};
+document.querySelectorAll('[data-c]').forEach(b=>b.onclick=async()=>{const t=$(b.dataset.c);try{await navigator.clipboard.writeText(t.textContent);b.textContent='Copied ✓'}catch(e){const r=document.createRange();r.selectNodeContents(t);getSelection().removeAllRanges();getSelection().addRange(r);b.textContent='Selected. Press Ctrl+C'}setTimeout(()=>b.textContent='Copy',2000)});
+$('clr').onclick=()=>{if(confirm('Remove every saved result?')){saved=[];store();chips();out()}};
+pick(0);out();
+</script></main></body></html>

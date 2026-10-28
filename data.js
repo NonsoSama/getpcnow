@@ -48,10 +48,11 @@ var P=[
 {n:"Dell Inspiron 14 Plus 7440",c:"New",s:["14 in","16 GB","1 TB","Ryzen 7","AMD Radeon"],u:["Programmers"],sc:8.1,lo:680000,t:735000,hi:800000,cn:["GH"],pro:["Newest chip on the list","Plenty of storage"],con:["Dearer than the used picks"]},
 /* ---- Apple ---- */
 {n:"Apple MacBook Air M1",c:"Used",s:["13.3 in","16 GB","256 GB","Apple M1","7-core GPU"],u:["Students","Programmers","Creators"],sc:8.8,lo:780000,t:815000,hi:870000,cn:["GH"],pro:["Excellent screen and battery","Strong resale","Cheapest way into Final Cut or Logic"],con:["256 GB fills up fast","Make sure it is not iCloud-locked","Check battery health"]},
+{n:"Apple MacBook Pro M1",c:"Used",s:["13.3 in","16 GB","512 GB","Apple M1","8-core GPU"],u:["Students","Creators","Programmers","Home & Work"],sc:8.9,lo:800000,t:860000,hi:900000,mx:{GH:8000},cn:["GH"],pro:["Fan keeps it fast under long jobs","Brighter screen and better speakers than the Air","512 GB is roomier than the base Air"],con:["Older Touch Bar design with only two ports","Make sure it is not iCloud-locked","Check battery health"]},
 {n:"Apple MacBook Air M4",c:"New",s:["13.6 in","16 GB","256 GB","Apple M4","8-core GPU"],u:["Creators"],sc:9.1,lo:1150000,t:1200000,hi:1350000,cn:["GH"],pro:["Great value for a new MacBook","16 GB of RAM"],con:["256 GB fills up fast","Much dearer on Jumia Ghana"]},
 {n:"Apple MacBook Air M5",c:"New",s:["13.6 in","16 GB","512 GB","Apple M5","10-core GPU"],u:["Creators"],sc:9.3,lo:1450000,t:1550000,hi:1650000,cn:["GH"],pro:["Best all-round creator laptop in range"],con:["At or above the N1.5M ceiling","Jumia Ghana price is over the cap"]},
 /* ---- Gaming ---- */
-{n:"Lenovo LOQ 15 RTX 5050",c:"New",s:["15.6 in","16 GB","512 GB","Core i5","RTX 5050"],u:["Creators"],sc:8.3,lo:1200000,t:1350000,hi:1500000,cn:["GH"],pro:["The RTX 5050 gets a 100W power budget","NVIDIA acceleration for Premiere and DaVinci"],con:["Often near the N1.5M ceiling"]},,
+{n:"Lenovo LOQ 15 RTX 5050",c:"New",s:["15.6 in","16 GB","512 GB","Core i5","RTX 5050"],u:["Creators"],sc:8.3,lo:1200000,t:1350000,hi:1500000,cn:["GH"],pro:["The RTX 5050 gets a 100W power budget","NVIDIA acceleration for Premiere and DaVinci"],con:["Often near the N1.5M ceiling"]},
 /* ---- Gaming: value picks only. Gamers page range is GH 5,000 to 10,000 (see CAP below) ---- */
 {n:"MSI GF63",c:"Used",s:["15.6 in","16 GB","512 GB","Core i5","RTX 3050"],u:["Gamers"],sc:8.0,lo:660000,t:730000,hi:840000,cn:["GH"],pro:["The cheapest RTX laptop on the list","Backlit keyboard"],con:["Only 4 GB of graphics memory","Used, check battery and fans"]},
 {n:"Acer Nitro 5",c:"Used",s:["15.6 in","16 GB","512 GB","Core i5","RTX 3050 Ti"],u:["Gamers"],sc:8.3,lo:845000,t:910000,hi:1100000,cn:["GH","NG"],pro:["Real RTX graphics at a used price","Easy to upgrade RAM and storage"],con:["Used, check battery and fan noise","Some listings are RTX 3050, others 3050 Ti"]},
@@ -86,10 +87,19 @@ function jijiBand(p,c){
 var JIJI_FILTER=false;
 /* qtext(laptop, ram, storage) = the words sent to the seller search: name + RAM + SSD, e.g. "HP EliteBook 840 G8 16GB 512GB". Without ram/storage it uses the laptop's standard ones. */
 function qtext(p,r,s){return p.n+" "+String(r||p.s[1]).replace(/\s+/g,"")+" "+String(s||p.s[2]).replace(/\s+/g,"")}
+/* Every Jiji button gets &price_max=... so sellers asking far too much are filtered out.
+   The cap is in the country's own money (cedis for GH, naira for NG). Where the cap comes from, first match wins:
+   1. a hand-set mx on the laptop in P, e.g.  mx:{GH:8000,NG:900000}   <- put your own researched number here
+   2. the laptop's high price (hi) in naira, turned into cedis with RATE for Ghana, rounded up to the next 100 (GH) or 10,000 (NG) */
+function jijiMax(p,c){
+  var h=(p.mx||{})[c]; if(h) return h;
+  if(!p.hi) return null;
+  return c==="GH"? Math.ceil(p.hi*RATE/100)*100 : Math.ceil(p.hi/10000)*10000}
 function jijiLink(p,c,r,s){
-  var host={GH:"https://jiji.com.gh",NG:"https://jiji.ng"}[c], b=JIJI_FILTER?jijiBand(p,c):null;
+  var host={GH:"https://jiji.com.gh",NG:"https://jiji.ng"}[c], b=JIJI_FILTER?jijiBand(p,c):null, m=jijiMax(p,c);
   var u=host+"/search?query="+encodeURIComponent(qtext(p,r,s)).replace(/%20/g,"+");
-  return b? u+"&price_min="+b[0]+"&price_max="+b[1] : u}
+  if(b) return u+"&price_min="+b[0]+"&price_max="+(p.mx&&p.mx[c]?p.mx[c]:b[1]);
+  return m? u+"&price_max="+m : u}
 /* OFFERS: the discounts. The best deals on the site come from this list (Jumia, Jiji, Tonaton).
    One line per offer. Fields:
    n = laptop name, exactly as written in P above
