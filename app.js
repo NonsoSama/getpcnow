@@ -13,7 +13,7 @@ P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(M
 var st={cur:"GH",cond:"All",bud:0,sort:"deal"},open={},alerts={},cat=null,moreOpen=false,lastCat=null;
 var $=function(i){return document.getElementById(i)};
 /* Hover note on every Buy on Jiji / Jumia button (Ghana and Nigeria). Change the words here. */
-var BUYTIP="Confirm the specs on the listing from the seller before you pay.";
+var BUYTIP="Confirm the specs on the listing from the buyer before you pay.";
 /* Phones and tablets cannot hover, so they get the same words as a small line under the buttons (hidden where hover works). */
 function buyNote(p){return here(p)?'<p class="buynote">'+BUYTIP+'</p>':""}
 (function(){
@@ -50,7 +50,7 @@ function dk(p){var o=offerFor(p);return o?1+o.x:(p.avg-p.t)/p.avg}
 function when(d){var t=new Date(d);return isNaN(t)?"":t.toLocaleDateString("en-GB",{day:"numeric",month:"short"})}
 /* Jiji button shows the going price range (from data.js JJ or jiji-bands.js), e.g. ' · GH₵8,000–8,700'. */
 function jijiTag(p){var b=jijiBand(p,st.cur);return b?' · '+fmt(b[0])+'–'+fmt(b[1]).replace(/^[^\d]+/,''):''}
-function sellersHtml(p,v){if(!here(p))return'<p class="note">Not listed in '+(st.cur==="NG"?"Nigeria":"Ghana")+' right now. Switch country to see where to buy.</p>';var x=v&&!v.base,r=v?v.r:null,q=v?v.s:null,o=x?null:offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((!x&&p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur,r,q):s[1]+encodeURIComponent(qtext(p,r,q))))]});
+function sellersHtml(p,v){if(!here(p))return'<p class="note">Not listed in '+(st.cur==="NG"?"Nigeria":"Ghana")+' right now. Switch country to see where to buy.</p>';var x=v&&!v.base,r=v?v.r:null,q=v?v.s:null,o=x?null:offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||(p.c==="New"&&!p.nj)}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((!x&&p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur,r,q):s[1]+encodeURIComponent(qtext(p,r,q))))]});
  if(o&&o.url&&!S.some(function(s){return s[0]===o.src}))S.push([o.src,o.url]);
  if(o)S.sort(function(a,b){return(b[0]===o.src)-(a[0]===o.src)});
  return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener" data-tip="'+BUYTIP+'">Buy on '+s[0]+(s[0]==="Jiji"?jijiTag(p):"")+"</a>"}).join("")}
