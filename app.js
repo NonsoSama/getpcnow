@@ -12,6 +12,30 @@ P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(M
  p.h=h;p.avg=h.reduce(function(a,b){return a+b},0)/12;p.deal=p.t<=p.avg*0.95;p.chg=(p.t-h[7])/h[7]});
 var st={cur:"GH",cond:"All",bud:0,sort:"deal"},open={},alerts={},cat=null,moreOpen=false,lastCat=null;
 var $=function(i){return document.getElementById(i)};
+/* Hover note on every Buy on Jiji / Jumia button (Ghana and Nigeria). Change the words here. */
+var BUYTIP="Confirm the specs on the listing before you pay.";
+/* Phones and tablets cannot hover, so they get the same words as a small line under the buttons (hidden where hover works). */
+function buyNote(p){return here(p)?'<p class="buynote">'+BUYTIP+'</p>':""}
+(function(){
+ function init(){
+  var sty=document.createElement("style");
+  sty.textContent=".tipbox{position:fixed;z-index:60;max-width:230px;padding:6px 10px;border-radius:8px;background:rgba(25,25,25,.82);color:#fff;font-size:12px;font-weight:500;line-height:1.35;text-align:center;pointer-events:none;opacity:0;transition:opacity .15s}.tipbox.on{opacity:1}.buynote{display:none;margin:6px 0 0;font-size:12px;line-height:1.35;opacity:.7}@media (hover:none){.buynote{display:block}}";
+  document.head.appendChild(sty);
+  var box=document.createElement("div");box.className="tipbox";box.setAttribute("role","tooltip");document.body.appendChild(box);
+  function show(a){
+   box.textContent=a.getAttribute("data-tip");
+   var r=a.getBoundingClientRect(),w=box.offsetWidth,h=box.offsetHeight,x=r.left+r.width/2-w/2,y=r.top-h-8;
+   if(y<6)y=r.bottom+8;
+   x=Math.max(6,Math.min(x,window.innerWidth-w-6));
+   box.style.left=x+"px";box.style.top=y+"px";box.classList.add("on")}
+  function hide(){box.classList.remove("on")}
+  function tipEl(e){return e.target.closest?e.target.closest("a[data-tip]"):null}
+  document.addEventListener("mouseover",function(e){var a=tipEl(e);if(a)show(a)});
+  document.addEventListener("mouseout",function(e){if(tipEl(e))hide()});
+  document.addEventListener("focusin",function(e){var a=tipEl(e);if(a)show(a)});
+  document.addEventListener("focusout",hide);
+  window.addEventListener("scroll",hide,{passive:true})}
+ if(document.body)init();else document.addEventListener("DOMContentLoaded",init)})();
 function money(n){return st.cur==="NG"?"₦"+Math.round(n).toLocaleString("en-NG"):"GH₵"+(Math.round(n*RATE/10)*10).toLocaleString("en-GH")}
 /* OFFERS (from data.js): only offers for the country now selected are used. */
 function fmt(n){return st.cur==="NG"?"₦"+Math.round(n).toLocaleString("en-NG"):"GH₵"+Math.round(n).toLocaleString("en-GH")}
@@ -29,7 +53,7 @@ function jijiTag(p){var b=jijiBand(p,st.cur);return b?' · '+fmt(b[0])+'–'+fmt
 function sellersHtml(p,v){if(!here(p))return'<p class="note">Not listed in '+(st.cur==="NG"?"Nigeria":"Ghana")+' right now. Switch country to see where to buy.</p>';var x=v&&!v.base,r=v?v.r:null,q=v?v.s:null,o=x?null:offerFor(p),S=SELL[st.cur].filter(function(s){return s[0]==="Jiji"||p.c==="New"}).map(function(s){return[s[0],(o&&o.url&&o.src===s[0])?o.url:((!x&&p.url&&alive(p.url[s[0]])&&p.url[s[0]])||(s[0]==="Jiji"?jijiLink(p,st.cur,r,q):s[1]+encodeURIComponent(qtext(p,r,q))))]});
  if(o&&o.url&&!S.some(function(s){return s[0]===o.src}))S.push([o.src,o.url]);
  if(o)S.sort(function(a,b){return(b[0]===o.src)-(a[0]===o.src)});
- return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener">Buy on '+s[0]+(s[0]==="Jiji"?jijiTag(p):"")+"</a>"}).join("")}
+ return S.map(function(s,j){return'<a class="btn'+(j?"":" dark")+'" href="'+s[1]+'" target="_blank" rel="noopener" data-tip="'+BUYTIP+'">Buy on '+s[0]+(s[0]==="Jiji"?jijiTag(p):"")+"</a>"}).join("")}
 function topDeals(){var L=P.map(function(p){return{p:p,o:offerFor(p)}}).filter(function(x){return x.o}).sort(function(a,b){return b.o.x-a.o.x}).slice(0,3);
  if(!L.length)return"";
  return'<h2>Best deals right now</h2><div class="grid g1">'+L.map(function(x){return'<a class="card" href="/laptop/'+slug(x.p.n)+'">'+lapImg(x.p.n)+"<h3>"+x.p.n+'</h3><p class="note"><b class="off">'+x.o.pct+"% off</b> · "+fmt(x.o.now)+" on "+x.o.src+(x.o.test?" · SAMPLE":"")+"</p></a>"}).join("")+"</div>"}
@@ -90,7 +114,7 @@ function list(){
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
   el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["pr","Price range"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
-  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div></div></div>'
+  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div>'+buyNote(p)+'</div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
   el.querySelector(".bell").onclick=function(){if(alerts[p.n]){toast("You already have an alert for this laptop");return}
@@ -120,7 +144,7 @@ function vrow(p,v){
  return'<article class="vr"><div class="vi">'+lapImg(p.n)+'</div><div class="vm"><h3>'+p.n+'</h3><div class="chips"><span>'+v.r+"</span><span>"+v.s+"</span><span>"+v.c+"</span><span>"+v.g+'</span></div>'
   +'<button class="tab" data-a="spec" data-k="'+key+'" aria-expanded="'+!!on+'">'+GEAR+"Specs</button>"
   +(on?"<table><tr><td>Screen</td><td>"+p.s[0]+"</td></tr><tr><td>Memory</td><td>"+v.r+"</td></tr><tr><td>Storage</td><td>"+v.s+"</td></tr><tr><td>Processor</td><td>"+v.c+"</td></tr><tr><td>Graphics</td><td>"+v.g+"</td></tr><tr><td>Condition</td><td>"+p.c+"</td></tr></table>":"")+"</div>"
-  +'<div class="vb"><span class="b'+cls+'">'+lbl+'</span><div class="vp"><b class="price">'+(v.o?fmt(v.o.now):money(v.t))+"</b>"+(v.o?"<s>"+fmt(v.o.was)+"</s><em>Save "+fmt(v.o.was-v.o.now)+"</em>"+(v.o.test?"<em>Sample offer</em>":""):v.was?"<s>"+money(v.was)+"</s><em>Save "+money(v.was-v.t)+"</em>":"")+'</div><div class="btns"><div class="sl">'+sellers+'</div><button class="btn bell'+(al?" on":"")+'" data-a="bell" data-k="'+key+'" aria-label="Price alert" aria-pressed="'+!!al+'">🔔</button></div></div></article>'}
+  +'<div class="vb"><span class="b'+cls+'">'+lbl+'</span><div class="vp"><b class="price">'+(v.o?fmt(v.o.now):money(v.t))+"</b>"+(v.o?"<s>"+fmt(v.o.was)+"</s><em>Save "+fmt(v.o.was-v.o.now)+"</em>"+(v.o.test?"<em>Sample offer</em>":""):v.was?"<s>"+money(v.was)+"</s><em>Save "+money(v.was-v.t)+"</em>":"")+'</div><div class="btns"><div class="sl">'+sellers+'</div><button class="btn bell'+(al?" on":"")+'" data-a="bell" data-k="'+key+'" aria-label="Price alert" aria-pressed="'+!!al+'">🔔</button></div>'+buyNote(p)+'</div></article>'}
 function vrender(p){
  var all=variants(p),G=[["c","Processor","cpu"],["g","GPU","gpu"],["r","RAM","ram"],["s","Storage","storage"]],any=false;
  var list=all.filter(function(v){return G.every(function(g){return!DV.sel[g[0]].length||DV.sel[g[0]].indexOf(v[g[0]])>-1})}).sort(function(a,b){return DV.sort==="low"?a.t-b.t:b.t-a.t});
@@ -150,7 +174,7 @@ function detail(p){
   +'<div class="dz">'+lapImg(p.n)+'<div><h1>'+p.n+'</h1><p class="lead">A '+p.c.toLowerCase()+' laptop that suits '+p.u.join(", ").replace(/, ([^,]*)$/," and $1")+'. Rated '+p.sc.toFixed(1)+' out of 10.</p>'
   +'<button class="rm" id="rm" aria-expanded="false" aria-controls="rmb">Read More '+chev+'</button><div class="rmb" id="rmb" hidden>'+panel(p,"pc")+'</div>'
   +'<div class="dlinks"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(p.n+" review")+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg>Watch Review</a></div>'
-  +'<div class="dbuy">'+(ofr?'<span class="b sale">'+ofr.pct+'% off</span><div class="dprice"><b class="price">'+fmt(ofr.now)+'</b><small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+' · '+ofr.src+(ofr.test?' · SAMPLE':'')+'</small></div>':'<span>Starts from</span><b class="price">'+money(p.lo)+'</b>')+'<div class="btns">'+sellers+'</div></div></div></div>'
+  +'<div class="dbuy">'+(ofr?'<span class="b sale">'+ofr.pct+'% off</span><div class="dprice"><b class="price">'+fmt(ofr.now)+'</b><small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+' · '+ofr.src+(ofr.test?' · SAMPLE':'')+'</small></div>':'<span>Starts from</span><b class="price">'+money(p.lo)+'</b>')+'<div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div></div>'
   +'<div class="sg">'+C.map(function(c){return'<div class="sc"><div class="ic">'+dico(c[0])+"</div><small>"+c[1]+"</small><b>"+c[2]+"</b></div>"}).join("")+"</div>"
   +'<div class="dsec"><h2>Best Prices &amp; Deals</h2><div class="vt"><button class="btn dark" id="cfgb" aria-expanded="false" aria-controls="cfg">'+SLID+'Customize Config</button><select id="vsort" aria-label="Sort configurations"><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option></select></div>'
   +'<div class="vw" id="vw"><aside class="cp" id="cfg" hidden></aside><div id="vlist"></div></div></div>'
