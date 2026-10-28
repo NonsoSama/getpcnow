@@ -13,7 +13,7 @@ P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(M
 var st={cur:"GH",cond:"All",bud:0,sort:"deal"},open={},alerts={},cat=null,moreOpen=false,lastCat=null;
 var $=function(i){return document.getElementById(i)};
 /* Hover note on every Buy on Jiji / Jumia button (Ghana and Nigeria). Change the words here. */
-var BUYTIP="Confirm the specs on the listing before you pay.";
+var BUYTIP="Confirm the specs on the listing from the buyer before you pay.";
 /* Phones and tablets cannot hover, so they get the same words as a small line under the buttons (hidden where hover works). */
 function buyNote(p){return here(p)?'<p class="buynote">'+BUYTIP+'</p>':""}
 (function(){
