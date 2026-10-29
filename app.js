@@ -10,7 +10,7 @@ P=P.filter(function(p){var u=p.url?Object.keys(p.url).map(function(k){return p.u
 P.forEach(function(p){p.o=[/^Apple/.test(p.n)?"mac":"win"];if(LINUX.indexOf(p.n)>-1)p.o.push("linux")});
 P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(Math.round(v/1000)*1000);x=(x*9301+49297)%233280;v=v*(1+((x/233280)-0.42)*0.05)}
  p.h=h;p.avg=h.reduce(function(a,b){return a+b},0)/12;p.deal=p.t<=p.avg*0.95;p.chg=(p.t-h[7])/h[7]});
-var st={cur:"GH",cond:"All",bud:0,sort:"deal"},open={},alerts={},cat=null,moreOpen=false,lastCat=null;
+var st={cur:"GH",cond:"All",bud:0,sort:"deal"},open={},alerts={},cat=null,moreOpen=false,lastCat=null,prevUse=null;
 var $=function(i){return document.getElementById(i)};
 /* Hover note on every Buy on Jiji / Jumia button (Ghana and Nigeria). Change the words here. */
 var BUYTIP="Confirm the specs on the listing from the seller before you pay.";
@@ -121,11 +121,21 @@ function list(){
    openAlert(p,function(){alerts[p.n]=true;list();var bl=$("items").children[L.indexOf(p)].querySelector(".bell");bl.classList.add("ring")})};
   box.appendChild(el)})}
 
+/* LEFT PANEL on every category page ("Select use"): jump straight to another use without going home.
+   Uses come from CATS in data.js, plus All laptops. "Previous use" goes back to the use you were on before this one. */
+function isUse(c){return c[0]==="all"||CATS.some(function(x){return x[0]===c[0]})}
+function useName(c){return c[0]==="all"?"All laptops":c[1]}
+function useSide(c){
+ var U=CATS.map(function(x){return[x[0],x[1]]}).concat([["all","All laptops"]]);
+ return'<aside class="side" aria-label="Select use"><h2 class="side-t">Select use</h2><div class="uses">'
+  +U.map(function(u){var on=u[0]===c[0];return'<a class="use'+(on?" on":"")+'" href="/'+u[0]+'"'+(on?' aria-current="page"':"")+">"+u[1]+"</a>"}).join("")+"</div>"
+  +(prevUse?'<a class="btn prev" href="/'+prevUse[0]+'" title="Back to '+useName(prevUse)+'">← Previous use</a>':'<span class="btn prev off" aria-disabled="true">← Previous use</span>')+"</aside>"}
+
 function category(c){
- if(!lastCat||c[0]!==lastCat[0])st.sort="deal";lastCat=c;
+ if(!lastCat||c[0]!==lastCat[0]){st.sort="deal";if(lastCat&&isUse(lastCat))prevUse=lastCat}lastCat=c;
  cat=c[0]==="all"?null:c;var t=cat?(c[3]?c[1]:"Best Laptops for "+c[1]):"All laptops";
- $("app").innerHTML='<section class="page"><a class="back" href="/">← All categories</a><h1>'+t+'</h1><p>'+c[2]+'</p><div class="filters">'+seg(["All","New","Used","Refurbished"],"cond")+budgetSel()
- +'<select id="sort" aria-label="Sort"><option value="score">Top rated</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="deal">Best deals</option></select></div><p class="count" id="count"></p><div id="items"></div></section>';
+ $("app").innerHTML='<section class="page"><a class="back" href="/">← All categories</a><h1>'+t+'</h1><p>'+c[2]+'</p><div class="cat-layout">'+useSide(c)+'<div class="cat-main"><div class="filters">'+seg(["All","New","Used","Refurbished"],"cond")+budgetSel()
+ +'<select id="sort" aria-label="Sort"><option value="score">Top rated</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="deal">Best deals</option></select></div><p class="count" id="count"></p><div id="items"></div></div></div></section>';
  $("sort").value=st.sort;
  $("budget").onchange=function(){st.bud=+this.value;list()};$("sort").onchange=function(){st.sort=this.value;list()};
  document.querySelectorAll("[data-k=cond]").forEach(function(b){b.onclick=function(){st.cond=b.dataset.v;category(c)}});

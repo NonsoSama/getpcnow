@@ -179,6 +179,19 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
 .to-top svg{width:20px;height:20px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,12px);background:#000;color:#fff;padding:11px 18px;border-radius:99px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
 #toast.on{opacity:1;transform:translate(-50%,0)}
+/* category pages: "Select use" left panel + list */
+.cat-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;align-items:start}
+.cat-main{min-width:0}
+.side{position:sticky;top:16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:16px}
+.side .side-t{font-size:17px;letter-spacing:-.3px;margin:0 0 12px}
+.uses{display:grid;gap:8px;margin-bottom:14px}
+.use{display:block;padding:10px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-weight:700;font-size:14px;text-decoration:none;transition:border-color .18s,background .18s,color .18s}
+.use:hover{border-color:var(--acc)}
+.use.on{border-color:var(--acc);background:var(--accs);color:var(--accd)}
+.btn.prev{display:flex;width:100%;border-radius:10px}
+.btn.prev.off{opacity:.45;cursor:not-allowed;pointer-events:none}
+@media(min-width:861px){.cat-main .top{grid-template-columns:130px 1fr 215px;gap:18px}}
+@media(max-width:860px){.cat-layout{grid-template-columns:1fr;gap:16px}.side{position:static}.uses{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:28px}.grid{grid-template-columns:1fr 1fr}.top{grid-template-columns:1fr}.top .im{max-width:200px}.pc{grid-template-columns:1fr}nav{order:3;width:100%}}
 @media(max-width:860px){.dz{grid-template-columns:1fr;gap:24px}.vw.cfg-open{grid-template-columns:1fr}.vr{grid-template-columns:1fr}.vi{border-right:0;border-bottom:1.5px solid var(--line);justify-self:stretch}.vi .im{max-width:180px}.vb{padding:0 20px 18px}.sg{grid-template-columns:1fr 1fr}.foot-grid{grid-template-columns:1fr 1fr}.foot-brand{grid-column:1/-1}}
 @media(max-width:480px){.grid{grid-template-columns:1fr}}
