@@ -43,6 +43,7 @@ function offerFor(p){var b=null;ALLOFF.forEach(function(o){
  if(o.n!==p.n||o.c!==st.cur||!(o.was>o.now))return;var x=1-o.now/o.was,pc=Math.round(x*100);if(pc<1)return;
  if(!b||x>b.x)b={x:x,pct:pc,was:o.was,now:o.now,src:o.src,url:o.url,upd:o.upd,test:o.test,nowN:st.cur==="GH"?o.now/RATE:o.now}});return b}
 function capOk(p){var c=cat&&CAP[cat[1]];if(!c)return true;var v=p.t*RATE;return v>=c[0]&&v<=c[1]}
+function cc(p){return p.c==="New"?" new":p.c==="Used"?" used":""} /* colour class for the condition badge */
 function here(p){return!p.cn||p.cn.indexOf(st.cur)>-1}
 function ep(p){var o=offerFor(p);return o?o.nowN:p.t}
 function budN(){return st.cur==="GH"?st.bud/RATE:st.bud}
@@ -114,7 +115,7 @@ function list(){
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
   el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["pr","Price range"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
-  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":p.chg<-0.03?" drop":"")+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t)+'<small>typical price · '+p.c+'</small>')+'</div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div>'+buyNote(p)+'</div></div>'
+  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":cc(p))+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t))+'</div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div>'+buyNote(p)+'</div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
   el.querySelector(".bell").onclick=function(){if(alerts[p.n]){toast("You already have an alert for this laptop");return}
@@ -148,8 +149,8 @@ var DV={n:"",open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},spec:{}};
 function vkey(v){return[v.r,v.s,v.c,v.g].join("|")}
 function vrow(p,v){
  var key=vkey(v),on=DV.spec[key],al=alerts[p.n],
- lbl=v.o?v.o.pct+"% off":v.was?"On Sale":v.base?(p.deal?"Great Deal":p.chg<-0.03?"Down "+Math.round(-p.chg*100)+"%":p.c):p.c,
- cls=v.o||v.was?" sale":v.base?(p.deal?" deal":p.chg<-0.03?" drop":""):"",
+ lbl=v.o?v.o.pct+"% off":v.was?"On Sale":(v.base&&p.deal)?"Great Deal":p.c,
+ cls=v.o||v.was?" sale":(v.base&&p.deal)?" deal":cc(p),
  sellers=sellersHtml(p,v);
  return'<article class="vr"><div class="vi">'+lapImg(p.n)+'</div><div class="vm"><h3>'+p.n+'</h3><div class="chips"><span>'+v.r+"</span><span>"+v.s+"</span><span>"+v.c+"</span><span>"+v.g+'</span></div>'
   +'<button class="tab" data-a="spec" data-k="'+key+'" aria-expanded="'+!!on+'">'+GEAR+"Specs</button>"
