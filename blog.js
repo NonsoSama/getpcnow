@@ -67,12 +67,13 @@ function countView(p){ /* +1 when someone opens an article. Once per browser per
   fetch(API+"/"+encodeURIComponent(p.slug),{method:"POST"}).then(function(r){return r.ok?r.json():null}).then(function(j){
     if(j&&typeof j.n==="number"){counts[p.slug]=j.n;refreshReads();try{localStorage.setItem(k,today)}catch(e){}}else sent[p.slug]=0}).catch(function(){sent[p.slug]=0})}
 function meta(p){return '<div class="bmeta"><span>'+fmtDate(p.date)+'</span><span data-reads="'+esc(p.slug)+'">'+readsTxt(rd(p))+'</span><span>'+mins(p)+' min read</span></div>'}
-function pic(p,extra){return '<div class="bpic">'+(p.img?'<img src="'+esc(abs(p.img))+'" alt="" loading="lazy">':'<svg aria-hidden="true"><use href="#lap"/></svg>')+(extra||'')+'</div>'}
+/* same image handling as img() in app.js: laptop placeholder underneath, broken images remove themselves, eager=2 is for the article hero */
+function pic(p,extra,eager){return '<div class="bpic"><svg aria-hidden="true"><use href="#lap"/></svg>'+(p.img?'<img src="'+esc(abs(p.img))+'" alt="" '+(eager?'loading="eager"'+(eager>1?' fetchpriority="high"':''):'loading="lazy"')+' decoding="async" onerror="this.remove()">':'')+(extra||'')+'</div>'}
 function href(p){return '/blog/'+p.slug}
 
 function card(p,feat){
-  if(feat)return '<a class="bcard bfeat" href="'+href(p)+'">'+pic(p)+'<div class="bbody"><span class="bcat">'+esc(p.category)+'</span><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p><div class="bfoot">'+meta(p)+'<b class="bby">by '+BY+'</b></div></div></a>';
-  return '<a class="bcard" href="'+href(p)+'">'+pic(p,'<span class="bcat">'+esc(p.category)+'</span>')+'<div class="bbody"><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p>'+meta(p)+'</div></a>';
+  if(feat)return '<a class="card bcard bfeat" href="'+href(p)+'">'+pic(p)+'<div class="bbody"><span class="bcat">'+esc(p.category)+'</span><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p><div class="bfoot">'+meta(p)+'<b class="bby">by '+BY+'</b></div></div></a>';
+  return '<a class="card bcard" href="'+href(p)+'">'+pic(p,'<span class="bcat">'+esc(p.category)+'</span>')+'<div class="bbody"><h3>'+esc(p.title)+'</h3><p class="bex">'+esc(p.excerpt)+'</p>'+meta(p)+'</div></a>';
 }
 function grid(list){return '<div class="bgrid">'+list.map(function(p){return card(p)}).join("")+'</div>'}
 
@@ -90,7 +91,7 @@ function build(){
   sec.innerHTML=html;return sec;
 }
 function mount(){
-  if(document.getElementById("blog"))return;
+  if(document.getElementById("blog")||document.querySelector("#app .cat-layout"))return; /* never on category pages */
   var anchor=document.querySelector("#app .deals")||document.querySelector("#app .more");
   if(!anchor)return;
   anchor.parentNode.insertBefore(build(),anchor.nextSibling);
@@ -113,7 +114,7 @@ function postPage(p){
   document.getElementById("app").innerHTML='<article class="page post"><a class="back" href="/">← Home</a>'
    +'<h1>'+esc(p.title)+'</h1>'
    +'<div class="postbar">'+meta(p)+'<button type="button" class="shr" id="shr">'+shareIc+'Share</button></div>'
-   +'<figure class="hero-img">'+pic(p)+(p.caption?'<figcaption>'+esc(p.caption)+'</figcaption>':'')+'</figure>'
+   +'<figure class="hero-img">'+pic(p,"",2)+(p.caption?'<figcaption>'+esc(p.caption)+'</figcaption>':'')+'</figure>'
    +(p.summary?'<h2 class="sumh">Summary</h2><p class="sum">'+esc(p.summary)+'</p>':'')
    +'<div id="toc"></div>'
    +'<div class="prose" id="prose">'+p.body+'</div>'
