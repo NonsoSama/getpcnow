@@ -141,7 +141,7 @@ var RGPU={"GTX 1060":1,"GTX 1650 Ti":1,"GTX 1660 Ti":2,"RTX 2060":2,"14-core GPU
 /* Footer. SOCIALS: paste each profile link between the quotes. Empty = shows "coming soon" when tapped. */
 var SOCIALS=[
  {k:"email",label:"Email",url:"mailto:getpcnow.alerts@gmail.com?subject=Hello%20getpcnow"},          /* e.g. "mailto:hello@yourdomain.com" */
- {k:"youtube",label:"YouTube",url:""},      /* e.g. "https://youtube.com/@getpcnow" */
- {k:"x",label:"X (Twitter)",url:""},        /* e.g. "https://x.com/getpcnow" */
- {k:"instagram",label:"Instagram",url:""},  /* e.g. "https://instagram.com/getpcnow" */
- {k:"tiktok",label:"TikTok",url:""}];        /* e.g. "https://tiktok.com/@getpcnow" */
+ {k:"youtube",label:"YouTube",url:"https://www.youtube.com/@getpcnowhq"},      /* e.g. "https://youtube.com/@getpcnow" */
+ {k:"x",label:"X (Twitter)",url:"https://x.com/getpcnowhq"},        /* e.g. "https://x.com/getpcnow" */
+ {k:"instagram",label:"Instagram",url:"https://www.instagram.com/getpcnowhq/"},  /* e.g. "https://instagram.com/getpcnow" */
+ {k:"tiktok",label:"TikTok",url:"https://www.tiktok.com/@getpcnowhq"}];        /* e.g. "https://tiktok.com/@getpcnow" */
