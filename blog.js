@@ -9,6 +9,7 @@ var POSTS=[
   excerpt:"Most people overspend on specs they never use. Here is a simple way to pick the right amount of memory for how you work.",
   date:"2026-10-24",      // YYYY-MM-DD
   reads:0,              // only a fallback now. The real count comes from the live counter (see /api/views)
+  // cta:{text:"Button text",href:"/students"}, // optional. Shows a button under the article body
   // mins:6,              // optional. If left out, it is worked out from the article length
   img:"images/blog/ram.jpg",                 // headline image, e.g. "images/ram.jpg". Empty = grey placeholder
   caption:"",             // optional small line under the headline image
@@ -29,6 +30,7 @@ var POSTS=[
   title:"Laptops that survive four years of campus life",
   excerpt:"Light, tough and fair on price. What to look for when you are buying for school.",
   date:"2026-10-24",reads:0,img:"images/blog/laptopstudent.jpg",
+  cta:{text:"Browse students laptops now!",href:"/students"},
   body:"<p>A laptop for school has a harder life than most. It goes in a bag every day, gets charged in busy hostels and lecture halls, and has to last until you graduate. The goal is not to buy the fanciest one. It is to buy one that is still working well in year four.</p><h2>What to look for</h2><ul><li><b>Battery life.</b> You will not always find a socket in the lecture hall, and power cuts happen. Look for a laptop that really lasts around 8 hours on one charge. Reviews are more honest about this than the box.</li><li><b>Weight.</b> You will carry it every day. A laptop with a 13 to 15 inch screen that weighs under about 1.8kg is easy on your back.</li><li><b>A strong build.</b> Metal or thick plastic bodies last longer than thin, flimsy ones. Check that the hinge is firm and the keyboard does not bend when you press it.</li><li><b>8GB of RAM at least.</b> This keeps the laptop smooth when you have many tabs open. If you study coding, design or engineering, go for 16GB.</li><li><b>An SSD, not a hard drive.</b> A laptop with an SSD starts in seconds and feels fast for years. 256GB is the minimum, and 512GB gives you room.</li><li><b>A decent screen.</b> You will stare at it for hours. Pick one that is bright enough to read, and avoid very small screens.</li></ul><h2>What you can skip</h2><p>You do not need the newest processor. A mid-range one handles notes, research, online classes and Zoom very well. Gaming laptops are usually heavy and their batteries run out quickly, so skip them unless your course needs the power. Also avoid very cheap laptops with 4GB of RAM and an old hard drive. They feel slow by the second year.</p><p>A good used or refurbished business laptop can be a smart buy. Brands like Lenovo ThinkPad, Dell Latitude and HP EliteBook are built to be tough, and they often cost less than a new student laptop. Use our used laptop checklist before you pay.</p><h2>How to make it last four years</h2><ul><li><b>Use a padded sleeve</b> inside your bag, and never put heavy books on top of the laptop.</li><li><b>Use a surge protector</b> or a stabiliser when you charge. Sudden power jumps can damage your charger and your laptop.</li><li><b>Keep drinks away</b> from your laptop. One spill can end it.</li><li><b>Back up your work.</b> Save your files to Google Drive or a flash drive every week, so you do not lose your project if the laptop is stolen or breaks.</li><li><b>Do not leave it on a bed or soft surface.</b> It blocks the air vents and makes the laptop overheat.</li></ul><h2>The simple rule</h2><p>Buy for year four, not year one. A laptop that is a little better than you need today is much cheaper than buying a second one in two years.</p>"
 },
 {
@@ -118,6 +120,7 @@ function postPage(p){
    +(p.summary?'<h2 class="sumh">Summary</h2><p class="sum">'+esc(p.summary)+'</p>':'')
    +'<div id="toc"></div>'
    +'<div class="prose" id="prose">'+p.body+'</div>'
+   +(p.cta?'<p class="postcta"><a class="btn dark" href="'+esc(p.cta.href)+'">'+esc(p.cta.text)+'</a></p>':'')
    +'<p class="byline">Written by '+BY+'</p>'
    +(more.length?'<h2 class="postmore">More reads</h2>'+grid(more):'')+'</article>';
   document.getElementById("shr").onclick=function(){share(p)};
