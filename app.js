@@ -5,14 +5,14 @@ var DEADL=typeof DEAD!=="undefined"?DEAD:[];
 function nq(u){return String(u||"").replace(/(\.html)\?.*/,"$1")}
 function alive(u){return!u||DEADL.indexOf(nq(u))<0}
 function fresh(o){return!o.auto||(Date.now()-new Date(o.upd))/864e5<=5}
-var ALLOFF=(typeof OFFERS!=="undefined"?OFFERS:[]).concat(typeof AUTO!=="undefined"?AUTO:[]).filter(function(o){return alive(o.url)&&fresh(o)});
+var ALLOFF=(typeof OFFERS!=="undefined"?OFFERS:[]).concat(typeof AUTO!=="undefined"?AUTO:[]).filter(function(o){return o.src!=="Jumia"&&alive(o.url)&&fresh(o)});
 P=P.filter(function(p){var u=p.url?Object.keys(p.url).map(function(k){return p.url[k]}):[];return!(p.ad&&u.length&&u.every(function(x){return!alive(x)}))});
 P.forEach(function(p){p.o=[/^Apple/.test(p.n)?"mac":"win"];if(LINUX.indexOf(p.n)>-1)p.o.push("linux")});
 P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(Math.round(v/1000)*1000);x=(x*9301+49297)%233280;v=v*(1+((x/233280)-0.42)*0.05)}
  p.h=h;p.avg=h.reduce(function(a,b){return a+b},0)/12;p.deal=p.t<=p.avg*0.95;p.chg=(p.t-h[7])/h[7]});
 var st={cur:"GH",cond:"All",bud:0,sort:"low"},open={},alerts={},cat=null,moreOpen=false,lastCat=null,prevUse=null;
 var $=function(i){return document.getElementById(i)};
-/* Hover note on every Buy on Jiji / Jumia button (Ghana and Nigeria). Change the words here. */
+/* Hover note on every Buy on Jiji button (Ghana and Nigeria). Change the words here. */
 var BUYTIP="Confirm the specs on the listing from the seller before you pay.";
 /* Phones and tablets cannot hover, so they get the same words as a small line under the buttons (hidden where hover works). */
 function buyNote(p){return here(p)?'<p class="buynote">'+BUYTIP+'</p>':""}
@@ -216,7 +216,7 @@ function detail(p){
  document.title=p.n+" – getpcnow"}
 
 /* ---- routing: real URLs (/all, /laptop/acer-nitro-5, /blog/ram-8-vs-16) using the History API ---- */
-var SITE="https://getpcnow.shop",DESC0="Find the best laptop deals in Nigeria and Ghana. Compare prices from Jumia and Jiji and see discounts first.",ROUTES=[];
+var SITE="https://getpcnow.shop",DESC0="Find the best laptop deals in Nigeria and Ghana. Compare prices from Jiji and see discounts first.",ROUTES=[];
 /* ROUTES: other scripts (blog.js) add a function here. It gets the path (like "blog/ram-8-vs-16"), draws the page and returns {d:description,noindex:bool}, or returns false if the path is not theirs. */
 function seo(desc,noindex){ /* keeps canonical, description and robots right for the page on screen */
  var path=location.pathname.replace(/\/+$/,"")||"/";
@@ -259,7 +259,7 @@ function footer(){
   return'<li><a href="'+(live?x.url:"#")+'"'+(live&&!mail?' target="_blank" rel="noopener noreferrer"':"")+(live?"":' data-soon="'+x.label+'"')+' aria-label="'+x.label+(live&&!mail?" (opens in a new tab)":"")+'">'+ICO[x.k]+"<span>"+x.label+"</span></a></li>"}).join("");
  $("foot").innerHTML='<div class="wrap"><div class="foot-grid"><div class="foot-brand"><a class="foot-logo" href="/" aria-label="getpcnow home"><div><span>get</span><span><b>pc</b></span><span>now</span></div></a></div>'
   +col("Quick Links",q)+col("Deals by system",d)+'<div><h4>Get In Touch</h4><ul>'+soc+"</ul></div></div>"
-  +'<div class="foot-note"><span>Prices are ballpark figures from Jiji and Jumia listings and change often. Check the seller page before you pay.</span><button class="to-top" id="top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div></div>';
+  +'<div class="foot-note"><span>Prices are ballpark figures from Jiji listings and change often. Check the seller page before you pay.</span><button class="to-top" id="top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div></div>';
  $("foot").onclick=function(e){var a=e.target.closest("a[data-soon]");if(a){e.preventDefault();toast(a.getAttribute("data-soon")+" is coming soon")}};
  $("top").onclick=function(){window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}}
 footer();
