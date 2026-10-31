@@ -10,7 +10,7 @@ P=P.filter(function(p){var u=p.url?Object.keys(p.url).map(function(k){return p.u
 P.forEach(function(p){p.o=[/^Apple/.test(p.n)?"mac":"win"];if(LINUX.indexOf(p.n)>-1)p.o.push("linux")});
 P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(Math.round(v/1000)*1000);x=(x*9301+49297)%233280;v=v*(1+((x/233280)-0.42)*0.05)}
  p.h=h;p.avg=h.reduce(function(a,b){return a+b},0)/12;p.deal=p.t<=p.avg*0.95;p.chg=(p.t-h[7])/h[7]});
-var st={cur:"GH",cond:"All",bud:0,sort:"low"},open={},alerts={},cat=null,moreOpen=false,lastCat=null,prevUse=null;
+var st={cur:"GH",cond:"All",bud:0,sort:"low"},open={},cat=null,moreOpen=false,lastCat=null,prevUse=null;
 var $=function(i){return document.getElementById(i)};
 /* Hover note on every Buy on Jiji button (Ghana and Nigeria). Change the words here. */
 var BUYTIP="Confirm the specs on the listing from the seller before you pay.";
@@ -125,11 +125,9 @@ function list(){
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
   el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["pr","Price range"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
-  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":cc(p))+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t))+'</div><div class="btns">'+sellers+'<button class="btn bell'+(alerts[p.n]?" on":"")+'" aria-label="Price alert" aria-pressed="'+!!alerts[p.n]+'">🔔</button></div>'+buyNote(p)+'</div></div>'
+  +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":cc(p))+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t))+'</div><div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
-  el.querySelector(".bell").onclick=function(){if(alerts[p.n]){toast("You already have an alert for this laptop");return}
-   openAlert(p,function(){alerts[p.n]=true;list();var bl=$("items").children[L.indexOf(p)].querySelector(".bell");bl.classList.add("ring")})};
   box.appendChild(el)})}
 
 /* LEFT PANEL on every category page ("Select use"): jump straight to another use without going home.
@@ -159,14 +157,14 @@ function variants(p){var b=p.s,o=offerFor(p),l=[{r:b[1],s:b[2],c:b[3],g:b[4],t:o
 var DV={n:"",open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},spec:{}};
 function vkey(v){return[v.r,v.s,v.c,v.g].join("|")}
 function vrow(p,v){
- var key=vkey(v),on=DV.spec[key],al=alerts[p.n],
+ var key=vkey(v),on=DV.spec[key],
  lbl=v.o?v.o.pct+"% off":v.was?"On Sale":(v.base&&p.deal)?"Great Deal":p.c,
  cls=v.o||v.was?" sale":(v.base&&p.deal)?" deal":cc(p),
  sellers=sellersHtml(p,v);
  return'<article class="vr"><div class="vi">'+lapImg(p.n)+'</div><div class="vm"><h3>'+p.n+'</h3><div class="chips"><span>'+v.r+"</span><span>"+v.s+"</span><span>"+v.c+"</span><span>"+v.g+'</span></div>'
   +'<button class="tab" data-a="spec" data-k="'+key+'" aria-expanded="'+!!on+'">'+GEAR+"Specs</button>"
   +(on?"<table><tr><td>Screen</td><td>"+p.s[0]+"</td></tr><tr><td>Memory</td><td>"+v.r+"</td></tr><tr><td>Storage</td><td>"+v.s+"</td></tr><tr><td>Processor</td><td>"+v.c+"</td></tr><tr><td>Graphics</td><td>"+v.g+"</td></tr><tr><td>Condition</td><td>"+p.c+"</td></tr></table>":"")+"</div>"
-  +'<div class="vb"><span class="b'+cls+'">'+lbl+'</span><div class="vp"><b class="price">'+(v.o?fmt(v.o.now):money(v.t))+"</b>"+(v.o?"<s>"+fmt(v.o.was)+"</s><em>Save "+fmt(v.o.was-v.o.now)+"</em>"+(v.o.test?"<em>Sample offer</em>":""):v.was?"<s>"+money(v.was)+"</s><em>Save "+money(v.was-v.t)+"</em>":"")+'</div><div class="btns"><div class="sl">'+sellers+'</div><button class="btn bell'+(al?" on":"")+'" data-a="bell" data-k="'+key+'" aria-label="Price alert" aria-pressed="'+!!al+'">🔔</button></div>'+buyNote(p)+'</div></article>'}
+  +'<div class="vb"><span class="b'+cls+'">'+lbl+'</span><div class="vp"><b class="price">'+(v.o?fmt(v.o.now):money(v.t))+"</b>"+(v.o?"<s>"+fmt(v.o.was)+"</s><em>Save "+fmt(v.o.was-v.o.now)+"</em>"+(v.o.test?"<em>Sample offer</em>":""):v.was?"<s>"+money(v.was)+"</s><em>Save "+money(v.was-v.t)+"</em>":"")+'</div><div class="btns"><div class="sl">'+sellers+'</div></div>'+buyNote(p)+'</div></article>'}
 function vrender(p){
  var all=variants(p),G=[["c","Processor","cpu"],["g","GPU","gpu"],["r","RAM","ram"],["s","Storage","storage"]],any=false;
  var list=all.filter(function(v){return G.every(function(g){return!DV.sel[g[0]].length||DV.sel[g[0]].indexOf(v[g[0]])>-1})}).sort(function(a,b){return DV.sort==="low"?a.t-b.t:b.t-a.t});
@@ -209,8 +207,6 @@ function detail(p){
   if(a==="opt"){var l=DV.sel[t.dataset.g],i=l.indexOf(t.dataset.v);i>-1?l.splice(i,1):l.push(t.dataset.v)}
   else if(a==="clr"){DV.sel={c:[],g:[],r:[],s:[]}}
   else if(a==="spec"){DV.spec[t.dataset.k]=!DV.spec[t.dataset.k]}
-  else if(a==="bell"){if(alerts[p.n]){toast("You already have an alert for this laptop");return}
-   openAlert(p,function(){alerts[p.n]=true;vrender(p)});return}
   vrender(p)};
  vrender(p);
  document.title=p.n+" – getpcnow"}
@@ -232,6 +228,7 @@ function route(){
  if(x){seo(x.d,x.noindex);return}
  if(!ROUTES.length&&/^blog(\/|$)/.test(h))return; /* blog.js loads right after this file and draws the blog pages */
  if(!h)home();
+ else if(h==="unsubscribe"){unsubPage();d="Unsubscribe from getpcnow new laptop emails.";bad=true}
  else if(h==="tips"){tips();d="Simple checks before you buy a used or refurbished laptop: battery, screen, keyboard, serial number and safe payment."}
  else if(h==="all"){category(["all","","Every laptop we track, in one list."]);d="Every laptop we track in Nigeria and Ghana in one list, with prices, discounts and where to buy."}
  else if(h.indexOf("laptop/")===0){var q=P.filter(function(x){return slug(x.n)===h.slice(7)})[0];if(q){detail(q);d=q.n+": specs, pros and cons, price range and where to buy in Ghana and Nigeria."}else{home();bad=true}}
