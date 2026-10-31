@@ -10,7 +10,7 @@ P=P.filter(function(p){var u=p.url?Object.keys(p.url).map(function(k){return p.u
 P.forEach(function(p){p.o=[/^Apple/.test(p.n)?"mac":"win"];if(LINUX.indexOf(p.n)>-1)p.o.push("linux")});
 P.forEach(function(p,i){var h=[],v=p.t,x=i*7+3;for(var k=0;k<12;k++){h.unshift(Math.round(v/1000)*1000);x=(x*9301+49297)%233280;v=v*(1+((x/233280)-0.42)*0.05)}
  p.h=h;p.avg=h.reduce(function(a,b){return a+b},0)/12;p.deal=p.t<=p.avg*0.95;p.chg=(p.t-h[7])/h[7]});
-var st={cur:"GH",cond:"All",bud:0,sort:"deal"},open={},alerts={},cat=null,moreOpen=false,lastCat=null,prevUse=null;
+var st={cur:"GH",cond:"All",bud:0,sort:"low"},open={},alerts={},cat=null,moreOpen=false,lastCat=null,prevUse=null;
 var $=function(i){return document.getElementById(i)};
 /* Hover note on every Buy on Jiji / Jumia button (Ghana and Nigeria). Change the words here. */
 var BUYTIP="Confirm the specs on the listing from the seller before you pay.";
@@ -83,7 +83,17 @@ function panel(p,k){
  return rangeUI(p)}
 
 function seg(items,key,id){return'<div class="seg" role="group">'+items.map(function(v){return'<button class="btn'+(st[key]===v?" on":"")+'" data-k="'+key+'" data-v="'+v+'">'+v+"</button>"}).join("")+"</div>"}
-function budgetSel(){var n=st.cur==="NG"?[500000,800000,1200000,1600000]:[3500,5000,7500,10000],o=[[0,"Any budget"]].concat(n.map(function(v){return[v,"Under "+fmt(v)]}));
+/* BUDGET: the choices come from the laptops on this page. The highest choice is the priciest laptop here (rounded up), so it shows everything; it is picked when the page opens. There is no "Any budget". */
+function budTiers(){
+ var L=P.filter(function(p){return here(p)&&capOk(p)&&(!cat||(cat[3]?p.o.indexOf(cat[3])>-1:p.u.indexOf(cat[1])>-1))}),
+  step=st.cur==="NG"?100000:500,mx=0,mn=1e12;
+ L.forEach(function(p){var v=st.cur==="GH"?ep(p)*RATE:ep(p);if(v>mx)mx=v;if(v<mn)mn=v});
+ if(!L.length)return[st.cur==="NG"?1000000:9000];
+ var top=Math.ceil(mx/step-1e-9)*step,t=[];
+ [.5,.7,.85,1].forEach(function(f){var v=Math.round(top*f/step)*step;if(v>=mn&&t.indexOf(v)<0)t.push(v)});
+ if(t.indexOf(top)<0)t.push(top);
+ return t.sort(function(x,y){return x-y})}
+function budgetSel(){var o=budTiers().map(function(v){return[v,"Under "+fmt(v)]});
  return'<select id="budget" aria-label="Budget">'+o.map(function(x){return'<option value="'+x[0]+'"'+(st.bud===x[0]?" selected":"")+">"+x[1]+"</option>"}).join("")+"</select>"}
 
 function bindMore(){
@@ -133,8 +143,9 @@ function useSide(c){
   +(prevUse?'<a class="btn prev" href="/'+prevUse[0]+'" title="Back to '+useName(prevUse)+'">← Previous use</a>':'<span class="btn prev off" aria-disabled="true">← Previous use</span>')+"</aside>"}
 
 function category(c){
- if(!lastCat||c[0]!==lastCat[0]){st.sort="deal";if(lastCat&&isUse(lastCat))prevUse=lastCat}lastCat=c;
+ if(!lastCat||c[0]!==lastCat[0]){st.sort="low";st.bud=0;if(lastCat&&isUse(lastCat))prevUse=lastCat}lastCat=c;
  cat=c[0]==="all"?null:c;var t=cat?(c[3]?c[1]:"Best Laptops for "+c[1]):"All laptops";
+ var BT=budTiers();if(BT.indexOf(st.bud)<0)st.bud=BT[BT.length-1];
  $("app").innerHTML='<section class="page"><a class="back" href="/">← All categories</a><h1>'+t+'</h1><p>'+c[2]+'</p><div class="cat-layout">'+useSide(c)+'<div class="cat-main"><div class="filters">'+seg(["All","New","Used","Refurbished"],"cond")+budgetSel()
  +'<select id="sort" aria-label="Sort"><option value="score">Top rated</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="deal">Best deals</option></select></div><p class="count" id="count"></p><div id="items"></div></div></div></section>';
  $("sort").value=st.sort;
