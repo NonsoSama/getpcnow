@@ -3,6 +3,7 @@
    FIRST RUN: it only creates known-listings.json from your current laptops and sends nothing. After that, any laptop
    you add to data.js is "new" the next time the script runs. It sends ONE email per subscriber (a digest if you added several).
    Test first with:  node scripts/notify-new-listings.mjs --dry   (prints what it would send, sends nothing)
+   Add --wait-live (the GitHub Action does) to wait until the live site's data.js shows the new laptops before sending.
 
    Needs Node 18+ and these settings (environment variables, NEVER written into any file on the website):
      SUPABASE_URL          https://bcfspmezuuanhmxndjsq.supabase.co
@@ -60,8 +61,9 @@ const html = unsub => `<div style="font-family:Arial,Helvetica,sans-serif;max-wi
  <div style="font-size:22px;font-weight:800;color:#111">getpcnow</div>
  <p style="font-size:16px;color:#111">${fresh.length === 1 ? "A new laptop was just added:" : "New laptops were just added:"}</p>
  <table width="100%" cellpadding="0" cellspacing="0">${fresh.map(card).join("")}</table>
- <p style="font-size:12px;color:#777;margin-top:22px">Prices are ballpark figures from Jiji listings and change often. Check the seller page before you pay.<br>
- You get this because you asked for new-laptop updates on getpcnow. <a href="${unsub}" style="color:#777">Unsubscribe</a></p></div>`;
+ <p style="font-size:12px;color:#777;margin:22px 0 14px">Prices are ballpark figures from Jiji listings and change often. Check the seller page before you pay.<br>
+ You get this because you asked for new-laptop updates on getpcnow.</p>
+ <a href="${unsub}" style="display:inline-block;border:1.5px solid #bbb;color:#444;text-decoration:none;font-weight:700;font-size:13px;padding:9px 16px;border-radius:10px">Unsubscribe</a></div>`;
 const text = unsub => `${subject}\n\n` + fresh.map(p => `${p.n} (${p.c})\n${p.s.join(" | ")}\n${prices(p)}\n${SITE}/laptop/${slug(p.n)}\n`).join("\n") + `\nUnsubscribe: ${unsub}\n`;
 
 if (dry) {
@@ -71,6 +73,23 @@ if (dry) {
 
 for (const k of ["SUPABASE_URL", "SUPABASE_SERVICE_KEY", "RESEND_API_KEY", "MAIL_FROM"])
   if (!process.env[k]) { console.error(`Missing setting: ${k} (see the top of this file)`); process.exit(1); }
+
+/* --wait-live: Cloudflare Pages takes a minute or two to publish. Wait (up to 15 min) until the live data.js contains every new laptop. */
+if (process.argv.includes("--wait-live")) {
+  const url = process.env.DATA_URL || `${SITE}/data.js`, sleep = ms => new Promise(r => setTimeout(r, ms));
+  let live = false;
+  for (let i = 0; i < 45 && !live; i++) {
+    try {
+      const r = await fetch(`${url}?t=${Date.now()}`, { headers: { "Cache-Control": "no-cache" } });
+      if (r.status === 404) { console.log(`${url} not found (404). Waiting 3 minutes instead of checking.`); await sleep(180000); live = true; break; }
+      const body = r.ok ? await r.text() : "";
+      live = fresh.every(p => body.includes(p.n));
+    } catch (e) { /* network blip: try again */ }
+    if (!live) { console.log(`Site not updated yet (check ${i + 1}/45). Waiting 20 seconds...`); await sleep(20000); }
+  }
+  if (!live) { console.error("The live site still does not show the new laptop(s) after 15 minutes. Nothing sent. Re-run the workflow later."); process.exit(1); }
+  console.log("Live site is updated.");
+}
 
 const sb = { apikey: process.env.SUPABASE_SERVICE_KEY, Authorization: "Bearer " + process.env.SUPABASE_SERVICE_KEY };
 const res = await fetch(`${process.env.SUPABASE_URL}/rest/v1/subscribers?select=email,token&limit=100000`, { headers: sb });

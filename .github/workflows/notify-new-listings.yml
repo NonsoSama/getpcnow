@@ -1,0 +1,37 @@
+# Emails subscribers when you add a laptop to data.js and push to GitHub.
+# Needs 4 repository secrets: SUPABASE_URL, SUPABASE_SERVICE_KEY, RESEND_API_KEY, MAIL_FROM
+name: Email new laptop listings
+on:
+  push:
+    paths: ["data.js"]
+  workflow_dispatch:          # lets you run it by hand: Actions tab > this workflow > Run workflow
+permissions:
+  contents: write             # so it can save known-listings.json after sending
+concurrency:
+  group: notify-new-listings
+  cancel-in-progress: false
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Send emails for new laptops
+        run: node scripts/notify-new-listings.mjs --wait-live
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+      - name: Save the announced list
+        run: |
+          if [ -n "$(git status --porcelain known-listings.json)" ]; then
+            git config user.name "getpcnow-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add known-listings.json
+            git commit -m "Update announced laptops [skip ci]"
+            git push
+          fi
