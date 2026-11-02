@@ -41,8 +41,9 @@
 <div class="wrap">
 <header>
   <a class="logo" href="/">get<b>pc</b>now</a>
-  <nav><a href="/">Home</a><a href="/all">All laptops</a><a href="/tips">Buying used</a></nav>
+  <nav id="mainnav"><a href="/">Home</a><a href="/all">All laptops</a><a href="/tips">Buying used</a></nav>
   <div class="seg" role="group" aria-label="Country and currency"><button class="btn" id="NG">Nigeria ₦</button><button class="btn" id="GH">Ghana ₵</button></div>
+  <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mainnav"><svg class="mb-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="mb-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
 </header>
 <main id="app"><noscript><p>getpcnow needs JavaScript to show laptops. Please turn it on in your browser.</p></noscript></main>
 </div>
@@ -55,5 +56,17 @@
 <script src="/alerts.js"></script>
 <script src="/app.js"></script>
 <script src="/blog.js"></script>
+<script>
+/* mobile menu: the hamburger button shows or hides the nav links (see the max-width:760px block in dark.css) */
+(function(){
+  var h=document.querySelector("header"),b=document.getElementById("menuBtn");
+  if(!h||!b)return;
+  function set(o){h.classList.toggle("menu-open",o);b.setAttribute("aria-expanded",o?"true":"false");b.setAttribute("aria-label",o?"Close menu":"Open menu")}
+  b.addEventListener("click",function(){set(!h.classList.contains("menu-open"))});
+  document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest("#mainnav a"))set(false)});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")set(false)});
+  window.matchMedia("(min-width:761px)").addEventListener("change",function(e){if(e.matches)set(false)});
+})();
+</script>
 </body>
 </html>
