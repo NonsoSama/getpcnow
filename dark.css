@@ -44,6 +44,7 @@ header.menu-open .menu-btn .mb-close{display:block}
 
 /* surfaces that were hard-coded white */
 :root[data-theme="dark"] .btn,
+:root[data-theme="dark"] .fsel-btn,
 :root[data-theme="dark"] select,
 :root[data-theme="dark"] .opt,
 :root[data-theme="dark"] .use{background:#181818}

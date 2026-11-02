@@ -82,7 +82,10 @@ function panel(p,k){
  if(k==="sp"){var L=["Screen","Memory","Storage","Processor","Graphics"];return"<table>"+L.map(function(l,i){return"<tr><td>"+l+"</td><td>"+p.s[i]+"</td></tr>"}).join("")+"<tr><td>Condition</td><td>"+p.c+"</td></tr></table>"}
  return rangeUI(p)}
 
-function seg(items,key,id){return'<div class="seg" role="group">'+items.map(function(v){return'<button class="btn'+(st[key]===v?" on":"")+'" data-k="'+key+'" data-v="'+v+'">'+v+"</button>"}).join("")+"</div>"}
+function seg(items,key,id){return'<div class="fsel"><button type="button" class="fsel-btn" aria-haspopup="true" aria-expanded="false">'+st[key]+'</button><div class="seg" role="group">'+items.map(function(v){return'<button class="btn'+(st[key]===v?" on":"")+'" data-k="'+key+'" data-v="'+v+'">'+v+"</button>"}).join("")+"</div></div>"}
+/* mobile: the condition trigger opens a small list; clicking elsewhere or pressing Escape closes it */
+document.addEventListener("click",function(e){var o=document.querySelector(".fsel.open");if(o&&!o.contains(e.target)){o.classList.remove("open");o.querySelector(".fsel-btn").setAttribute("aria-expanded","false")}});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){var o=document.querySelector(".fsel.open");if(o){o.classList.remove("open");o.querySelector(".fsel-btn").setAttribute("aria-expanded","false")}}});
 /* BUDGET: the choices come from the laptops on this page. The highest choice is the priciest laptop here (rounded up), so it shows everything; it is picked when the page opens. There is no "Any budget". */
 function budTiers(){
  var L=P.filter(function(p){return here(p)&&capOk(p)&&(!cat||(cat[3]?p.o.indexOf(cat[3])>-1:p.u.indexOf(cat[1])>-1))}),
@@ -147,6 +150,8 @@ function category(c){
  $("app").innerHTML='<section class="page"><a class="back" href="/">← All categories</a><h1>'+t+'</h1><p>'+c[2]+'</p><div class="cat-layout">'+useSide(c)+'<div class="cat-main"><div class="filters">'+seg(["All","New","Used","Refurbished"],"cond")+budgetSel()
  +'<select id="sort" aria-label="Sort"><option value="score">Top rated</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="deal">Best deals</option></select></div><p class="count" id="count"></p><div id="items"></div></div></div></section>';
  $("sort").value=st.sort;
+ var fs=document.querySelector(".fsel"),fb=fs&&fs.querySelector(".fsel-btn");
+ if(fb)fb.onclick=function(){var o=fs.classList.toggle("open");fb.setAttribute("aria-expanded",o?"true":"false")};
  $("budget").onchange=function(){st.bud=+this.value;list()};$("sort").onchange=function(){st.sort=this.value;list()};
  document.querySelectorAll("[data-k=cond]").forEach(function(b){b.onclick=function(){st.cond=b.dataset.v;category(c)}});
  document.title=t+" – getpcnow";list()}

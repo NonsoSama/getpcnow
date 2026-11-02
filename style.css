@@ -230,3 +230,19 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
 .am-go{width:100%}.am-go:disabled{opacity:.6;cursor:wait}
 .am-x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:28px;line-height:1;cursor:pointer;color:var(--mute);padding:4px 8px;border-radius:8px}
 .am-x:hover{background:var(--soft)}
+
+/* condition filter (All / New / Used / Refurbished): on desktop it stays a row of buttons; on mobile it becomes one button that opens a list (app.js seg()) */
+.fsel{display:contents}
+.fsel-btn{display:none}
+@media(max-width:760px){
+  .filters{gap:8px}
+  .fsel{display:block;position:relative}
+  .fsel-btn{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1.5px solid var(--line);border-radius:9px;background:#fff;font-weight:500;font-size:12.5px;cursor:pointer;transition:border-color .18s}
+  .fsel-btn:hover,.fsel.open .fsel-btn{border-color:var(--acc)}
+  .fsel-btn:after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 1.8px 1.8px 0;transform:translateY(-2px) rotate(45deg);transition:transform .18s}
+  .fsel.open .fsel-btn:after{transform:translateY(2px) rotate(-135deg)}
+  .fsel .seg{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:30;flex-direction:column;gap:2px;min-width:160px;padding:4px;border:1.5px solid var(--line);border-radius:12px;background:var(--soft);box-shadow:0 10px 26px rgba(0,0,0,.18)}
+  .fsel.open .seg{display:flex}
+  .fsel .seg .btn{justify-content:flex-start;width:100%;padding:10px 12px;font-size:14px}
+  .filters select{padding:6px 8px;font-size:12.5px;border-radius:9px}
+}
