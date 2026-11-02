@@ -177,8 +177,12 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
 .site-foot li a:hover{color:var(--acc)}
 .site-foot li svg{width:20px;height:20px;flex:none}
 .foot-note{border-top:1px solid #3a3a3a;padding:18px 0 28px;font-size:13px;color:#a8a8a8;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.to-top{flex:none;width:42px;height:42px;border-radius:50%;border:1.5px solid #555;background:none;color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .18s,border-color .18s,transform .18s}
-.to-top:hover{background:var(--acc);border-color:var(--acc);transform:translateY(-2px)}
+.foot-note span{padding-right:56px}
+/* back-to-top button: floats at the bottom right once the page has been scrolled a little (index.html toggles .show) */
+.to-top{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;width:44px;height:44px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.28);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .22s,transform .22s,visibility .22s,background .18s}
+.to-top.show{opacity:1;visibility:visible;transform:none}
+.to-top:hover{background:var(--accd)}
+.to-top:active{transform:scale(.92)}
 .to-top svg{width:20px;height:20px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,12px);background:#000;color:#fff;padding:11px 18px;border-radius:99px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
 #toast.on{opacity:1;transform:translate(-50%,0)}

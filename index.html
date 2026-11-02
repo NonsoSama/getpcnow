@@ -68,5 +68,14 @@
   window.matchMedia("(min-width:761px)").addEventListener("change",function(e){if(e.matches)set(false)});
 })();
 </script>
+<script>
+/* back-to-top button (#top is built by app.js): show it after the first bit of scrolling */
+(function(){
+  var busy=false;
+  function upd(){busy=false;var b=document.getElementById("top");if(b)b.classList.toggle("show",(window.pageYOffset||document.documentElement.scrollTop)>200)}
+  window.addEventListener("scroll",function(){if(!busy){busy=true;requestAnimationFrame(upd)}},{passive:true});
+  upd();
+})();
+</script>
 </body>
 </html>
