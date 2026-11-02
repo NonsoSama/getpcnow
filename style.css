@@ -86,7 +86,7 @@ select:hover{border-color:var(--acc)}
 .hbell{order:3;display:inline-grid;place-items:center;width:38px;height:38px;padding:0;border:0;border-radius:12px;background:var(--soft);color:var(--ink);cursor:pointer;margin-left:-10px;transition:background .18s,transform .18s}
 .hbell svg{width:19px;height:19px;transform-origin:50% 10%}
 .hbell:hover{background:var(--accs);color:var(--acc)}.hbell:active{transform:scale(.92)}
-.hbell.on{background:var(--warn);color:#000}.hbell.ring svg{animation:ring .6s}
+.hbell.ring svg{animation:ring .6s}
 @keyframes ring{20%{transform:rotate(18deg)}40%{transform:rotate(-16deg)}60%{transform:rotate(10deg)}80%{transform:rotate(-6deg)}}
 .panel{border-top:1.5px solid var(--line);padding:18px;background:var(--soft);animation:open .25s ease-out}
 @keyframes open{from{opacity:0;transform:translateY(-6px)}}
