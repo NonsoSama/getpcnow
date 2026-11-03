@@ -235,7 +235,7 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
 .fsel{display:contents}
 .fsel-btn{display:none}
 @media(max-width:760px){
-  .filters{gap:8px}
+  .filters{gap:6px}
   .fsel{display:block;position:relative}
   .fsel-btn{display:inline-flex;align-items:center;box-sizing:border-box;min-height:34px;gap:8px;padding:0 10px;border:1.5px solid var(--line);border-radius:9px;background:#fff;font-weight:500;font-size:12.5px;cursor:pointer;transition:border-color .18s}
   .fsel-btn:hover,.fsel.open .fsel-btn{border-color:var(--acc)}
@@ -244,5 +244,6 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
   .fsel .seg{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:30;flex-direction:column;gap:2px;min-width:160px;padding:4px;border:1.5px solid var(--line);border-radius:12px;background:var(--soft);box-shadow:0 10px 26px rgba(0,0,0,.18)}
   .fsel.open .seg{display:flex}
   .fsel .seg .btn{justify-content:flex-start;width:100%;padding:10px 12px;font-size:14px}
-  .filters select{box-sizing:border-box;min-height:34px;padding:0 8px;font-size:12.5px;line-height:1.2;border-radius:9px;text-align:center;text-align-last:center}
+  .filters select{box-sizing:border-box;min-height:34px;padding:0 8px;font-size:12.5px;line-height:1.2;border-radius:9px}
+  .cat-main .filters #sort{margin-left:0}
 }
