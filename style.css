@@ -152,6 +152,7 @@ table{border-collapse:collapse;width:100%;max-width:480px;font-size:15px}td{padd
 .chips span{padding:10px 16px;font-size:15px;border-left:1px solid var(--line)}.chips span:first-child{border-left:0}
 .vm .tab{display:inline-flex;align-items:center;gap:7px;margin-left:-10px}.vm .tab svg{width:17px;height:17px}
 .vm table{margin-top:10px}
+.vm .pc{grid-template-columns:1fr;gap:14px;margin-top:10px}.vm .pc ul{font-size:14px}
 .vb{padding:18px 20px 18px 0;display:flex;flex-direction:column;gap:10px;justify-content:center}
 .vp{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px}.vp .price{font-size:26px}.vp s{color:var(--mute);font-size:14px}.vp em{font-style:normal;font-weight:700;color:var(--acc);font-size:14px;margin-left:auto}
 .vempty{border:1.5px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--mute)}

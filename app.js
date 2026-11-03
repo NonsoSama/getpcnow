@@ -159,16 +159,17 @@ function rateOf(k,v){var n=parseFloat(v);return k==="r"?(n>=16?3:n>=8?2:1):k==="
 function pf(n){return'<span class="pf pf'+n+'" title="Performance rating">'+RL[n]+"</span>"}
 function variants(p){var b=p.s,o=offerFor(p),l=[{r:b[1],s:b[2],c:b[3],g:b[4],t:o?o.nowN:p.t,base:1,o:o}];
  (VARS[p.n]||[]).forEach(function(a){var t=Math.round(p.t*a[4]/1000)*1000;l.push({r:a[0],s:a[1],c:a[2],g:a[3],t:t,was:a[5]?Math.round(t/0.9/1000)*1000:0})});return l}
-var DV={n:"",open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},spec:{}};
+var DV={n:"",open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},pc:{}};
 function vkey(v){return[v.r,v.s,v.c,v.g].join("|")}
+var PCI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v8M8 7h8M8 18h8"/></svg>';
 function vrow(p,v){
- var key=vkey(v),on=DV.spec[key],
+ var key=vkey(v),on=DV.pc[key],
  lbl=v.o?v.o.pct+"% off":v.was?"On Sale":(v.base&&p.deal)?"Great Deal":p.c,
  cls=v.o||v.was?" sale":(v.base&&p.deal)?" deal":cc(p),
  sellers=sellersHtml(p,v);
  return'<article class="vr"><div class="vi">'+lapImg(p.n)+'</div><div class="vm"><h3>'+p.n+'</h3><div class="chips"><span>'+v.r+"</span><span>"+v.s+"</span><span>"+v.c+"</span><span>"+v.g+'</span></div>'
-  +'<button class="tab" data-a="spec" data-k="'+key+'" aria-expanded="'+!!on+'">'+GEAR+"Specs</button>"
-  +(on?"<table><tr><td>Screen</td><td>"+p.s[0]+"</td></tr><tr><td>Memory</td><td>"+v.r+"</td></tr><tr><td>Storage</td><td>"+v.s+"</td></tr><tr><td>Processor</td><td>"+v.c+"</td></tr><tr><td>Graphics</td><td>"+v.g+"</td></tr><tr><td>Condition</td><td>"+p.c+"</td></tr></table>":"")+"</div>"
+  +'<button class="tab" data-a="pc" data-k="'+key+'" aria-expanded="'+!!on+'">'+PCI+"Pros and cons</button>"
+  +(on?panel(p,"pc"):"")+"</div>"
   +'<div class="vb"><span class="b'+cls+'">'+lbl+'</span><div class="vp"><b class="price">'+(v.o?fmt(v.o.now):money(v.t))+"</b>"+(v.o?"<s>"+fmt(v.o.was)+"</s><em>Save "+fmt(v.o.was-v.o.now)+"</em>"+(v.o.test?"<em>Sample offer</em>":""):v.was?"<s>"+money(v.was)+"</s><em>Save "+money(v.was-v.t)+"</em>":"")+'</div><div class="btns"><div class="sl">'+sellers+'</div></div>'+buyNote(p)+'</div></article>'}
 function vrender(p){
  var all=variants(p),G=[["c","Processor","cpu"],["g","GPU","gpu"],["r","RAM","ram"],["s","Storage","storage"]],any=false;
@@ -191,7 +192,7 @@ function accRows(p){
   ["Network",0,"<p>"+(p.net||"Wi-Fi and Bluetooth details have not been added for this laptop yet.")+"</p>"],
   ["Others",0,"<p>Condition: "+p.c+"</p><p>Best for: "+p.u.join(", ")+"</p><p>Our score: "+p.sc.toFixed(1)+" out of 10</p><p>Typical price: "+money(p.t)+"</p>"]]}
 function detail(p){
- if(DV.n!==p.n)DV={n:p.n,open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},spec:{}};
+ if(DV.n!==p.n)DV={n:p.n,open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},pc:{}};
  var sellers=sellersHtml(p),ofr=offerFor(p);
  var C=[["screen","Screen Size",p.s[0]],["ram","Memory (RAM)",p.s[1]],["storage","Storage",p.s[2]],["cpu","Processor",p.s[3]],["gpu","Graphics",p.s[4]],["tag","Condition",p.c],["star","Our Score",p.sc.toFixed(1)+" / 10"],["users","Best For",p.u.join(", ")]];
  var chev='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -201,17 +202,16 @@ function detail(p){
   +'<div class="dlinks"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(p.n+" review")+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg>Watch Review</a></div>'
   +'<div class="dbuy">'+(ofr?'<span class="b sale">'+ofr.pct+'% off</span><div class="dprice"><b class="price">'+fmt(ofr.now)+'</b><small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+' · '+ofr.src+(ofr.test?' · SAMPLE':'')+'</small></div>':'<span>Starts from</span><b class="price">'+money(p.lo)+'</b>')+'<div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div></div>'
   +'<div class="sg">'+C.map(function(c){return'<div class="sc"><div class="ic">'+dico(c[0])+"</div><small>"+c[1]+"</small><b>"+c[2]+"</b></div>"}).join("")+"</div>"
-  +'<div class="dsec"><h2>Best Prices &amp; Deals</h2><div class="vt"><button class="btn dark" id="cfgb" aria-expanded="false" aria-controls="cfg">'+SLID+'Customize Config</button><select id="vsort" aria-label="Sort configurations"><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option></select></div>'
+  +'<div class="dsec"><h2>Best Prices &amp; Deals</h2><div class="vt"><button class="btn dark" id="cfgb" aria-expanded="false" aria-controls="cfg">'+SLID+'Config</button></div>'
   +'<div class="vw" id="vw"><aside class="cp" id="cfg" hidden></aside><div id="vlist"></div></div></div>'
   +'<div class="dsec"><h2>Details</h2><div class="acc">'+accRows(p).map(function(r){return"<details><summary>"+r[0]+(r[1]?pf(r[1]):"")+'</summary><div class="ab">'+r[2]+"</div></details>"}).join("")+'</div><p class="note">Performance ratings are our own simple estimate of each part compared with the other laptops on this site.</p></div>'
   +'<div class="dsec"><h2>Pros and cons</h2>'+panel(p,"pc")+"</div></section>";
  $("rm").onclick=function(){var o=this.getAttribute("aria-expanded")!=="true";this.setAttribute("aria-expanded",o);$("rmb").hidden=!o};
  $("cfgb").onclick=function(){DV.open=!DV.open;vrender(p)};
- $("vsort").value=DV.sort;$("vsort").onchange=function(){DV.sort=this.value;vrender(p)};
- $("vw").onclick=function(e){var t=e.target.closest("[data-a]");if(!t)return;var a=t.dataset.a;
+  $("vw").onclick=function(e){var t=e.target.closest("[data-a]");if(!t)return;var a=t.dataset.a;
   if(a==="opt"){var l=DV.sel[t.dataset.g],i=l.indexOf(t.dataset.v);i>-1?l.splice(i,1):l.push(t.dataset.v)}
   else if(a==="clr"){DV.sel={c:[],g:[],r:[],s:[]}}
-  else if(a==="spec"){DV.spec[t.dataset.k]=!DV.spec[t.dataset.k]}
+  else if(a==="pc"){DV.pc[t.dataset.k]=!DV.pc[t.dataset.k]}
   vrender(p)};
  vrender(p);
  document.title=p.n+" – getpcnow"}
