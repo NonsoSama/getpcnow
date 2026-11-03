@@ -156,7 +156,7 @@ function category(c){
  document.querySelectorAll("[data-k=cond]").forEach(function(b){b.onclick=function(){st.cond=b.dataset.v;category(c)}});
  document.title=t+" – getpcnow";list()}
 function rateOf(k,v){var n=parseFloat(v);return k==="r"?(n>=16?3:n>=8?2:1):k==="s"?(n*(/TB/i.test(v)?1000:1)>=1000?3:n*(/TB/i.test(v)?1000:1)>=512?2:1):((k==="c"?RCPU:RGPU)[v]||2)}
-function pf(n){return'<span class="pf pf'+n+'">'+RL[n]+" Performance</span>"}
+function pf(n){return'<span class="pf pf'+n+'" title="Performance rating">'+RL[n]+"</span>"}
 function variants(p){var b=p.s,o=offerFor(p),l=[{r:b[1],s:b[2],c:b[3],g:b[4],t:o?o.nowN:p.t,base:1,o:o}];
  (VARS[p.n]||[]).forEach(function(a){var t=Math.round(p.t*a[4]/1000)*1000;l.push({r:a[0],s:a[1],c:a[2],g:a[3],t:t,was:a[5]?Math.round(t/0.9/1000)*1000:0})});return l}
 var DV={n:"",open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},spec:{}};

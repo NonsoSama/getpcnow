@@ -139,7 +139,7 @@ function jijiLink(p,c,r,s){
    n = laptop name, exactly as written in P above
    c = country: "NG" (prices in naira) or "GH" (prices in cedis)
    was = the old price, now = the price today (the site works out the % off)
-   src = the seller: "Jiji" or "Tonaton"
+   src = the seller: "Jiji"
    url = link to that exact listing
    upd = the date you checked it, so old deals can be hidden later
    Jiji and Tonaton listings have no old price, so use the laptop's typical price (t) as "was".
