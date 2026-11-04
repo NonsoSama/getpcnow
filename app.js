@@ -63,24 +63,18 @@ function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-
 /* img(src, eager): eager=1 loads straight away (front page, visible on arrival); eager=2 also gets top priority (hero). No flag = lazy, for images further down. */
 function abs(u){return/^(https?:|\/|data:)/.test(u)?u:"/"+u}
 function img(src,eager){src=abs(src);return'<div class="im"><svg aria-hidden="true"><use href="#lap"/></svg><img src="'+src+'" alt="" '+(eager?'loading="eager"'+(eager>1?' fetchpriority="high"':''):'loading="lazy"')+' decoding="async" onerror="this.remove()"></div>'}
-/* Price range selector: bars = how many listings sit at each price, blue bar + two handles = the usual low-to-high range. Prices go through money(), so it follows the Nigeria / Ghana toggle. */
-function rangeUI(p){
- var n=26,sp=p.hi-p.lo,a=p.lo-sp*.3,b=p.hi+sp*.3,w=b-a,x=0,bars=[],mx=0,k,c,z,r;
- for(k=0;k<p.n.length;k++)x+=p.n.charCodeAt(k)*(k+3);
- for(k=0;k<n;k++){c=a+(k+.5)*w/n;z=(c-p.t)/(sp*.3);x=(x*9301+49297)%233280;r=.6+.4*(x/233280);
-  c=Math.exp(-z*z/2)*r;bars.push(c);if(c>mx)mx=c}
- function at(v){return((v-a)/w*100).toFixed(2)}
- return'<div class="rs" role="img" aria-label="Typical price range '+money(p.lo)+' to '+money(p.hi)+'">'
-  +'<h4>Price range</h4><p class="rs-s">What this laptop usually sells for</p>'
-  +'<div class="rs-chart"><div class="rs-bars">'+bars.map(function(v){return'<i style="height:'+Math.max(6,Math.round(v/mx*100))+'%"></i>'}).join("")+'</div>'
-  +'<div class="rs-track"><i class="rs-fill" style="left:'+at(p.lo)+'%;width:'+((p.hi-p.lo)/w*100).toFixed(2)+'%"></i></div>'
-  +'<span class="rs-pin" style="left:'+at(p.lo)+'%"><em>'+money(p.lo)+'</em></span>'
-  +'<span class="rs-pin" style="left:'+at(p.hi)+'%"><em>'+money(p.hi)+'</em></span></div>'
-  +'<p class="note">Most listings fall between '+money(p.lo)+' and '+money(p.hi)+'. Typical price is '+money(p.t)+'.</p></div>'}
+/* Checks Before Purchase: the same short checklist on every laptop (replaces the old price range tab). The first item links to the battery health post on the blog. */
+function checksUI(){
+ return'<div class="ck"><h4>Checks before purchase</h4><ul>'
+  +'<li>Check battery health and charging. <a href="/blog/check-battery-health">How to check battery health</a></li>'
+  +'<li>Test the keyboard, screen, webcam, and ports.</li>'
+  +'<li>Confirm the exact processor and RAM.</li>'
+  +'<li>Check Wi-Fi and speaker functionality.</li>'
+  +'<li>Ask about warranty, returns, and repairs.</li></ul></div>'}
 function panel(p,k){
  if(k==="pc")return'<div class="pc"><div><h4>Pros</h4><ul class="pros">'+p.pro.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div><div><h4>Cons</h4><ul class="cons">'+p.con.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div></div>';
  if(k==="sp"){var L=["Screen","Memory","Storage","Processor","Graphics"];return"<table>"+L.map(function(l,i){return"<tr><td>"+l+"</td><td>"+p.s[i]+"</td></tr>"}).join("")+"<tr><td>Condition</td><td>"+p.c+"</td></tr></table>"}
- return rangeUI(p)}
+ return checksUI()}
 
 function seg(items,key,id){return'<div class="fsel"><button type="button" class="fsel-btn" aria-haspopup="true" aria-expanded="false">'+st[key]+'</button><div class="seg" role="group">'+items.map(function(v){return'<button class="btn'+(st[key]===v?" on":"")+'" data-k="'+key+'" data-v="'+v+'">'+v+"</button>"}).join("")+"</div></div>"}
 /* mobile: the condition trigger opens a small list; clicking elsewhere or pressing Escape closes it */
@@ -127,7 +121,7 @@ function list(){
  var box=$("items");box.innerHTML=L.length?"":'<div class="item"><div class="top" style="grid-template-columns:1fr"><div><h3 class="name">No laptops match yet</h3><p class="spec">Try a higher budget or set condition to All.</p></div></div></div>';
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
-  el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["pr","Price range"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
+  el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["ck","Checks before purchase"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
   +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":cc(p))+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(p.t))+'</div><div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
@@ -200,7 +194,7 @@ function detail(p){
   +'<div class="dz">'+lapImg(p.n)+'<div><h1>'+p.n+'</h1><p class="lead">A '+p.c.toLowerCase()+' laptop that suits '+p.u.join(", ").replace(/, ([^,]*)$/," and $1")+'. Rated '+p.sc.toFixed(1)+' out of 10.</p>'
   +'<button class="rm" id="rm" aria-expanded="false" aria-controls="rmb">Read More '+chev+'</button><div class="rmb" id="rmb" hidden>'+panel(p,"pc")+'</div>'
   +'<div class="dlinks"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(p.n+" review")+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg>Watch Review</a></div>'
-  +'<div class="dbuy">'+(ofr?'<span class="b sale">'+ofr.pct+'% off</span><div class="dprice"><b class="price">'+fmt(ofr.now)+'</b><small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+' · '+ofr.src+(ofr.test?' · SAMPLE':'')+'</small></div>':'<span>Starts from</span><b class="price">'+money(p.lo)+'</b>')+'<div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div></div>'
+  +'<div class="dbuy">'+(ofr?'<span class="b sale">'+ofr.pct+'% off</span><div class="dprice"><b class="price">'+fmt(ofr.now)+'</b><small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+' · '+ofr.src+(ofr.test?' · SAMPLE':'')+'</small></div>':'<span>Estimated price</span><b class="price">'+money(p.t)+'</b>')+'<div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div></div>'
   +'<div class="sg">'+C.map(function(c){return'<div class="sc"><div class="ic">'+dico(c[0])+"</div><small>"+c[1]+"</small><b>"+c[2]+"</b></div>"}).join("")+"</div>"
   +'<div class="dsec"><h2>Best Prices &amp; Deals</h2><div class="vt"><button class="btn dark" id="cfgb" aria-expanded="false" aria-controls="cfg">'+SLID+'Config</button></div>'
   +'<div class="vw" id="vw"><aside class="cp" id="cfg" hidden></aside><div id="vlist"></div></div></div>'
@@ -236,7 +230,7 @@ function route(){
  else if(h==="unsubscribe"){unsubPage();d="Unsubscribe from getpcnow new laptop emails.";bad=true}
  else if(h==="tips"){tips();d="Simple checks before you buy a used or refurbished laptop: battery, screen, keyboard, serial number and safe payment."}
  else if(h==="all"){category(["all","","Every laptop we track, in one list."]);d="Every laptop we track in Nigeria and Ghana in one list, with prices, discounts and where to buy."}
- else if(h.indexOf("laptop/")===0){var q=P.filter(function(x){return slug(x.n)===h.slice(7)})[0];if(q){detail(q);d=q.n+": specs, pros and cons, price range and where to buy in Ghana and Nigeria."}else{home();bad=true}}
+ else if(h.indexOf("laptop/")===0){var q=P.filter(function(x){return slug(x.n)===h.slice(7)})[0];if(q){detail(q);d=q.n+": specs, pros and cons, checks before you buy and where to buy in Ghana and Nigeria."}else{home();bad=true}}
  else{var c=CATS.concat(DEALS).filter(function(x){return x[0]===h})[0];if(c){category(c);d=c[2]||d}else{home();bad=true}}
  seo(d,bad)}
 function go(u){history.pushState(null,"",u);route();window.scrollTo(0,0)}
