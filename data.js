@@ -13,7 +13,7 @@ var RATE=0.00888;
 var CATS=[
  ["students","Students","Light, long battery life and easy on the budget."],
  ["programmers","Programmers","Fast processors, plenty of memory and a keyboard you can type on all day."],
- ["gamers","Gamers","Value gaming laptops from GH₵3,500 to GH₵15,000 with a real graphics card, not overpriced ones."],
+ ["gamers","Gamers","Value gaming laptops from GH₵7,000 to GH₵15,000 with a real graphics card, not overpriced ones."],
  ["creators","Creators","Strong screens and power for photo, video and design work."],
  ["home-work","Home & Work","Reliable everyday laptops for documents, email and video calls."]];
 var DEALS=[
