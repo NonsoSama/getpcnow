@@ -1,9 +1,11 @@
 [
  "HP EliteBook 840 G7",
+ "HP ZBook 15u G5",
  "HP EliteBook 840 G8",
  "HP EliteBook x360 1040 G8",
  "Lenovo ThinkPad T14 Gen 2",
  "Lenovo ThinkPad X1 Carbon Gen 8",
+ "Lenovo ThinkPad X1 Carbon",
  "Dell Latitude 5420",
  "HP ProBook 450 G8",
  "Dell Inspiron 14 7420",
@@ -48,7 +50,8 @@
  "HP ZBook 14u G6",
  "HP Omen 15 GTX 1050",
  "HP EliteBook 840 G6",
- "Dell Precision 7520",
+ "Dell XPS 15 9560",
+ "Asus ExpertBook B1",
  "HP Omen 16 (12th Gen Core i9)",
  "Dell Alienware m15 R7"
 ]
