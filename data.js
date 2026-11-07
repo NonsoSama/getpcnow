@@ -101,8 +101,8 @@ var P=[
 (function(){P.forEach(function(q){var r=q.pr;if(!r)return;
   if(r.NG)q.t=r.NG;
   else if(r.GH){var n=Math.ceil(r.GH/RATE);while(n*RATE<r.GH)n++;q.t=n}})})();
-/* Operating system tags used by the Deals pages. Apple = mac, everything else = win. Add a laptop name to LINUX to list it under Linux Deals. Picked from Ubuntu hardware certification and Dell / Lenovo Linux-preinstall reports (Oct 2026). */
-var LINUX=["Lenovo ThinkPad T14 Gen 2","Lenovo ThinkPad X1 Carbon Gen 8","Lenovo ThinkPad X1 Carbon","HP EliteBook 840 G7","HP EliteBook 840 G8","Dell Latitude 5420"];
+/* Operating system tags used by the Deals pages. Apple = mac, everything else = win. Add a laptop name to LINUX to list it under Linux Deals. Picked from Ubuntu hardware certification and Dell / Lenovo Linux-preinstall reports (Oct 2026). Rule: business-class laptops with Intel or AMD graphics. Nvidia gaming and creator laptops are left out because they need extra driver setup. */
+var LINUX=["Lenovo ThinkPad T14 Gen 2","Lenovo ThinkPad X1 Carbon Gen 8","Lenovo ThinkPad X1 Carbon","HP EliteBook 840 G6","HP EliteBook 840 G7","HP EliteBook 840 G8","HP EliteBook 845 G7","HP EliteBook x360 1040 G8","HP ProBook 450 G8","HP ProBook x360 435 G8","HP ZBook 14u G6","HP ZBook 15u G5","HP ZBook Firefly G8","Dell Latitude 5420"];
 /* Optional fields on a laptop: ad:true = this laptop exists only for one listing, so hide it when that listing dies (needs url:{...}).
    match:["thinkpad","t14"] = words a seller's title must contain for the finder to count it as this laptop. */
 /* Sellers: edit here. Jiji is the only seller now (Jumia was removed because it has no good deals). To link one laptop to an exact listing, add  url:{Jiji:"https://..."}  to that laptop above. */

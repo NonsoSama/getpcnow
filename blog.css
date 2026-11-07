@@ -67,6 +67,16 @@
 .prose img{max-width:100%;border-radius:14px}
 .prose code{background:var(--soft);border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:.92em;word-break:break-word}
 
+/* article extras: warning box, link under each system, deal buttons */
+.prose .warn{background:var(--soft);border:1px solid var(--line);border-left:5px solid var(--warn);border-radius:12px;padding:16px 20px;margin:0 0 20px}
+.prose .warn p{margin:0 0 8px}
+.prose .warn ul{margin:0}
+.prose .warn li:last-child{margin-bottom:0}
+.prose .oslink{margin:0 0 20px}
+.prose .osbtns-lead{text-align:center;margin:34px 0 12px}
+.prose .osbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 0 8px}
+.prose .osbtns .btn{color:#fff;text-decoration:none}
+
 /* article table of contents */
 .toc{background:var(--soft);border-radius:14px;padding:18px 22px;margin:0 0 28px}
 .toc .sumh{margin:0 0 8px}
