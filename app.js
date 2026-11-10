@@ -120,13 +120,13 @@ function tips(){
 
 function list(){
  var L=P.filter(function(p){return here(p)&&capOk(p)&&(!cat||(cat[3]?p.o.indexOf(cat[3])>-1:p.u.indexOf(cat[1])>-1))&&(st.cond==="All"||p.c===st.cond)&&(!st.bud||ep(p)<=budN())});
- L.sort(function(a,b){return st.sort==="low"?ep(a)-ep(b):st.sort==="high"?ep(b)-ep(a):st.sort==="deal"?dk(b)-dk(a):b.sc-a.sc});
+ L.sort(function(a,b){return st.sort==="low"?ep(a)-ep(b):st.sort==="high"?ep(b)-ep(a):st.sort==="deal"?dk(b)-dk(a):ep(a)-ep(b)});
  var nd=L.filter(function(p){return offerFor(p)}).length;
  $("count").textContent=L.length+(L.length===1?" laptop":" laptops")+(nd?" · "+nd+" on offer":"");
  var box=$("items");box.innerHTML=L.length?"":'<div class="item"><div class="top" style="grid-template-columns:1fr"><div><h3 class="name">No laptops match yet</h3><p class="spec">Try a higher budget or set condition to All.</p></div></div></div>';
  L.forEach(function(p){var i=P.indexOf(p),o=open[i],el=document.createElement("article"),ofr=offerFor(p);el.className="item";
   var sellers=sellersHtml(p);
-  el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a><span class="score" title="Our score out of 10">'+p.sc.toFixed(1)+'</span></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["ck","Checks before buy"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
+  el.innerHTML='<div class="top"><a class="imlink" href="/laptop/'+slug(p.n)+'" aria-label="View '+p.n+'">'+lapImg(p.n)+'</a><div><h3 class="name"><a class="nl" href="/laptop/'+slug(p.n)+'">'+p.n+'</a></h3><p class="spec">'+p.s.join(" | ")+'</p><div class="tags">'+p.u.map(function(u){return'<span class="tag">'+u+"</span>"}).join("")+'</div><div class="tabs">'+[["pc","Pros and cons"],["sp","Specs"],["ck","Checks before buy"]].map(function(t){return'<button class="tab" data-k="'+t[0]+'" aria-expanded="'+(o===t[0])+'">'+t[1]+"</button>"}).join("")+'</div></div>'
   +'<div class="buy"><span class="b'+(ofr?" sale":p.deal?" deal":cc(p))+'">'+(ofr?ofr.pct+"% off":p.deal?"Good deal":p.c)+'</span><div class="price">'+(ofr?fmt(ofr.now)+'<small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+'<br>'+ofr.src+' · '+p.c+(ofr.upd?' · checked '+when(ofr.upd):'')+(ofr.test?' · SAMPLE':'')+'</small>':money(pt(p)))+'</div><div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div>'
   +(o?'<div class="panel">'+panel(p,o)+"</div>":"");
   el.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){open[i]=open[i]===b.dataset.k?null:b.dataset.k;list()}});
@@ -147,7 +147,7 @@ function category(c){
  cat=c[0]==="all"?null:c;var t=cat?(c[3]?c[1]:"Best Laptops for "+c[1]):"All laptops";
  var BT=budTiers();if(BT.indexOf(st.bud)<0)st.bud=BT[BT.length-1];
  $("app").innerHTML='<section class="page"><a class="back" href="/">← All categories</a><h1>'+t+'</h1><p>'+c[2]+'</p><div class="cat-layout">'+useSide(c)+'<div class="cat-main"><div class="filters">'+seg(["All","New","Used","Refurbished"],"cond")+budgetSel()
- +'<select id="sort" aria-label="Sort"><option value="score">Top rated</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="deal">Best deals</option></select></div><p class="count" id="count"></p><div id="items"></div></div></div></section>';
+ +'<select id="sort" aria-label="Sort"><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="deal">Best deals</option></select></div><p class="count" id="count"></p><div id="items"></div></div></div></section>';
  $("sort").value=st.sort;
  var fs=document.querySelector(".fsel"),fb=fs&&fs.querySelector(".fsel-btn");
  if(fb)fb.onclick=function(){var o=fs.classList.toggle("open");fb.setAttribute("aria-expanded",o?"true":"false")};
@@ -189,14 +189,14 @@ function accRows(p){
   ["Storage",rateOf("s",b[2]),part("s",b[2])],
   ["Graphics",rateOf("g",b[4]),part("g",b[4])],
   ["Network",0,"<p>"+(p.net||"Wi-Fi and Bluetooth details have not been added for this laptop yet.")+"</p>"],
-  ["Others",0,"<p>Condition: "+p.c+"</p><p>Best for: "+p.u.join(", ")+"</p><p>Our score: "+p.sc.toFixed(1)+" out of 10</p><p>Typical price: "+money(pt(p))+"</p>"]]}
+  ["Others",0,"<p>Condition: "+p.c+"</p><p>Best for: "+p.u.join(", ")+"</p><p>Typical price: "+money(pt(p))+"</p>"]]}
 function detail(p){
  if(DV.n!==p.n)DV={n:p.n,open:false,sort:"low",sel:{c:[],g:[],r:[],s:[]},pc:{}};
  var sellers=sellersHtml(p),ofr=offerFor(p);
- var C=[["screen","Screen Size",p.s[0]],["ram","Memory (RAM)",p.s[1]],["storage","Storage",p.s[2]],["cpu","Processor",p.s[3]],["gpu","Graphics",p.s[4]],["tag","Condition",p.c],["star","Our Score",p.sc.toFixed(1)+" / 10"],["users","Best For",p.u.join(", ")]];
+ var C=[["screen","Screen Size",p.s[0]],["ram","Memory (RAM)",p.s[1]],["storage","Storage",p.s[2]],["cpu","Processor",p.s[3]],["gpu","Graphics",p.s[4]],["tag","Condition",p.c],["users","Best For",p.u.join(", ")]];
  var chev='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
  $("app").innerHTML='<section class="page"><a class="back" href="/'+(lastCat?lastCat[0]:"all")+'">← Back to laptops</a>'
-  +'<div class="dz">'+lapImg(p.n)+'<div><h1>'+p.n+'</h1><p class="lead">A '+p.c.toLowerCase()+' laptop that suits '+p.u.join(", ").replace(/, ([^,]*)$/," and $1")+'. Rated '+p.sc.toFixed(1)+' out of 10.</p>'
+  +'<div class="dz">'+lapImg(p.n)+'<div><h1>'+p.n+'</h1><p class="lead">A '+p.c.toLowerCase()+' laptop that suits '+p.u.join(", ").replace(/, ([^,]*)$/," and $1")+'.</p>'
   +'<button class="rm" id="rm" aria-expanded="false" aria-controls="rmb">Read More '+chev+'</button><div class="rmb" id="rmb" hidden>'+panel(p,"pc")+'</div>'
   +'<div class="dlinks"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(p.n+" review")+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg>Watch Review</a></div>'
   +'<div class="dbuy">'+(ofr?'<span class="b sale">'+ofr.pct+'% off</span><div class="dprice"><b class="price">'+fmt(ofr.now)+'</b><small><s>'+fmt(ofr.was)+'</s> · Save '+fmt(ofr.was-ofr.now)+' · '+ofr.src+(ofr.test?' · SAMPLE':'')+'</small></div>':'<span>Estimated price</span><b class="price">'+money(pt(p))+'</b>')+'<div class="btns">'+sellers+'</div>'+buyNote(p)+'</div></div></div>'
