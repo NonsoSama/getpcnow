@@ -39,7 +39,7 @@ td small{color:var(--mut)}
 
 <div id="main" class="hide">
 <div class="top"><div class="logo">get<b>pc</b>now<small>admin v3</small></div><span><span id="who" class="mut"></span> <button class="b x" id="out">Log out</button></span></div>
-<div id="err" class="hide"></div><p class="mut" id="stat" style="margin:0 0 10px;font-size:13px"></p>
+<div id="err" class="hide"></div><p id="pickbox" class="hide" style="background:var(--offb);color:var(--offt);padding:10px 12px;border-radius:8px">Could not find data.js next to this page or at /data.js. Open this page from your live site (https://getpcnow.shop/admin.html), or choose the file here: <input type="file" id="pick" accept=".js" style="width:auto"></p><p class="mut" id="stat" style="margin:0 0 10px;font-size:13px"></p>
 <div class="tabs"><button data-t="lap" class="on">Laptops</button><button data-t="new">+ Add laptop</button><button data-t="add">Added by us</button><button data-t="off">Offers</button></div>
 <div class="card">
  <div id="t-lap"><p><input id="q" placeholder="Search laptops…"></p><p class="mut" id="cnt"></p><table id="lap"></table></div>
@@ -58,7 +58,6 @@ td small{color:var(--mut)}
  <div id="t-off" class="hide"><p class="mut">Specific Jiji listings from data.js and the finder. Delist when the ad is sold.</p><table id="off"></table></div>
 </div></div></div><div id="msg"></div>
 
-<script src="/data.js"></script><script src="/offers-auto.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 var sb=supabase.createClient("https://bcfspmezuuanhmxndjsq.supabase.co","sb_publishable_pa3gHKvmKqW2Vb-kl_n61w_8Yvp5Ie2");
@@ -106,14 +105,14 @@ async function start(){
  if(!ok){say("This account is not an admin.");await sb.auth.signOut();return}
  $("who").textContent=s.user.email;$("login").classList.add("hide");$("main").classList.remove("hide");
  try{if(!$("specs").innerHTML)buildForm()}catch(e){fail("form: "+e.message)}
- if(typeof P==="undefined"){$("err").textContent="Could not load /data.js, so the laptop list is empty. Put admin.html in the same folder as data.js.";$("err").classList.remove("hide")}
+ if(typeof P==="undefined")$("pickbox").classList.remove("hide")
  draw();load()}
 async function load(){
  var R=await Promise.all([sb.from("delisted").select("*"),sb.from("added").select("*").order("created_at",{ascending:false}),sb.from("links").select("*")]),bad=[];
- ["delisted","added","links"].forEach(function(t,i){if(R[i].error)bad.push(t)});
+ ["delisted","added","links"].forEach(function(t,i){if(R[i].error)bad.push(t+": "+R[i].error.message+(R[i].error.code?" ["+R[i].error.code+"]":""))});
  DEL=R[0].data||[];ADD=R[1].data||[];LINKS=R[2].data||[];
  $("err").classList.toggle("hide",!bad.length);
- if(bad.length)$("err").textContent="Missing database table(s): "+bad.join(", ")+". Run admin-schema.sql again in the Supabase SQL Editor, then refresh.";
+ if(bad.length)$("err").textContent="Database says: "+bad.join(" | ");
  draw()}
 
 /* ---------- Laptops tab: every laptop in data.js, with its Jiji link and a Delist button ---------- */
@@ -180,5 +179,10 @@ $("save").onclick=async function(){
  $("save").disabled=false;say(r.error?r.error.message:"Added. Live on the site now.");
  if(!r.error){document.querySelectorAll("#t-new input:not([type=checkbox]),#t-new textarea").forEach(function(i){i.value=""});document.querySelectorAll("#t-new select").forEach(function(i){if(i.id!=="c")i.selectedIndex=0});
   document.querySelectorAll("#cats input").forEach(function(i){i.checked=false});[].forEach.call(document.querySelectorAll("[id$=o].hide"),function(){});await load()}};
-start();
+/* find data.js: try next to this page, then the site root. Works on the live site and when this file is opened from a folder. */
+function loadJs(srcs,ok,done){var i=0;(function next(){if(ok())return done(true);if(i>=srcs.length)return done(false);var s=document.createElement("script");s.src=srcs[i++]+"?t="+Date.now();s.onload=next;s.onerror=next;document.head.appendChild(s)})()}
+function boot(){loadJs(["data.js","/data.js"],function(){return typeof P!=="undefined"},function(got){
+ loadJs(["offers-auto.js","/offers-auto.js"],function(){return typeof AUTO!=="undefined"||!got},function(){start()})})}
+$("pick").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{(0,eval)(String(r.result));$("pickbox").classList.add("hide");buildForm();draw()}catch(e){fail("that file is not a valid data.js: "+e.message)}};r.readAsText(f)};
+boot();
 </script></body></html>
