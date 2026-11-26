@@ -4,60 +4,227 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#1e90ff">
+<script>/* pick light or dark before the page paints: saved choice, else the device setting */
+(function(){var t=null;try{t=localStorage.getItem("gpn-admin-theme")}catch(e){}
+if(t!=="dark"&&t!=="light")t=window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";
+document.documentElement.setAttribute("data-theme",t)})();</script>
 <style>
-:root{--bg:#f5f7fa;--card:#fff;--tx:#1a1a1a;--mut:#6b7280;--line:#eef0f4;--in:#ccd3dd;--tab:#e3e8ef;--pri:#1e90ff;--okb:#dff5e6;--okt:#176b33;--offb:#fde2e0;--offt:#a3231b}
-@media(prefers-color-scheme:dark){:root{--bg:#121417;--card:#1c2026;--tx:#e8eaed;--mut:#9aa3af;--line:#2a3039;--in:#3a424d;--tab:#252b33;--okb:#16351f;--okt:#7be09a;--offb:#3d1a18;--offt:#ff9b94}}
+/* getpcnow admin. Colours come from the public site (style.css + dark.css): same blue accent, same greys, same radii, same fonts. */
+:root{color-scheme:light;
+ --bg:#f2f3f5;--panel:#fff;--soft:#f6f6f6;--soft2:#eceef1;--ink:#000;--mute:#5c5f66;--line:#e3e3e3;--acc:#1e90ff;--accd:#1873cc;--accs:#e6f2ff;--ring:rgba(30,144,255,.22);
+ --okb:#dcf5e5;--okt:#146c35;--offb:#fde4e2;--offt:#b3261e;--warnb:#fff3cf;--warnt:#7a5600;--toastb:#111;--toastt:#fff;--shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05);
+ --side:#111214;--sideline:#26282c}
+:root[data-theme="dark"]{color-scheme:dark;
+ --bg:#0b0b0b;--panel:#121212;--soft:#1a1a1a;--soft2:#232323;--ink:#f2f2f2;--mute:#a3a3a3;--line:#2f2f2f;--acc:#3d9bff;--accd:#7cbcff;--accs:#102a45;--ring:rgba(61,155,255,.28);
+ --okb:#12341f;--okt:#7be09a;--offb:#3d1a18;--offt:#ff9b94;--warnb:#3a3010;--warnt:#ffd45b;--toastb:#f2f2f2;--toastt:#111;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+ --side:#181818;--sideline:#2a2a2a}
 *{box-sizing:border-box}
-body{font:15px/1.45 "DM Sans",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--tx)}
-.w{max-width:1000px;margin:0 auto;padding:16px}
-.logo{font:800 22px Manrope,"DM Sans",sans-serif;color:var(--tx);letter-spacing:-.5px}.logo b{color:var(--pri)}.logo small{font:500 13px "DM Sans";color:var(--mut);margin-left:8px}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap}
-.tabs{display:flex;gap:4px;overflow-x:auto}
-.tabs button{padding:9px 14px;border:0;background:var(--tab);color:var(--tx);border-radius:10px 10px 0 0;cursor:pointer;font:inherit;white-space:nowrap}
-.tabs button.on{background:var(--card);font-weight:700;color:var(--pri)}
-.card{background:var(--card);border-radius:0 12px 12px 12px;padding:16px;box-shadow:0 1px 3px #0002;overflow-x:auto}
-input,select,textarea{font:inherit;padding:9px;border:1px solid var(--in);border-radius:8px;width:100%;background:var(--card);color:var(--tx)}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-offset:-1px}
-button.b{padding:7px 12px;border:0;border-radius:8px;background:var(--pri);color:#fff;cursor:pointer;font:inherit;font-weight:500}
-button.b:disabled{opacity:.5}button.r{background:#d9342b}button.g{background:#2a9d4a}button.x{background:#6b7280}
-a{color:var(--pri)}
-table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{font-size:13px;color:var(--mut)}
-.tag{font-size:12px;padding:2px 8px;border-radius:10px;background:var(--okb);color:var(--okt);white-space:nowrap}.tag.off{background:var(--offb);color:var(--offt)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid .full{grid-column:1/3}
-#msg{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 16px;border-radius:10px;display:none;z-index:9}
-label{font-size:13px;font-weight:700}.hide{display:none}.act{white-space:nowrap}small,.mut{color:var(--mut)}
-td input{min-width:220px}
-@media(max-width:640px){.grid{grid-template-columns:1fr}.grid .full{grid-column:1}}
-.dim{opacity:.55}.dim td:last-child,.dim td:nth-child(3){opacity:1}
-.chip{display:inline-flex;gap:6px;align-items:center;margin:0 12px 6px 0;font-weight:500;font-size:14px}.chip input{width:auto}
-#err{background:var(--offb);color:var(--offt);padding:10px 12px;border-radius:8px;margin-bottom:10px}
-td small{color:var(--mut)}
-</style></head><body><div class="w">
-<div id="login" class="card" style="max-width:340px;margin:60px auto;border-radius:12px"><div class="logo">get<b>pc</b>now<small>admin v3</small></div><p>
-<label>Email</label><input id="em" type="email" autocomplete="username"></p><p><label>Password</label><input id="pw" type="password" autocomplete="current-password"></p>
-<button class="b" id="go">Log in</button></div>
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 "DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.logo{font-family:Manrope,"DM Sans",system-ui,sans-serif}
+a{color:var(--acc)}
+.hide{display:none!important}
+.mut,small{color:var(--mute)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg{flex:none}
 
-<div id="main" class="hide">
-<div class="top"><div class="logo">get<b>pc</b>now<small>admin v3</small></div><span><span id="who" class="mut"></span> <button class="b x" id="out">Log out</button></span></div>
-<div id="err" class="hide"></div><p id="pickbox" class="hide" style="background:var(--offb);color:var(--offt);padding:10px 12px;border-radius:8px">Could not find data.js next to this page or at /data.js. Open this page from your live site (https://getpcnow.shop/admin.html), or choose the file here: <input type="file" id="pick" accept=".js" style="width:auto"></p><p class="mut" id="stat" style="margin:0 0 10px;font-size:13px"></p>
-<div class="tabs"><button data-t="lap" class="on">Laptops</button><button data-t="edit">Edit listings</button><button data-t="new">+ Add laptop</button><button data-t="add">Added by us</button><button data-t="off">Offers</button></div>
-<div class="card">
- <div id="t-lap"><p><input id="q" placeholder="Search laptops…"></p><p class="mut" id="cnt"></p><table id="lap"></table></div>
- <div id="t-edit" class="hide"><div id="elist"><p class="mut">Change a laptop's condition, specs, categories, prices, pros and cons. It saves to the database and shows on the site right away. data.js is never changed, and “Revert” brings back the data.js version.</p><p><input id="eq" placeholder="Search laptops…"></p><p class="mut" id="ecnt"></p><table id="etab"></table></div><div id="eform" class="hide"></div></div>
- <div id="t-new" class="hide"><div class="grid">
-  <div><label>Name</label><input id="n" placeholder="HP EliteBook 840 G8"></div>
-  <div><label>Condition</label><select id="c"><option>Used</option><option>New</option><option>Refurbished</option></select></div>
-  <span id="specs" style="display:contents"></span>
-  <div class="full"><label>Categories</label><div id="cats"></div></div>
-  <div><label>Ghana price (₵)</label><input id="pgh" type="number" inputmode="numeric"></div><div><label>Nigeria price (₦)</label><input id="png" type="number" inputmode="numeric"></div>
-  <div><label>Jiji link, Ghana</label><input id="ugh" placeholder="https://jiji.com.gh/…"></div><div><label>Jiji link, Nigeria</label><input id="ung" placeholder="https://jiji.ng/…"></div>
-  <div class="full mut" style="margin-top:-6px">These links are what the "Buy on Jiji" button opens on the site.</div>
-  <div class="full"><label>Pros (one per line, 4 to 5)</label><textarea id="pro" rows="4"></textarea></div>
-  <div class="full"><label>Cons (one per line, 4 to 5)</label><textarea id="con" rows="4"></textarea></div>
- </div><p><button class="b g" id="save">Add laptop</button></p></div>
- <div id="t-add" class="hide"><table id="added"></table></div>
- <div id="t-off" class="hide"><p class="mut">Specific Jiji listings from data.js and the finder. Delist when the ad is sold.</p><table id="off"></table></div>
-</div></div></div><div id="msg"></div>
+/* brand */
+.logo{font-weight:800;font-size:25px;letter-spacing:-1px;color:var(--ink);line-height:1}
+.logo b{color:var(--acc)}
+.logo small{font:700 10.5px "DM Sans",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-left:8px;padding:3px 7px;border-radius:99px;background:var(--soft2);vertical-align:3px}
+
+/* ---------- sign in ---------- */
+#login{position:relative;min-height:100vh;display:grid;place-items:center;padding:20px;overflow:hidden}
+#login:before,#login:after{content:"";position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none}
+#login:before{width:420px;height:420px;background:var(--acc);top:-120px;left:-100px;opacity:.28}
+#login:after{width:360px;height:360px;background:#7a5cff;bottom:-120px;right:-80px;opacity:.18}
+.lbox{position:relative;z-index:1;width:100%;max-width:380px;background:var(--panel);border:1.5px solid var(--line);border-radius:24px;padding:30px 28px;box-shadow:var(--shadow)}
+.lbox .logo{font-size:30px;margin-bottom:6px}.lbox .logo small{display:none}
+.lbox h2{margin:18px 0 4px;font-size:22px;letter-spacing:-.6px}
+.lbox p.mut{margin:0 0 18px}
+.lbox .f{margin-bottom:14px}
+.lbox .b{width:100%;padding:12px;font-size:15px}
+
+/* ---------- app shell: sidebar + content ---------- */
+.shell{display:grid;grid-template-columns:248px minmax(0,1fr);gap:18px;padding:18px;min-height:100vh;max-width:1500px;margin:0 auto}
+.side{position:sticky;top:18px;height:calc(100vh - 36px);display:flex;flex-direction:column;gap:6px;background:var(--side);color:#f2f2f2;border:1.5px solid var(--sideline);border-radius:26px;padding:22px 14px 14px}
+.side .logo{color:#fff;padding:0 10px 18px;font-size:26px}
+.side .logo small{background:#26282c;color:#a3a3a3}
+.tabs{display:flex;flex-direction:column;gap:4px;overflow:visible}
+.tabs button{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;border-radius:14px;background:none;color:#a9acb2;font:700 14px "DM Sans",sans-serif;text-align:left;cursor:pointer;white-space:nowrap;transition:background .18s,color .18s,transform .18s}
+.tabs button *{pointer-events:none}
+.tabs button svg{width:20px;height:20px}
+.tabs button:hover{background:rgba(255,255,255,.07);color:#fff}
+.tabs button.on{background:var(--acc);color:#fff;box-shadow:0 8px 20px -6px var(--acc)}
+.spacer{flex:1}
+.theme{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:1.5px solid var(--sideline);border-radius:14px;background:none;color:#cfd2d7;font:700 14px "DM Sans",sans-serif;cursor:pointer;transition:background .18s}
+.theme:hover{background:rgba(255,255,255,.07)}
+.theme svg{width:19px;height:19px;display:block}.theme .moon,.theme .sun{display:inline-flex}.theme .sun{display:none}
+:root[data-theme="dark"] .theme .sun{display:inline-flex}:root[data-theme="dark"] .theme .moon{display:none}
+.user{display:flex;align-items:center;gap:10px;margin-top:6px;padding:10px;border:1.5px solid var(--sideline);border-radius:16px}
+.av{width:36px;height:36px;border-radius:12px;background:var(--acc);color:#fff;display:grid;place-items:center;font:800 15px Manrope,sans-serif;flex:none}
+.user .who{min-width:0;flex:1;line-height:1.25}
+.user .who b{display:block;font-size:13px;color:#fff}
+#who{display:block;font-size:12px;color:#a3a3a3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user #out{padding:8px;border-radius:10px;background:#26282c;color:#e8e8e8;border:0;cursor:pointer;display:grid;place-items:center;transition:background .18s,color .18s}
+.user #out:hover{background:#d9342b;color:#fff}.user #out svg{width:17px;height:17px}
+
+.content{min-width:0;display:flex;flex-direction:column;gap:18px}
+.head h1{margin:2px 0 4px;font-size:clamp(26px,3.4vw,34px);letter-spacing:-1.2px;line-height:1.1}
+.head p{margin:0;color:var(--mute)}
+
+/* welcome banner */
+.hero{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 28px;border-radius:24px;color:#fff;background:linear-gradient(120deg,var(--acc) 0%,#1264c9 100%)}
+.hero:before{content:"";position:absolute;right:-60px;top:-80px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.12)}
+.hero:after{content:"";position:absolute;right:120px;bottom:-110px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero>*{position:relative;z-index:1}
+.hero h2{margin:0 0 4px;font-size:22px;letter-spacing:-.6px}
+.hero p{margin:0;opacity:.9;max-width:46ch}
+.hero .go{display:inline-flex;align-items:center;gap:7px;background:#fff;color:#111;text-decoration:none;font-weight:700;font-size:14px;padding:10px 16px;border-radius:12px;white-space:nowrap;transition:transform .18s,box-shadow .18s}
+.hero .go:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.2)}.hero .go svg{width:16px;height:16px}
+
+/* stat cards */
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.st{display:flex;align-items:center;gap:12px;background:var(--panel);border:1.5px solid var(--line);border-radius:18px;padding:14px;transition:transform .22s,box-shadow .22s,border-color .22s}
+.st:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--acc)}
+.st i{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--accs);color:var(--acc);flex:none}
+.st svg{width:20px;height:20px}
+.st b{display:block;font:800 22px/1.1 Manrope,sans-serif;letter-spacing:-.6px}
+.st span{font-size:12px;color:var(--mute)}
+
+/* main panel */
+.panel{background:var(--panel);border:1.5px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);overflow-x:auto}
+.warn{background:var(--warnb);color:var(--warnt);padding:12px 14px;border-radius:14px;margin:0}
+#err{background:var(--offb);color:var(--offt);padding:12px 14px;border-radius:14px;margin:0;font-weight:500}
+
+/* forms */
+label{display:block;font-size:12.5px;font-weight:700;color:var(--mute);margin:0 0 6px;letter-spacing:.01em}
+label small{font-weight:400}
+input,select,textarea{font:inherit;width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;background:var(--soft);color:var(--ink);transition:border-color .18s,box-shadow .18s,background .18s}
+input::placeholder,textarea::placeholder{color:var(--mute);opacity:.75}
+input:hover,select:hover,textarea:hover{border-color:var(--acc)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 4px var(--ring);background:var(--panel)}
+select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%238a8f98' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center}
+textarea{resize:vertical;line-height:1.5}
+input[type=file]{width:auto;padding:6px 8px}input[type=checkbox]{width:16px;height:16px;padding:0;accent-color:var(--acc)}
+.search{position:relative;margin-bottom:12px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--mute);pointer-events:none}
+.search input{padding-left:42px;border-radius:14px;padding-top:13px;padding-bottom:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid .full{grid-column:1/3}
+.chip{display:inline-flex;align-items:center;gap:8px;margin:0 8px 8px 0;padding:8px 14px;border:1.5px solid var(--line);border-radius:99px;background:var(--soft);font-weight:700;font-size:13.5px;color:var(--ink);cursor:pointer;transition:border-color .18s,background .18s}
+.chip:hover{border-color:var(--acc)}.chip:has(input:checked){border-color:var(--acc);background:var(--accs);color:var(--accd)}
+.chip input{margin:0}
+
+/* buttons: same feel as the site's .btn */
+button.b{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 15px;border:1.5px solid transparent;border-radius:11px;background:var(--acc);color:#fff;cursor:pointer;font:700 13.5px "DM Sans",sans-serif;transition:transform .18s,box-shadow .18s,background .18s,opacity .18s}
+button.b:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.18)}
+button.b:active{transform:scale(.96);box-shadow:none}
+button.b:disabled{opacity:.5;pointer-events:none}
+button.g{background:#1f9d4b}button.r{background:#d9342b}
+button.x{background:var(--soft);color:var(--ink);border-color:var(--line)}
+button.x:hover{border-color:var(--acc);box-shadow:none}
+#esave,#save{padding:12px 22px;font-size:14.5px}
+
+/* tables: every row is its own soft card */
+table{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:-4px}
+th{padding:0 14px 2px;border:0;text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+td{padding:13px 14px;border:0;background:var(--soft);vertical-align:middle;transition:background .18s}
+td:first-child{border-radius:16px 0 0 16px}td:last-child{border-radius:0 16px 16px 0}
+td:only-child{border-radius:16px}
+tr:hover td{background:var(--soft2)}
+td b{font-weight:700;font-size:15px;letter-spacing:-.2px}
+td small{display:block;margin-top:3px;font-size:12.5px}
+td input{min-width:230px;background:var(--panel)}
+td .act,.act{white-space:nowrap;text-align:right}
+td.act .b+.b{margin-left:6px}
+.dim td{opacity:.5}.dim td.act,.dim td:nth-child(3){opacity:1}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--okb);color:var(--okt);white-space:nowrap}
+.tag.off{background:var(--offb);color:var(--offt)}
+#cnt,#ecnt{margin:0 0 6px;font-size:13px;font-weight:500}
+.panel h3{font-size:22px;letter-spacing:-.6px}
+
+/* toast */
+#msg{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--toastb);color:var(--toastt);padding:12px 20px;border-radius:14px;font-weight:700;font-size:14px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:none;z-index:20;max-width:90vw}
+
+/* ---------- smaller screens: sidebar becomes a top bar ---------- */
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){
+ .shell{grid-template-columns:1fr;gap:12px;padding:10px}
+ .side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border-radius:20px}
+ .side .logo{padding:0 4px;font-size:22px;order:1}.side .logo small{display:none}
+ .spacer{display:none}
+ .theme{order:2;width:auto;margin-left:auto;padding:9px;border-radius:12px}.theme>span:last-child{display:none}
+ .user{order:3;margin:0;padding:5px;border-radius:12px}.user .who{display:none}.av{width:30px;height:30px;border-radius:9px}
+ .tabs{order:4;flex-direction:row;width:100%;overflow-x:auto;gap:6px;padding-bottom:2px}
+ .tabs button{width:auto;padding:10px 14px}
+ .hero{flex-direction:column;align-items:flex-start;padding:20px}
+ .panel{padding:14px;border-radius:20px}
+}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.grid .full{grid-column:1}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}td input{min-width:180px}}
+</style></head><body>
+
+<div id="login">
+ <div class="lbox">
+  <div class="logo">get<b>pc</b>now</div>
+  <h2>Admin sign in</h2><p class="mut">Manage laptops, prices and links for the site.</p>
+  <div class="f"><label for="em">Email</label><input id="em" type="email" autocomplete="username"></div>
+  <div class="f"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"></div>
+  <button class="b" id="go">Log in</button>
+ </div>
+</div>
+
+<div id="main" class="shell hide">
+ <aside class="side">
+  <div class="logo">get<b>pc</b>now<small>admin</small></div>
+  <div class="tabs">
+   <button data-t="lap" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg><span>Laptops</span></button>
+   <button data-t="edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit listings</span></button>
+   <button data-t="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add laptop</span></button>
+   <button data-t="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg><span>Added by us</span></button>
+   <button data-t="off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><span>Offers</span></button>
+  </div>
+  <div class="spacer"></div>
+  <button class="theme" id="themeBtn" type="button" aria-label="Switch light or dark"><span class="moon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="sun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span>Light / Dark</span></button>
+  <div class="user"><div class="av" id="av">A</div><div class="who"><b>Admin</b><span id="who"></span></div><button id="out" type="button" aria-label="Log out" title="Log out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button></div>
+ </aside>
+
+ <div class="content">
+  <div class="head"><h1 id="ptitle">Laptops</h1><p id="psub" class="mut">Delist a laptop, or paste the Jiji link its “Buy on Jiji” button opens.</p></div>
+  <div class="hero">
+   <div><h2>Welcome back</h2><p>Everything you change here goes live on getpcnow within seconds. No deploy needed.</p></div>
+   <a class="go" href="/" target="_blank" rel="noopener">View site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+  </div>
+  <div class="stats">
+   <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg></i><div><b id="sl">–</b><span>Laptops in data.js</span></div></div>
+   <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></i><div><b id="sd">–</b><span>Delisted</span></div></div>
+   <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></i><div><b id="sa">–</b><span>Added by us</span></div></div>
+   <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></i><div><b id="sk">–</b><span>Custom links</span></div></div>
+   <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></i><div><b id="se">–</b><span>Edited</span></div></div>
+  </div>
+  <p class="sr" id="stat"></p>
+  <div id="err" class="hide"></div>
+  <p id="pickbox" class="warn hide">Could not find data.js next to this page or at /data.js. Open this page from your live site (https://getpcnow.shop/admin.html), or choose the file here: <input type="file" id="pick" accept=".js"></p>
+
+  <div class="panel">
+   <div id="t-lap"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" placeholder="Search laptops…"></div><p class="mut" id="cnt"></p><table id="lap"></table></div>
+   <div id="t-edit" class="hide"><div id="elist"><p class="mut" style="margin-top:0">Change a laptop's condition, specs, categories, prices, pros and cons. It saves to the database and shows on the site right away. data.js is never changed, and “Revert” brings back the data.js version.</p><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="eq" placeholder="Search laptops…"></div><p class="mut" id="ecnt"></p><table id="etab"></table></div><div id="eform" class="hide"></div></div>
+   <div id="t-new" class="hide"><div class="grid">
+    <div><label>Name</label><input id="n" placeholder="HP EliteBook 840 G8"></div>
+    <div><label>Condition</label><select id="c"><option>Used</option><option>New</option><option>Refurbished</option></select></div>
+    <span id="specs" style="display:contents"></span>
+    <div class="full"><label>Categories</label><div id="cats"></div></div>
+    <div><label>Ghana price (₵)</label><input id="pgh" type="number" inputmode="numeric"></div><div><label>Nigeria price (₦)</label><input id="png" type="number" inputmode="numeric"></div>
+    <div><label>Jiji link, Ghana</label><input id="ugh" placeholder="https://jiji.com.gh/…"></div><div><label>Jiji link, Nigeria</label><input id="ung" placeholder="https://jiji.ng/…"></div>
+    <div class="full mut" style="margin-top:-8px">These links are what the “Buy on Jiji” button opens on the site.</div>
+    <div class="full"><label>Pros (one per line, 4 to 5)</label><textarea id="pro" rows="4"></textarea></div>
+    <div class="full"><label>Cons (one per line, 4 to 5)</label><textarea id="con" rows="4"></textarea></div>
+   </div><p style="margin-bottom:0"><button class="b g" id="save">Add laptop</button></p></div>
+   <div id="t-add" class="hide"><table id="added"></table></div>
+   <div id="t-off" class="hide"><p class="mut" style="margin-top:0">Specific Jiji listings from data.js and the finder. Delist when the ad is sold.</p><table id="off"></table></div>
+  </div>
+ </div>
+</div>
+<div id="msg"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
@@ -104,7 +271,7 @@ async function start(){
  if(!s){$("login").classList.remove("hide");$("main").classList.add("hide");return}
  var ok=(await sb.rpc("is_admin")).data;
  if(!ok){say("This account is not an admin.");await sb.auth.signOut();return}
- $("who").textContent=s.user.email;$("login").classList.add("hide");$("main").classList.remove("hide");
+ $("who").textContent=s.user.email;$("av").textContent=String(s.user.email||"?").charAt(0).toUpperCase();$("login").classList.add("hide");$("main").classList.remove("hide");
  try{if(!$("specs").innerHTML)buildForm()}catch(e){fail("form: "+e.message)}
  if(typeof P==="undefined")$("pickbox").classList.remove("hide")
  draw();load()}
@@ -117,7 +284,7 @@ async function load(){
  draw()}
 
 /* ---------- Laptops tab: every laptop in data.js, with its Jiji link and a Delist button ---------- */
-function draw(){try{drawAll();drawEdit()}catch(e){fail("could not draw the list: "+e.message)}}
+function draw(){try{drawAll();drawEdit();setStats()}catch(e){fail("could not draw the list: "+e.message)}}
 function drawAll(){
  var q=$("q").value.toLowerCase(),h="<tr><th>Laptop</th><th>Price</th><th>Jiji link (what “Buy on Jiji” opens)</th><th></th></tr>",n=0;
  (typeof P!=="undefined"?P:[]).map(eff).forEach(function(p){if(q&&p.n.toLowerCase().indexOf(q)<0)return;
@@ -142,7 +309,7 @@ function drawAll(){
 
 document.addEventListener("click",async function(e){var t=e.target;
  if(t.dataset.t){document.querySelectorAll(".tabs button").forEach(function(b){b.classList.toggle("on",b===t)});
-  ["lap","edit","new","add","off"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});return}
+  ["lap","edit","new","add","off"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});$("ptitle").textContent=PT[t.dataset.t][0];$("psub").textContent=PT[t.dataset.t][1];return}
  if(t.dataset.d){t.disabled=true;var k=t.dataset.k,c=t.dataset.c,del=t.dataset.d==="delist",r=del?await sb.from("delisted").insert({key:k,country:c}).select():await sb.from("delisted").delete().eq("key",k).eq("country",c);
   if(r.error){say(r.error.message);t.disabled=false;return}
   if(del)DEL=DEL.concat(r.data);else DEL=DEL.filter(function(d){return!(d.key===k&&d.country===c)});
@@ -216,6 +383,16 @@ document.addEventListener("click",async function(e){var t=e.target;
  if(t.id==="erevert"){if(!confirm("Remove all edits for this laptop and go back to the data.js version?"))return;t.disabled=true;
   var r=await sb.from("edits").delete().eq("key",EKEY);t.disabled=false;if(r.error){say(r.error.message);return}say("Reverted to data.js");await load();closeEdit()}});
 $("eq").oninput=drawEdit;
+
+/* ---------- look and feel: page titles, stat cards, light/dark switch ---------- */
+var PT={lap:["Laptops","Delist a laptop, or paste the Jiji link its “Buy on Jiji” button opens."],
+ edit:["Edit listings","Change specs, prices, categories, pros and cons. Live on the site in seconds."],
+ "new":["Add laptop","Add a new laptop. It appears on the site straight away."],
+ add:["Added by us","Laptops added from this page. Send the email alert or remove them."],
+ off:["Offers","Specific Jiji listings. Delist an offer when the ad is sold."]};
+function setStats(){var v={sl:typeof P!=="undefined"?P.length:"–",sd:DEL.length,sa:ADD.length,sk:LINKS.length,se:EDITS.length};
+ Object.keys(v).forEach(function(k){var e=$(k);if(e)e.textContent=v[k]})}
+$("themeBtn").onclick=function(){var r=document.documentElement,n=r.getAttribute("data-theme")==="dark"?"light":"dark";r.setAttribute("data-theme",n);try{localStorage.setItem("gpn-admin-theme",n)}catch(e){}};
 $("q").oninput=draw;
 $("go").onclick=async function(){var r=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});if(r.error)say(r.error.message);else start()};
 $("pw").onkeydown=function(e){if(e.key==="Enter")$("go").click()};
