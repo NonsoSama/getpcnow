@@ -40,9 +40,10 @@ td small{color:var(--mut)}
 <div id="main" class="hide">
 <div class="top"><div class="logo">get<b>pc</b>now<small>admin v3</small></div><span><span id="who" class="mut"></span> <button class="b x" id="out">Log out</button></span></div>
 <div id="err" class="hide"></div><p id="pickbox" class="hide" style="background:var(--offb);color:var(--offt);padding:10px 12px;border-radius:8px">Could not find data.js next to this page or at /data.js. Open this page from your live site (https://getpcnow.shop/admin.html), or choose the file here: <input type="file" id="pick" accept=".js" style="width:auto"></p><p class="mut" id="stat" style="margin:0 0 10px;font-size:13px"></p>
-<div class="tabs"><button data-t="lap" class="on">Laptops</button><button data-t="new">+ Add laptop</button><button data-t="add">Added by us</button><button data-t="off">Offers</button></div>
+<div class="tabs"><button data-t="lap" class="on">Laptops</button><button data-t="edit">Edit listings</button><button data-t="new">+ Add laptop</button><button data-t="add">Added by us</button><button data-t="off">Offers</button></div>
 <div class="card">
  <div id="t-lap"><p><input id="q" placeholder="Search laptops…"></p><p class="mut" id="cnt"></p><table id="lap"></table></div>
+ <div id="t-edit" class="hide"><div id="elist"><p class="mut">Change a laptop's condition, specs, categories, prices, pros and cons. It saves to the database and shows on the site right away. data.js is never changed, and “Revert” brings back the data.js version.</p><p><input id="eq" placeholder="Search laptops…"></p><p class="mut" id="ecnt"></p><table id="etab"></table></div><div id="eform" class="hide"></div></div>
  <div id="t-new" class="hide"><div class="grid">
   <div><label>Name</label><input id="n" placeholder="HP EliteBook 840 G8"></div>
   <div><label>Condition</label><select id="c"><option>Used</option><option>New</option><option>Refurbished</option></select></div>
@@ -62,7 +63,7 @@ td small{color:var(--mut)}
 <script>
 var sb=supabase.createClient("https://bcfspmezuuanhmxndjsq.supabase.co","sb_publishable_pa3gHKvmKqW2Vb-kl_n61w_8Yvp5Ie2");
 var $=function(i){return document.getElementById(i)},fail=function(m){var e=$("err");if(e){e.textContent="Problem: "+m;e.classList.remove("hide")}},
-DEL=[],ADD=[],LINKS=[];
+DEL=[],ADD=[],LINKS=[],EDITS=[];
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function say(t){var m=$("msg");m.textContent=t;m.style.display="block";clearTimeout(say.t);say.t=setTimeout(function(){m.style.display="none"},2800)}
 var DOM={GH:/^https:\/\/(www\.)?jiji\.com\.gh\//i,NG:/^https:\/\/(www\.)?jiji\.ng\//i};
@@ -108,18 +109,18 @@ async function start(){
  if(typeof P==="undefined")$("pickbox").classList.remove("hide")
  draw();load()}
 async function load(){
- var R=await Promise.all([sb.from("delisted").select("*"),sb.from("added").select("*").order("created_at",{ascending:false}),sb.from("links").select("*")]),bad=[];
- ["delisted","added","links"].forEach(function(t,i){if(R[i].error)bad.push(t+": "+R[i].error.message+(R[i].error.code?" ["+R[i].error.code+"]":""))});
- DEL=R[0].data||[];ADD=R[1].data||[];LINKS=R[2].data||[];
+ var R=await Promise.all([sb.from("delisted").select("*"),sb.from("added").select("*").order("created_at",{ascending:false}),sb.from("links").select("*"),sb.from("edits").select("*")]),bad=[];
+ ["delisted","added","links","edits"].forEach(function(t,i){if(R[i].error)bad.push(t+": "+R[i].error.message+(R[i].error.code?" ["+R[i].error.code+"]":""))});
+ DEL=R[0].data||[];ADD=R[1].data||[];LINKS=R[2].data||[];EDITS=R[3].data||[];
  $("err").classList.toggle("hide",!bad.length);
  if(bad.length)$("err").textContent="Database says: "+bad.join(" | ");
  draw()}
 
 /* ---------- Laptops tab: every laptop in data.js, with its Jiji link and a Delist button ---------- */
-function draw(){try{drawAll()}catch(e){fail("could not draw the list: "+e.message)}}
+function draw(){try{drawAll();drawEdit()}catch(e){fail("could not draw the list: "+e.message)}}
 function drawAll(){
  var q=$("q").value.toLowerCase(),h="<tr><th>Laptop</th><th>Price</th><th>Jiji link (what “Buy on Jiji” opens)</th><th></th></tr>",n=0;
- (typeof P!=="undefined"?P:[]).forEach(function(p){if(q&&p.n.toLowerCase().indexOf(q)<0)return;
+ (typeof P!=="undefined"?P:[]).map(eff).forEach(function(p){if(q&&p.n.toLowerCase().indexOf(q)<0)return;
   (p.cn||["GH","NG"]).forEach(function(c){n++;
    var off=isDel(p.n,c),l=linkOf(p.n,c),base=p.url&&p.url.Jiji&&DOM[c].test(p.url.Jiji)?p.url.Jiji:"",v=l?l.url:base,pr=p.pr&&p.pr[c];
    h+='<tr class="'+(off?"dim":"")+'"><td><b>'+esc(p.n)+"</b><br><small>"+esc(p.c)+" · "+(c==="GH"?"Ghana":"Nigeria")+(off?' · <span class="tag off">delisted</span>':"")+"</small></td>"
@@ -133,7 +134,7 @@ function drawAll(){
  o.forEach(function(x){var off=!!drow(x.url,"ALL");
   h+='<tr class="'+(off?"dim":"")+'"><td>'+esc(x.n)+" <small>("+esc(x.c)+")</small></td><td>"+esc(x.now)+'</td><td class="act"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">Open on Jiji</a> <button class="b '+(off?"g":"r")+'" data-d="'+(off?"relist":"delist")+'" data-k="'+esc(x.url)+'" data-c="ALL">'+(off?"Relist":"Delist")+"</button></td></tr>"});
  $("off").innerHTML=o.length?h:"<tr><td>No offers right now.</td></tr>";
- $("stat").textContent="data.js: "+(typeof P!=="undefined"?P.length+" laptops":"NOT LOADED")+" · database: "+DEL.length+" delisted, "+ADD.length+" added, "+LINKS.length+" links";
+ $("stat").textContent="data.js: "+(typeof P!=="undefined"?P.length+" laptops":"NOT LOADED")+" · database: "+DEL.length+" delisted, "+ADD.length+" added, "+LINKS.length+" links, "+EDITS.length+" edited";
  h="<tr><th>Laptop</th><th>Prices</th><th>Email</th><th></th></tr>";
  ADD.forEach(function(a){var p=a.data,pr=p.pr||{};
   h+="<tr><td>"+esc(p.n)+"</td><td>"+(pr.GH?"GH₵"+pr.GH:"")+" "+(pr.NG?"₦"+pr.NG:"")+"</td><td>"+(a.notified_at?'<span class="tag">sent</span>':'<button class="b x" data-test="'+a.id+'">Send test to me</button> <button class="b" data-notify="'+a.id+'">Email ALL subscribers</button>')+'</td><td><button class="b r" data-rm="'+a.id+'">Remove</button></td></tr>'});
@@ -141,7 +142,7 @@ function drawAll(){
 
 document.addEventListener("click",async function(e){var t=e.target;
  if(t.dataset.t){document.querySelectorAll(".tabs button").forEach(function(b){b.classList.toggle("on",b===t)});
-  ["lap","new","add","off"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});return}
+  ["lap","edit","new","add","off"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});return}
  if(t.dataset.d){t.disabled=true;var k=t.dataset.k,c=t.dataset.c,del=t.dataset.d==="delist",r=del?await sb.from("delisted").insert({key:k,country:c}).select():await sb.from("delisted").delete().eq("key",k).eq("country",c);
   if(r.error){say(r.error.message);t.disabled=false;return}
   if(del)DEL=DEL.concat(r.data);else DEL=DEL.filter(function(d){return!(d.key===k&&d.country===c)});
@@ -157,6 +158,64 @@ document.addEventListener("change",async function(e){var t=e.target;if(!t.datase
  else{if(!DOM[c].test(u)){say("Link must start with https://"+(c==="GH"?"jiji.com.gh/":"jiji.ng/"));return}
   r=await sb.from("links").upsert({key:k,country:c,url:u},{onConflict:"key,country"}).select();if(!r.error)LINKS=LINKS.filter(function(l){return!(l.key===k&&l.country===c)}).concat(r.data)}
  say(r.error?r.error.message:(u?"Link saved. Live now.":"Link removed"));if(!r.error)draw()});
+
+/* ---------- Edit listings: changes are saved as small "patches" in the edits table; live.js lays them over data.js ---------- */
+var EKEY=null;
+function editOf(k){return EDITS.filter(function(e){return e.key===k})[0]}
+function eff(p){var e=editOf(p.n),o={},k;for(k in p)o[k]=p[k];if(e&&e.data)for(k in e.data)o[k]=e.data[k];return o}
+function basePs(){var seen={},out=[];(typeof P!=="undefined"?P:[]).forEach(function(p){out.push({p:p,src:"data.js"});seen[p.n]=1});
+ ADD.forEach(function(a){if(a.data&&a.data.n&&!seen[a.data.n]){out.push({p:a.data,src:"added by us"});seen[a.data.n]=1}});return out}
+function money(c,v){return v?(c==="GH"?"GH₵":"₦")+Number(v).toLocaleString():""}
+function drawEdit(){var q=$("eq").value.toLowerCase(),n=0,h="<tr><th>Laptop</th><th>Specs</th><th>Prices</th><th></th></tr>";
+ basePs().forEach(function(x){var p=eff(x.p);if(q&&p.n.toLowerCase().indexOf(q)<0)return;n++;var pr=p.pr||{};
+  h+='<tr><td><b>'+esc(p.n)+'</b><br><small>'+esc(p.c)+" · "+x.src+(editOf(x.p.n)?' · <span class="tag">edited</span>':"")+"</small></td><td><small>"+esc((p.s||[]).join(" · "))+"</small></td><td>"
+   +money("GH",pr.GH)+(pr.GH&&pr.NG?"<br>":"")+money("NG",pr.NG)+'</td><td class="act"><button class="b" data-e="'+esc(p.n)+'">Edit</button></td></tr>'});
+ $("etab").innerHTML=h;$("ecnt").textContent=n+" laptops"}
+function selOpts(i,cur){var G=LISTS["s"+i][1],seen=false,
+ h='<option value="">Choose…</option>'+Object.keys(G).map(function(k){var op=G[k].map(function(x){if(x===cur)seen=true;return"<option"+(x===cur?" selected":"")+">"+esc(x)+"</option>"}).join("");return k?'<optgroup label="'+k+'">'+op+"</optgroup>":op}).join("");
+ if(cur&&!seen)h+="<option selected>"+esc(cur)+"</option>";return h}
+function openEdit(k){var x=basePs().filter(function(y){return y.p.n===k})[0];if(!x)return;
+ var p=eff(x.p),pr=p.pr||{},s=p.s||[],u=p.u||[],conds=["New","Used","Refurbished"];EKEY=k;
+ if(conds.indexOf(p.c)<0)conds.push(p.c);
+ var h='<p><button class="b x" id="ecancel">← Back to list</button></p><h3 style="margin:6px 0 4px">'+esc(k)+'</h3><p class="mut" style="margin-top:0">The name cannot be changed here, because Jiji links and delists are tied to it. To rename, delist this one and add a new laptop.</p><div class="grid">'
+  +'<div><label>Condition</label><select id="ec">'+conds.map(function(o){return"<option"+(o===p.c?" selected":"")+">"+esc(o)+"</option>"}).join("")+"</select></div><div></div>";
+ for(var i=0;i<5;i++)h+='<div class="'+(i===4?"full":"")+'"><label>'+LISTS["s"+i][0]+'</label><select id="es'+i+'">'+selOpts(i,s[i])+"</select></div>";
+ h+='<div class="full"><label>Categories</label><div id="ecats">'+(typeof CATS!=="undefined"?CATS:[]).map(function(c){return'<label class="chip"><input type="checkbox" value="'+esc(c[1])+'"'+(u.indexOf(c[1])>-1?" checked":"")+">"+esc(c[1])+"</label>"}).join("")+"</div></div>"
+  +'<div><label>Ghana price (₵) <small>empty = not sold in Ghana</small></label><input id="epgh" type="number" inputmode="numeric" min="1" value="'+esc(pr.GH||"")+'"></div>'
+  +'<div><label>Nigeria price (₦) <small>empty = not sold in Nigeria</small></label><input id="epng" type="number" inputmode="numeric" min="1" value="'+esc(pr.NG||"")+'"></div>'
+  +'<div class="full"><label>Pros (one per line)</label><textarea id="epro" rows="5">'+esc((p.pro||[]).join("\n"))+'</textarea></div>'
+  +'<div class="full"><label>Cons (one per line)</label><textarea id="econ" rows="5">'+esc((p.con||[]).join("\n"))+"</textarea></div></div>"
+  +'<p><button class="b g" id="esave">Save changes</button> '+(editOf(k)?'<button class="b r" id="erevert">Revert to data.js</button> ':"")+'<button class="b x" id="ecancel2">Cancel</button></p>';
+ $("eform").innerHTML=h;$("elist").classList.add("hide");$("eform").classList.remove("hide");window.scrollTo(0,0)}
+function closeEdit(){EKEY=null;$("eform").classList.add("hide");$("eform").innerHTML="";$("elist").classList.remove("hide")}
+function same(f,a,b){if(f==="u"||f==="cn"){a=(a||[]).slice().sort();b=(b||[]).slice().sort()}return JSON.stringify(a)===JSON.stringify(b)}
+async function saveEdit(){
+ var x=basePs().filter(function(y){return y.p.n===EKEY})[0];if(!x)return;var b=x.p,btn=$("esave");
+ var s=[0,1,2,3,4].map(function(i){return $("es"+i).value});
+ if(s.some(function(v){return!v})){say("Choose all five specs");return}
+ var gh=Math.round(+$("epgh").value||0),ng=Math.round(+$("epng").value||0);
+ if(!gh&&!ng){say("Enter at least one price");return}
+ if(gh<0||ng<0||gh>999999999||ng>999999999){say("Check the prices");return}
+ var u=[].slice.call($("ecats").querySelectorAll("input:checked")).map(function(i){return i.value});
+ if(!u.length){say("Pick at least one category");return}
+ var lines=function(id){return $(id).value.split("\n").map(function(t){return t.trim()}).filter(Boolean)},pr={},cn=[];
+ if(gh){pr.GH=gh;cn.push("GH")}if(ng){pr.NG=ng;cn.push("NG")}
+ var want={c:$("ec").value,s:s,u:u,pr:pr,cn:cn,pro:lines("epro"),con:lines("econ")},patch={};
+ Object.keys(want).forEach(function(f){var bv=f==="cn"?(b.cn||["GH","NG"]):b[f];if(!same(f,bv,want[f]))patch[f]=want[f]});
+ if(patch.pr||patch.cn){patch.pr=pr;patch.cn=cn;if(b.est)patch.est=0}
+ btn.disabled=true;var r;
+ if(Object.keys(patch).length)r=await sb.from("edits").upsert({key:EKEY,data:patch,updated_at:new Date().toISOString()},{onConflict:"key"});
+ else r=await sb.from("edits").delete().eq("key",EKEY);
+ btn.disabled=false;
+ if(r.error){say(r.error.message);return}
+ say(Object.keys(patch).length?"Saved. Live on the site now.":"No changes from data.js");await load();closeEdit()}
+document.addEventListener("click",async function(e){var t=e.target;
+ if(t.dataset&&t.dataset.e){openEdit(t.dataset.e);return}
+ if(t.id==="ecancel"||t.id==="ecancel2"){closeEdit();return}
+ if(t.id==="esave"){saveEdit();return}
+ if(t.id==="erevert"){if(!confirm("Remove all edits for this laptop and go back to the data.js version?"))return;t.disabled=true;
+  var r=await sb.from("edits").delete().eq("key",EKEY);t.disabled=false;if(r.error){say(r.error.message);return}say("Reverted to data.js");await load();closeEdit()}});
+$("eq").oninput=drawEdit;
 $("q").oninput=draw;
 $("go").onclick=async function(){var r=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});if(r.error)say(r.error.message);else start()};
 $("pw").onkeydown=function(e){if(e.key==="Enter")$("go").click()};
