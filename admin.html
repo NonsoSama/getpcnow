@@ -33,13 +33,13 @@ td input{min-width:220px}
 #err{background:var(--offb);color:var(--offt);padding:10px 12px;border-radius:8px;margin-bottom:10px}
 td small{color:var(--mut)}
 </style></head><body><div class="w">
-<div id="login" class="card" style="max-width:340px;margin:60px auto;border-radius:12px"><div class="logo">get<b>pc</b>now<small>admin</small></div><p>
+<div id="login" class="card" style="max-width:340px;margin:60px auto;border-radius:12px"><div class="logo">get<b>pc</b>now<small>admin v3</small></div><p>
 <label>Email</label><input id="em" type="email" autocomplete="username"></p><p><label>Password</label><input id="pw" type="password" autocomplete="current-password"></p>
 <button class="b" id="go">Log in</button></div>
 
 <div id="main" class="hide">
-<div class="top"><div class="logo">get<b>pc</b>now<small>admin</small></div><span><span id="who" class="mut"></span> <button class="b x" id="out">Log out</button></span></div>
-<div id="err" class="hide"></div>
+<div class="top"><div class="logo">get<b>pc</b>now<small>admin v3</small></div><span><span id="who" class="mut"></span> <button class="b x" id="out">Log out</button></span></div>
+<div id="err" class="hide"></div><p class="mut" id="stat" style="margin:0 0 10px;font-size:13px"></p>
 <div class="tabs"><button data-t="lap" class="on">Laptops</button><button data-t="new">+ Add laptop</button><button data-t="add">Added by us</button><button data-t="off">Offers</button></div>
 <div class="card">
  <div id="t-lap"><p><input id="q" placeholder="Search laptops…"></p><p class="mut" id="cnt"></p><table id="lap"></table></div>
@@ -62,7 +62,8 @@ td small{color:var(--mut)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 var sb=supabase.createClient("https://bcfspmezuuanhmxndjsq.supabase.co","sb_publishable_pa3gHKvmKqW2Vb-kl_n61w_8Yvp5Ie2");
-var $=function(i){return document.getElementById(i)},DEL=[],ADD=[],LINKS=[];
+var $=function(i){return document.getElementById(i)},fail=function(m){var e=$("err");if(e){e.textContent="Problem: "+m;e.classList.remove("hide")}},
+DEL=[],ADD=[],LINKS=[];
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function say(t){var m=$("msg");m.textContent=t;m.style.display="block";clearTimeout(say.t);say.t=setTimeout(function(){m.style.display="none"},2800)}
 var DOM={GH:/^https:\/\/(www\.)?jiji\.com\.gh\//i,NG:/^https:\/\/(www\.)?jiji\.ng\//i};
@@ -92,10 +93,11 @@ function buildForm(){
    +(ex.length?'<optgroup label="Already on your site">'+ex.map(function(x){return"<option>"+esc(x)+"</option>"}).join("")+"</optgroup>":"")+'<option value="__o">Other (type it)…</option>';
   h+='<div class="'+(id==="s4"?"full":"")+'"><label>'+LISTS[id][0]+'</label><select id="'+id+'">'+o+'</select><input id="'+id+'o" class="hide" placeholder="Type it" style="margin-top:6px"></div>'});
  $("specs").innerHTML=h;
- $("cats").innerHTML=CATS.map(function(c){return'<label class="chip"><input type="checkbox" value="'+esc(c[1])+'">'+esc(c[1])+"</label>"}).join("");
+ $("cats").innerHTML=(typeof CATS!=="undefined"?CATS:[]).map(function(c){return'<label class="chip"><input type="checkbox" value="'+esc(c[1])+'">'+esc(c[1])+"</label>"}).join("");
  Object.keys(LISTS).forEach(function(id){$(id).onchange=function(){$(id+"o").classList.toggle("hide",this.value!=="__o")}})}
 function val(id){var s=$(id).value;return s==="__o"?$(id+"o").value.trim():s}
 
+window.addEventListener("error",function(e){fail(e.message+" (line "+e.lineno+")")});window.addEventListener("unhandledrejection",function(e){fail(String(e.reason&&e.reason.message||e.reason))});
 /* ---------- start / load ---------- */
 async function start(){
  var s=(await sb.auth.getSession()).data.session;
@@ -103,7 +105,7 @@ async function start(){
  var ok=(await sb.rpc("is_admin")).data;
  if(!ok){say("This account is not an admin.");await sb.auth.signOut();return}
  $("who").textContent=s.user.email;$("login").classList.add("hide");$("main").classList.remove("hide");
- if(!$("specs").innerHTML)buildForm();
+ try{if(!$("specs").innerHTML)buildForm()}catch(e){fail("form: "+e.message)}
  if(typeof P==="undefined"){$("err").textContent="Could not load /data.js, so the laptop list is empty. Put admin.html in the same folder as data.js.";$("err").classList.remove("hide")}
  draw();load()}
 async function load(){
@@ -115,7 +117,8 @@ async function load(){
  draw()}
 
 /* ---------- Laptops tab: every laptop in data.js, with its Jiji link and a Delist button ---------- */
-function draw(){
+function draw(){try{drawAll()}catch(e){fail("could not draw the list: "+e.message)}}
+function drawAll(){
  var q=$("q").value.toLowerCase(),h="<tr><th>Laptop</th><th>Price</th><th>Jiji link (what “Buy on Jiji” opens)</th><th></th></tr>",n=0;
  (typeof P!=="undefined"?P:[]).forEach(function(p){if(q&&p.n.toLowerCase().indexOf(q)<0)return;
   (p.cn||["GH","NG"]).forEach(function(c){n++;
@@ -131,6 +134,7 @@ function draw(){
  o.forEach(function(x){var off=!!drow(x.url,"ALL");
   h+='<tr class="'+(off?"dim":"")+'"><td>'+esc(x.n)+" <small>("+esc(x.c)+")</small></td><td>"+esc(x.now)+'</td><td class="act"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">Open on Jiji</a> <button class="b '+(off?"g":"r")+'" data-d="'+(off?"relist":"delist")+'" data-k="'+esc(x.url)+'" data-c="ALL">'+(off?"Relist":"Delist")+"</button></td></tr>"});
  $("off").innerHTML=o.length?h:"<tr><td>No offers right now.</td></tr>";
+ $("stat").textContent="data.js: "+(typeof P!=="undefined"?P.length+" laptops":"NOT LOADED")+" · database: "+DEL.length+" delisted, "+ADD.length+" added, "+LINKS.length+" links";
  h="<tr><th>Laptop</th><th>Prices</th><th>Email</th><th></th></tr>";
  ADD.forEach(function(a){var p=a.data,pr=p.pr||{};
   h+="<tr><td>"+esc(p.n)+"</td><td>"+(pr.GH?"GH₵"+pr.GH:"")+" "+(pr.NG?"₦"+pr.NG:"")+"</td><td>"+(a.notified_at?'<span class="tag">sent</span>':'<button class="b x" data-test="'+a.id+'">Send test to me</button> <button class="b" data-notify="'+a.id+'">Email ALL subscribers</button>')+'</td><td><button class="b r" data-rm="'+a.id+'">Remove</button></td></tr>'});
