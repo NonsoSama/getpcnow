@@ -316,9 +316,9 @@ document.addEventListener("click",async function(e){var t=e.target;
   if(del)DEL=DEL.concat(r.data);else DEL=DEL.filter(function(d){return!(d.key===k&&d.country===c)});
   say(del?"Delisted. Gone from the site.":"Relisted");draw();return}
  if(t.dataset.rm){if(!confirm("Remove this laptop from the site?"))return;var r2=await sb.from("added").delete().eq("id",t.dataset.rm);say(r2.error?r2.error.message:"Removed");await load();return}
- if(t.dataset.test){t.disabled=true;var ft=await sb.functions.invoke("notify",{body:{id:+t.dataset.test,test:true}});say(ft.error?"Failed: "+await fnMsg(ft.error):"Test email sent to you");t.disabled=false;return}
+ if(t.dataset.test){t.disabled=true;var ft=await sb.functions.invoke("notify",{body:{id:t.dataset.test,test:true}});say(ft.error?"Failed: "+await fnMsg(ft.error):"Test email sent to you");t.disabled=false;return}
  if(t.dataset.notify){if(!confirm("Email ALL subscribers about this laptop? This cannot be undone."))return;t.disabled=true;t.textContent="Sending…";
-  var f=await sb.functions.invoke("notify",{body:{id:+t.dataset.notify}});say(f.error?"Failed: "+await fnMsg(f.error):"Sent to "+f.data.sent+" subscribers");await load()}});
+  var f=await sb.functions.invoke("notify",{body:{id:t.dataset.notify}});say(f.error?"Failed: "+await fnMsg(f.error):"Sent to "+f.data.sent+" subscribers");await load()}});
 /* pasting a link into a row saves it as soon as you leave the box or press Enter; an empty box removes it */
 document.addEventListener("change",async function(e){var t=e.target;if(!t.dataset.li)return;
  var k=t.dataset.k,c=t.dataset.c,u=t.value.trim(),r;
