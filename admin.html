@@ -143,6 +143,16 @@ td.act .b+.b{margin-left:6px}
 #cnt,#ecnt{margin:0 0 6px;font-size:13px;font-weight:500}
 .panel h3{font-size:22px;letter-spacing:-.6px}
 
+/* blog editor */
+.tb{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}.tb button{padding:7px 11px}
+#pmd{font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:340px}
+.pv{border:1.5px dashed var(--line);border-radius:16px;padding:4px 18px 14px;background:var(--panel)}
+.pv h2{font-size:21px;margin:22px 0 8px;letter-spacing:-.5px}.pv h3{font-size:17px;margin:18px 0 6px}
+.pv p,.pv li{line-height:1.65}.pv ul,.pv ol{padding-left:22px}.pv .warn{margin:12px 0}
+.pv .btn{display:inline-block;padding:10px 16px;border-radius:12px;background:var(--ink);color:var(--panel);text-decoration:none;font-weight:700;margin:0 8px 8px 0}
+.pv code,p code{background:var(--soft2);padding:1px 6px;border-radius:6px}
+#pthumb{max-height:90px;border-radius:10px;margin-top:8px;display:block}
+
 /* toast */
 #msg{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--toastb);color:var(--toastt);padding:12px 20px;border-radius:14px;font-weight:700;font-size:14px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:none;z-index:20;max-width:90vw}
 
@@ -182,6 +192,7 @@ td.act .b+.b{margin-left:6px}
    <button data-t="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add laptop</span></button>
    <button data-t="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg><span>Added by us</span></button>
    <button data-t="off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><span>Offers</span></button>
+   <button data-t="blog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg><span>Blog</span></button>
   </div>
   <div class="spacer"></div>
   <button class="theme" id="themeBtn" type="button" aria-label="Switch light or dark"><span class="moon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="sun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span>Light / Dark</span></button>
@@ -221,6 +232,7 @@ td.act .b+.b{margin-left:6px}
    </div><p style="margin-bottom:0"><button class="b g" id="save">Add laptop</button></p></div>
    <div id="t-add" class="hide"><table id="added"></table></div>
    <div id="t-off" class="hide"><p class="mut" style="margin-top:0">Specific Jiji listings from data.js and the finder. Delist when the ad is sold.</p><table id="off"></table></div>
+   <div id="t-blog" class="hide"><div id="blist"><p style="margin-top:0"><button class="b g" id="bnew">+ New article</button></p><p class="mut" id="bcnt"></p><p class="mut" style="font-size:13px">Older articles written inside blog.js are not listed here. They keep showing on the site.</p><table id="btab"></table></div><div id="bform" class="hide"></div></div>
   </div>
  </div>
 </div>
@@ -230,7 +242,7 @@ td.act .b+.b{margin-left:6px}
 <script>
 var sb=supabase.createClient("https://bcfspmezuuanhmxndjsq.supabase.co","sb_publishable_pa3gHKvmKqW2Vb-kl_n61w_8Yvp5Ie2");
 var $=function(i){return document.getElementById(i)},fail=function(m){var e=$("err");if(e){e.textContent="Problem: "+m;e.classList.remove("hide")}},
-DEL=[],ADD=[],LINKS=[],EDITS=[];
+DEL=[],ADD=[],LINKS=[],EDITS=[],BP=[];
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function say(t){var m=$("msg");m.textContent=t;m.style.display="block";clearTimeout(say.t);say.t=setTimeout(function(){m.style.display="none"},2800)}
 var DOM={GH:/^https:\/\/(www\.)?jiji\.com\.gh\//i,NG:/^https:\/\/(www\.)?jiji\.ng\//i};
@@ -277,15 +289,15 @@ async function start(){
  if(typeof P==="undefined")$("pickbox").classList.remove("hide")
  draw();load()}
 async function load(){
- var R=await Promise.all([sb.from("delisted").select("*"),sb.from("added").select("*").order("created_at",{ascending:false}),sb.from("links").select("*"),sb.from("edits").select("*")]),bad=[];
- ["delisted","added","links","edits"].forEach(function(t,i){if(R[i].error)bad.push(t+": "+R[i].error.message+(R[i].error.code?" ["+R[i].error.code+"]":""))});
- DEL=R[0].data||[];ADD=R[1].data||[];LINKS=R[2].data||[];EDITS=R[3].data||[];
+ var R=await Promise.all([sb.from("delisted").select("*"),sb.from("added").select("*").order("created_at",{ascending:false}),sb.from("links").select("*"),sb.from("edits").select("*"),sb.from("posts").select("*").order("date",{ascending:false})]),bad=[];
+ ["delisted","added","links","edits","posts"].forEach(function(t,i){if(R[i].error)bad.push(t+": "+R[i].error.message+(R[i].error.code?" ["+R[i].error.code+"]":""))});
+ DEL=R[0].data||[];ADD=R[1].data||[];LINKS=R[2].data||[];EDITS=R[3].data||[];BP=R[4].data||[];
  $("err").classList.toggle("hide",!bad.length);
  if(bad.length)$("err").textContent="Database says: "+bad.join(" | ");
  draw()}
 
 /* ---------- Laptops tab: every laptop in data.js, with its Jiji link and a Delist button ---------- */
-function draw(){try{drawAll();drawEdit();setStats()}catch(e){fail("could not draw the list: "+e.message)}}
+function draw(){try{drawAll();drawEdit();drawBlog();setStats()}catch(e){fail("could not draw the list: "+e.message)}}
 function drawAll(){
  var q=$("q").value.toLowerCase(),h="<tr><th>Laptop</th><th>Price</th><th>Jiji link (what “Buy on Jiji” opens)</th><th></th></tr>",n=0;
  (typeof P!=="undefined"?P:[]).map(eff).forEach(function(p){if(q&&p.n.toLowerCase().indexOf(q)<0)return;
@@ -310,7 +322,7 @@ function drawAll(){
 
 document.addEventListener("click",async function(e){var t=e.target;
  if(t.dataset.t){document.querySelectorAll(".tabs button").forEach(function(b){b.classList.toggle("on",b===t)});
-  ["lap","edit","new","add","off"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});$("ptitle").textContent=PT[t.dataset.t][0];$("psub").textContent=PT[t.dataset.t][1];return}
+  ["lap","edit","new","add","off","blog"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});$("ptitle").textContent=PT[t.dataset.t][0];$("psub").textContent=PT[t.dataset.t][1];return}
  if(t.dataset.d){t.disabled=true;var k=t.dataset.k,c=t.dataset.c,del=t.dataset.d==="delist",r=del?await sb.from("delisted").insert({key:k,country:c}).select():await sb.from("delisted").delete().eq("key",k).eq("country",c);
   if(r.error){say(r.error.message);t.disabled=false;return}
   if(del)DEL=DEL.concat(r.data);else DEL=DEL.filter(function(d){return!(d.key===k&&d.country===c)});
@@ -390,7 +402,8 @@ var PT={lap:["Laptops","Delist a laptop, or paste the Jiji link its “Buy on Ji
  edit:["Edit listings","Change specs, prices, categories, pros and cons. Live on the site in seconds."],
  "new":["Add laptop","Add a new laptop. It appears on the site straight away."],
  add:["Added by us","Laptops added from this page. Send the email alert or remove them."],
- off:["Offers","Specific Jiji listings. Delist an offer when the ad is sold."]};
+ off:["Offers","Specific Jiji listings. Delist an offer when the ad is sold."],
+ blog:["Blog","Write and publish articles. They show on /blog straight away."]};
 function setStats(){var v={sl:typeof P!=="undefined"?P.length:"–",sd:DEL.length,sa:ADD.length,sk:LINKS.length,se:EDITS.length};
  Object.keys(v).forEach(function(k){var e=$(k);if(e)e.textContent=v[k]})}
 $("themeBtn").onclick=function(){var r=document.documentElement,n=r.getAttribute("data-theme")==="dark"?"light":"dark";r.setAttribute("data-theme",n);try{localStorage.setItem("gpn-admin-theme",n)}catch(e){}};
@@ -416,6 +429,101 @@ $("save").onclick=async function(){
  $("save").disabled=false;say(r.error?r.error.message:"Added. Live on the site now.");
  if(!r.error){document.querySelectorAll("#t-new input:not([type=checkbox]),#t-new textarea").forEach(function(i){i.value=""});document.querySelectorAll("#t-new select").forEach(function(i){if(i.id!=="c")i.selectedIndex=0});
   document.querySelectorAll("#cats input").forEach(function(i){i.checked=false});[].forEach.call(document.querySelectorAll("[id$=o].hide"),function(){});await load()}};
+/* ---------- Blog: write articles here instead of in blog.js. They are saved in the "posts" table and blog.js shows them on /blog ---------- */
+var PID=null,slugTouched=false;
+function slugify(s){return String(s).toLowerCase().replace(/&/g," and ").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,70).replace(/-+$/,"")}
+function inl(s){return esc(s).replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/|#)[^\s)]*)\)/g,'<a href="$2">$1</a>').replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>")}
+/* simple writing format -> the same HTML the old posts in blog.js use */
+function md(src){
+ var STOP=/^(#{1,3}\s|>|[-*]\s|\d+[.)]\s|\[\[)/,BTN=/^\[\[(.+?)\|(.+?)\]\]\s*$/;
+ function blocks(L){var o=[],i=0,m;
+  while(i<L.length){var l=L[i];
+   if(!l.trim()){i++;continue}
+   if(m=/^(#{1,3})\s+(.*)$/.exec(l)){var n=Math.max(2,m[1].length);o.push("<h"+n+">"+inl(m[2])+"</h"+n+">");i++;continue}
+   if(/^>/.test(l)){var q=[];while(i<L.length&&/^>/.test(L[i])){q.push(L[i].replace(/^>\s?/,""));i++}o.push('<div class="warn">'+blocks(q)+"</div>");continue}
+   if(/^[-*]\s+/.test(l)){var u=[];while(i<L.length&&/^[-*]\s+/.test(L[i])){u.push("<li>"+inl(L[i].replace(/^[-*]\s+/,""))+"</li>");i++}o.push("<ul>"+u.join("")+"</ul>");continue}
+   if(/^\d+[.)]\s+/.test(l)){var d=[];while(i<L.length&&/^\d+[.)]\s+/.test(L[i])){d.push("<li>"+inl(L[i].replace(/^\d+[.)]\s+/,""))+"</li>");i++}o.push("<ol>"+d.join("")+"</ol>");continue}
+   if(BTN.test(l)){var b=[];while(i<L.length&&(m=BTN.exec(L[i]))){var h=m[2].trim();b.push('<a class="btn dark" href="'+esc(/^(https?:\/\/|\/|#)/.test(h)?h:"#")+'">'+esc(m[1].trim())+"</a>");i++}o.push('<div class="osbtns">'+b.join("")+"</div>");continue}
+   var p=[l.trim()];i++;
+   while(i<L.length&&L[i].trim()&&!STOP.test(L[i])){p.push(L[i].trim());i++}
+   o.push("<p>"+inl(p.join(" "))+"</p>")}
+  return o.join("")}
+ return blocks(String(src||"").replace(/\r/g,"").split("\n"))}
+
+function drawBlog(){
+ var h="<tr><th>Article</th><th>Status</th><th></th></tr>";
+ BP.forEach(function(p){h+='<tr><td><b>'+esc(p.title)+"</b><br><small>"+esc(p.category||"")+" · "+esc(p.date)+" · /blog/"+esc(p.slug)+'</small></td><td>'+(p.published?'<span class="tag">Live</span>':'<span class="tag off">Draft</span>')+'</td><td class="act">'
+  +(p.published?'<a href="/blog/'+esc(p.slug)+'" target="_blank" rel="noopener">View</a> ':"")+'<button class="b" data-pe="'+esc(p.id)+'">Edit</button> <button class="b r" data-pd="'+esc(p.id)+'">Delete</button></td></tr>'});
+ $("btab").innerHTML=BP.length?h:"<tr><td>No articles written here yet. Press “New article”.</td></tr>";
+ $("bcnt").textContent=BP.length+(BP.length===1?" article":" articles")}
+function prev(){var t=$("pmd"),v=$("pprev");if(!t||!v)return;v.innerHTML=$("pfmt").checked?t.value:md(t.value)}
+function thumb(){var v=$("pi").value.trim(),i=$("pthumb");i.onerror=function(){i.classList.add("hide")};if(!v){i.classList.add("hide");return}i.src=/^(https?:|\/|data:)/.test(v)?v:"/"+v;i.classList.remove("hide")}
+function tool(k){var t=$("pmd");if(!t)return;var a=t.selectionStart,b=t.selectionEnd,v=t.value,sel=v.slice(a,b),pre={h2:"## ",h3:"### ",ul:"- ",ol:"1. ",note:"> "};
+ if(pre[k]){var s=a?v.lastIndexOf("\n",a-1)+1:0,blk=v.slice(s,b).split("\n").map(function(l){return pre[k]+l}).join("\n");t.value=v.slice(0,s)+blk+v.slice(b);t.focus();t.setSelectionRange(s,s+blk.length)}
+ else{var r=k==="bold"?"**"+(sel||"bold text")+"**":k==="link"?"["+(sel||"link text")+"](https://)":"[[Button text|/all]]";t.value=v.slice(0,a)+r+v.slice(b);t.focus();t.setSelectionRange(a,a+r.length)}
+ prev()}
+function openPost(id){
+ var r=id?BP.filter(function(x){return x.id===id})[0]:null,html=!!r&&!r.md,src=r?(r.md||r.body||""):"";PID=r?r.id:null;slugTouched=!!r;
+ var v=function(k,d){return esc(r&&r[k]!=null?r[k]:(d||""))},
+  TB=[["h2","Heading"],["h3","Subheading"],["bold","Bold"],["ul","Bullets"],["ol","Numbers"],["link","Link"],["note","Note box"],["btn","Button"]];
+ $("bform").innerHTML='<p><button class="b x" id="bcancel">← Back to articles</button></p><h3 style="margin:6px 0 4px">'+(r?"Edit article":"New article")+'</h3>'
+  +'<p class="mut" style="margin-top:0">Fill the boxes, write the article, press Save. It shows on /blog right away.</p><div class="grid">'
+  +'<div class="full"><label>Title</label><input id="pt" value="'+v("title")+'" placeholder="8GB or 16GB RAM? What you actually need"></div>'
+  +'<div><label>Web address <small>getpcnow.shop/blog/…'+(r?" (cannot change once saved)":"")+'</small></label><input id="ps" value="'+v("slug")+'"'+(r?" readonly":"")+'></div>'
+  +'<div><label>Date</label><input id="pdt" type="date" value="'+v("date",new Date().toISOString().slice(0,10))+'"></div>'
+  +'<div><label>Category</label><input id="pc" list="pcats" value="'+v("category","Guides")+'"><datalist id="pcats"><option value="Guides"><option value="Tips"><option value="Advice"></datalist></div><div></div>'
+  +'<div class="full"><label>Short description <small>shown on the blog cards</small></label><textarea id="pe" rows="2">'+v("excerpt")+'</textarea></div>'
+  +'<div class="full"><label>Summary <small>shown under the image inside the article</small></label><textarea id="psum" rows="2">'+v("summary")+'</textarea></div>'
+  +'<div class="full"><label>Headline image</label><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="pi" style="flex:1;min-width:220px" value="'+v("img")+'" placeholder="Upload one, or paste a link"><button class="b x" id="pup" type="button">Upload image</button><input id="pfile" type="file" accept="image/*" class="hide"></div><img id="pthumb" class="hide" alt=""></div>'
+  +'<div class="full"><label>Photo caption <small>optional</small></label><input id="pcap" value="'+v("caption")+'"></div>'
+  +'<div><label>Button under the article: text <small>optional</small></label><input id="pct" value="'+v("cta_text")+'" placeholder="Browse all laptops"></div>'
+  +'<div><label>Button link</label><input id="pch" value="'+v("cta_href")+'" placeholder="/all"></div>'
+  +'<div class="full"><label>Article</label><div id="ptb" class="tb'+(html?" hide":"")+'">'+TB.map(function(x){return'<button type="button" class="b x" data-tool="'+x[0]+'">'+x[1]+"</button>"}).join("")+'</div>'
+  +'<textarea id="pmd" rows="16">'+esc(src)+'</textarea>'
+  +'<p class="mut" style="font-size:13px;margin:8px 0">Blank line = new paragraph. <code>## Heading</code> · <code>### Subheading</code> · <code>- bullet</code> · <code>1. numbered</code> · <code>**bold**</code> · <code>[text](link)</code> · <code>&gt; note box</code> · <code>[[Button text|/all]]</code></p>'
+  +'<label class="chip"><input type="checkbox" id="pfmt"'+(html?" checked":"")+'> Write in HTML instead (advanced)</label>'
+  +'<label style="margin-top:14px">Preview <small>close to how it looks on the site</small></label><div class="pv"><div id="pprev"></div></div></div></div>'
+  +'<p style="margin-bottom:0"><button class="b g" id="bsave">Save article</button> <label class="chip" style="margin:0 8px"><input type="checkbox" id="ppub"'+(!r||r.published?" checked":"")+'> Published on the site</label> '+(r?'<button class="b r" data-pd="'+esc(r.id)+'">Delete</button> ':"")+'<button class="b x" id="bcancel2">Cancel</button></p>';
+ $("blist").classList.add("hide");$("bform").classList.remove("hide");prev();thumb();window.scrollTo(0,0)}
+function closePost(){PID=null;$("bform").classList.add("hide");$("bform").innerHTML="";$("blist").classList.remove("hide")}
+async function savePost(){
+ var g=function(i){return $(i).value.trim()},title=g("pt"),slug=g("ps"),html=$("pfmt").checked,src=$("pmd").value,ct=g("pct"),ch=g("pch"),btn=$("bsave");
+ if(!title){say("Add a title");return}
+ if(!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)||slug.length>80){say("Web address: lowercase letters, numbers and dashes only, up to 80 characters");return}
+ if(!src.trim()){say("The article is empty");return}
+ if((ct&&!ch)||(!ct&&ch)){say("Button under the article: fill in both the text and the link, or leave both empty");return}
+ if(ch&&!/^(https?:\/\/|\/)/.test(ch)){say("Button link must start with / or https://");return}
+ var row={slug:slug,title:title,category:g("pc")||"Guides",excerpt:g("pe"),summary:g("psum"),img:g("pi"),caption:g("pcap"),cta_text:ct||null,cta_href:ch||null,md:html?null:src,body:html?src:md(src),date:$("pdt").value||new Date().toISOString().slice(0,10),published:$("ppub").checked,updated_at:new Date().toISOString()};
+ btn.disabled=true;
+ var r=PID?await sb.from("posts").update(row).eq("id",PID):await sb.from("posts").insert(row);
+ btn.disabled=false;
+ if(r.error){say(r.error.code==="23505"?"That web address is already used by another article":r.error.message);return}
+ say(row.published?"Saved. Live on the site now.":"Saved as a draft");await load();closePost()}
+/* headline image: shrunk to 1400px wide JPEG in the browser (small and fast on mobile data), then stored in Supabase Storage bucket "blog" */
+async function upImg(f){
+ var im=await new Promise(function(ok,no){var i=new Image();i.onload=function(){ok(i)};i.onerror=function(){no(new Error("could not read that image"))};i.src=URL.createObjectURL(f)}),
+  w=Math.min(1400,im.naturalWidth),h=Math.round(im.naturalHeight*w/im.naturalWidth),c=document.createElement("canvas");c.width=w;c.height=h;
+ var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+ var blob=await new Promise(function(ok){c.toBlob(ok,"image/jpeg",.85)}),name="posts/"+Date.now()+".jpg",r=await sb.storage.from("blog").upload(name,blob,{contentType:"image/jpeg",cacheControl:"31536000"});
+ if(r.error)throw r.error;return sb.storage.from("blog").getPublicUrl(name).data.publicUrl}
+document.addEventListener("click",async function(e){var t=e.target;if(!t||!t.dataset)return;
+ if(t.id==="bnew"){openPost(null);return}
+ if(t.dataset.pe){openPost(t.dataset.pe);return}
+ if(t.id==="bcancel"||t.id==="bcancel2"){closePost();return}
+ if(t.id==="bsave"){savePost();return}
+ if(t.id==="pup"){$("pfile").click();return}
+ if(t.dataset.tool){tool(t.dataset.tool);return}
+ if(t.dataset.pd){if(!confirm("Delete this article from the site? This cannot be undone."))return;var r=await sb.from("posts").delete().eq("id",t.dataset.pd);say(r.error?r.error.message:"Deleted");await load();closePost()}});
+document.addEventListener("input",function(e){var t=e.target;
+ if(t.id==="pmd")prev();else if(t.id==="pt"&&!slugTouched)$("ps").value=slugify(t.value);else if(t.id==="ps")slugTouched=true;else if(t.id==="pi")thumb()});
+document.addEventListener("change",async function(e){var t=e.target;
+ if(t.id==="pfmt"){var m=$("pmd");
+  if(t.checked)m.value=md(m.value).replace(/(<\/(?:p|h2|h3|ul|ol|div)>)/g,"$1\n");
+  else{if(m.value.trim()&&!confirm("Simple mode cannot read HTML, so the article box will be cleared. Continue?")){t.checked=true;return}m.value=""}
+  $("ptb").classList.toggle("hide",t.checked);prev();return}
+ if(t.id==="pfile"){var f=t.files[0];if(!f)return;say("Uploading…");
+  try{$("pi").value=await upImg(f);thumb();say("Image uploaded")}catch(x){say("Upload failed: "+(x.message||x))}t.value=""}});
+
 /* find data.js: try next to this page, then the site root. Works on the live site and when this file is opened from a folder. */
 function loadJs(srcs,ok,done){var i=0;(function next(){if(ok())return done(true);if(i>=srcs.length)return done(false);var s=document.createElement("script");s.src=srcs[i++]+"?t="+Date.now();s.onload=next;s.onerror=next;document.head.appendChild(s)})()}
 function boot(){loadJs(["data.js","/data.js"],function(){return typeof P!=="undefined"},function(got){
