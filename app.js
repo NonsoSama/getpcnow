@@ -20,7 +20,9 @@ var $=function(i){return document.getElementById(i)};
 /* Hover note on every Buy on Jiji button (Ghana and Nigeria). Change the words here. */
 var BUYTIP="Confirm the specs on the listing from the seller before you pay.";
 /* Phones and tablets cannot hover, so they get the same words as a small line under the buttons (hidden where hover works). */
-function buyNote(p){return here(p)?'<p class="buynote">'+BUYTIP+'</p>':""}
+/* soldUI(p) draws the "Sold out?" button and the "Reported sold by visitors" label under the Buy buttons. It does nothing here; live.js fills it in when a listing has a 14-day timer. */
+function soldUI(p){return""}
+function buyNote(p){return here(p)?'<p class="buynote">'+BUYTIP+'</p>'+soldUI(p):""}
 (function(){
  function init(){
   var sty=document.createElement("style");

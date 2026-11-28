@@ -192,6 +192,7 @@ td.act .b+.b{margin-left:6px}
    <button data-t="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add laptop</span></button>
    <button data-t="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg><span>Added by us</span></button>
    <button data-t="off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><span>Offers</span></button>
+   <button data-t="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Needs check</span><span class="tag off hide" id="chkn" style="margin-left:auto"></span></button>
    <button data-t="blog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg><span>Blog</span></button>
   </div>
   <div class="spacer"></div>
@@ -206,7 +207,7 @@ td.act .b+.b{margin-left:6px}
    <a class="go" href="/" target="_blank" rel="noopener">View site <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
   </div>
   <div class="stats">
-   <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg></i><div><b id="sl">–</b><span>Laptops in data.js</span></div></div>
+   <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg></i><div><b id="sl">–</b><span>Laptops on the site</span></div></div>
    <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></i><div><b id="sd">–</b><span>Delisted</span></div></div>
    <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></i><div><b id="sa">–</b><span>Added by us</span></div></div>
    <div class="st"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></i><div><b id="sk">–</b><span>Custom links</span></div></div>
@@ -214,11 +215,11 @@ td.act .b+.b{margin-left:6px}
   </div>
   <p class="sr" id="stat"></p>
   <div id="err" class="hide"></div>
-  <p id="pickbox" class="warn hide">Could not find data.js next to this page or at /data.js. Open this page from your live site (https://getpcnow.shop/admin.html), or choose the file here: <input type="file" id="pick" accept=".js"></p>
+  <p id="pickbox" class="warn hide">Could not load the laptop list. Open this page from your live site, or choose the list file here: <input type="file" id="pick" accept=".js"></p>
 
   <div class="panel">
    <div id="t-lap"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" placeholder="Search laptops…"></div><p class="mut" id="cnt"></p><table id="lap"></table></div>
-   <div id="t-edit" class="hide"><div id="elist"><p class="mut" style="margin-top:0">Change a laptop's condition, specs, categories, prices, pros and cons. It saves to the database and shows on the site right away. data.js is never changed, and “Revert” brings back the data.js version.</p><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="eq" placeholder="Search laptops…"></div><p class="mut" id="ecnt"></p><table id="etab"></table></div><div id="eform" class="hide"></div></div>
+   <div id="t-edit" class="hide"><div id="elist"><p class="mut" style="margin-top:0">Change a laptop's condition, specs, categories, prices, pros and cons. It saves to the database and shows on the site right away. The original listing is never changed, and “Revert” brings it back.</p><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="eq" placeholder="Search laptops…"></div><p class="mut" id="ecnt"></p><table id="etab"></table></div><div id="eform" class="hide"></div></div>
    <div id="t-new" class="hide"><div class="grid">
     <div><label>Name</label><input id="n" placeholder="HP EliteBook 840 G8"></div>
     <div><label>Condition</label><select id="c"><option>Used</option><option>New</option><option>Refurbished</option></select></div>
@@ -231,8 +232,9 @@ td.act .b+.b{margin-left:6px}
     <div class="full"><label>Cons (one per line, 4 to 5)</label><textarea id="con" rows="4"></textarea></div>
    </div><p style="margin-bottom:0"><button class="b g" id="save">Add laptop</button></p></div>
    <div id="t-add" class="hide"><table id="added"></table></div>
-   <div id="t-off" class="hide"><p class="mut" style="margin-top:0">Specific Jiji listings from data.js and the finder. Delist when the ad is sold.</p><table id="off"></table></div>
-   <div id="t-blog" class="hide"><div id="blist"><p style="margin-top:0"><button class="b g" id="bnew">+ New article</button></p><p class="mut" id="bcnt"></p><p class="mut" style="font-size:13px">Older articles written inside blog.js are not listed here. They keep showing on the site.</p><table id="btab"></table></div><div id="bform" class="hide"></div></div>
+   <div id="t-off" class="hide"><p class="mut" style="margin-top:0">Specific Jiji listings. Delist when the ad is sold.</p><table id="off"></table></div>
+   <div id="t-chk" class="hide"><p class="mut" id="chkmsg" style="margin-top:0"></p><table id="chk"></table></div>
+   <div id="t-blog" class="hide"><div id="blist"><p style="margin-top:0"><button class="b g" id="bnew">+ New article</button></p><p class="mut" id="bcnt"></p><p class="mut" style="font-size:13px">Older articles are not listed here. They keep showing on the site.</p><table id="btab"></table></div><div id="bform" class="hide"></div></div>
   </div>
  </div>
 </div>
@@ -242,7 +244,7 @@ td.act .b+.b{margin-left:6px}
 <script>
 var sb=supabase.createClient("https://bcfspmezuuanhmxndjsq.supabase.co","sb_publishable_pa3gHKvmKqW2Vb-kl_n61w_8Yvp5Ie2");
 var $=function(i){return document.getElementById(i)},fail=function(m){var e=$("err");if(e){e.textContent="Problem: "+m;e.classList.remove("hide")}},
-DEL=[],ADD=[],LINKS=[],EDITS=[],BP=[];
+DEL=[],ADD=[],LINKS=[],EDITS=[],BP=[],CHK=[],REP=[],CHKOK=true;
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function say(t){var m=$("msg");m.textContent=t;m.style.display="block";clearTimeout(say.t);say.t=setTimeout(function(){m.style.display="none"},2800)}
 var DOM={GH:/^https:\/\/(www\.)?jiji\.com\.gh\//i,NG:/^https:\/\/(www\.)?jiji\.ng\//i};
@@ -289,24 +291,24 @@ async function start(){
  if(typeof P==="undefined")$("pickbox").classList.remove("hide")
  draw();load()}
 async function load(){
- var R=await Promise.all([sb.from("delisted").select("*"),sb.from("added").select("*").order("created_at",{ascending:false}),sb.from("links").select("*"),sb.from("edits").select("*"),sb.from("posts").select("*").order("date",{ascending:false})]),bad=[];
+ var R=await Promise.all([sb.from("delisted").select("*"),sb.from("added").select("*").order("created_at",{ascending:false}),sb.from("links").select("*"),sb.from("edits").select("*"),sb.from("posts").select("*").order("date",{ascending:false}),sb.from("checks").select("*"),sb.from("reports").select("*")]),bad=[];
  ["delisted","added","links","edits","posts"].forEach(function(t,i){if(R[i].error)bad.push(t+": "+R[i].error.message+(R[i].error.code?" ["+R[i].error.code+"]":""))});
- DEL=R[0].data||[];ADD=R[1].data||[];LINKS=R[2].data||[];EDITS=R[3].data||[];BP=R[4].data||[];
+ DEL=R[0].data||[];ADD=R[1].data||[];LINKS=R[2].data||[];EDITS=R[3].data||[];BP=R[4].data||[];CHKOK=!R[5].error&&!R[6].error;CHK=R[5].data||[];REP=R[6].data||[];
  $("err").classList.toggle("hide",!bad.length);
  if(bad.length)$("err").textContent="Database says: "+bad.join(" | ");
- draw()}
+ await seedChecks();draw()}
 
-/* ---------- Laptops tab: every laptop in data.js, with its Jiji link and a Delist button ---------- */
-function draw(){try{drawAll();drawEdit();drawBlog();setStats()}catch(e){fail("could not draw the list: "+e.message)}}
+/* ---------- Laptops tab: every laptop, with its Jiji link and a Delist button ---------- */
+function draw(){try{drawAll();drawEdit();drawChk();drawBlog();setStats()}catch(e){fail("could not draw the list: "+e.message)}}
 function drawAll(){
  var q=$("q").value.toLowerCase(),h="<tr><th>Laptop</th><th>Price</th><th>Jiji link (what “Buy on Jiji” opens)</th><th></th></tr>",n=0;
  (typeof P!=="undefined"?P:[]).map(eff).forEach(function(p){if(q&&p.n.toLowerCase().indexOf(q)<0)return;
   (p.cn||["GH","NG"]).forEach(function(c){n++;
-   var off=isDel(p.n,c),l=linkOf(p.n,c),base=p.url&&p.url.Jiji&&DOM[c].test(p.url.Jiji)?p.url.Jiji:"",v=l?l.url:base,pr=p.pr&&p.pr[c];
+   var off=isDel(p.n,c),l=linkOf(p.n,c),base=p.url&&p.url.Jiji&&DOM[c].test(p.url.Jiji)?p.url.Jiji:"",v=l?l.url:base,pr=p.pr&&p.pr[c],ci=chkInfo(p,c);
    h+='<tr class="'+(off?"dim":"")+'"><td><b>'+esc(p.n)+"</b><br><small>"+esc(p.c)+" · "+(c==="GH"?"Ghana":"Nigeria")+(off?' · <span class="tag off">delisted</span>':"")+"</small></td>"
     +"<td>"+(pr?(c==="GH"?"GH₵":"₦")+Number(pr).toLocaleString():"")+"</td>"
     +'<td><input data-li="1" data-k="'+esc(p.n)+'" data-c="'+c+'" value="'+esc(v)+'" placeholder="Paste Jiji link, saves automatically">'
-    +(v?'<small><a href="'+esc(v)+'" target="_blank" rel="noopener">Test link</a> '+(l?"· custom":"· from data.js")+"</small>":"<small>No link: the button opens a Jiji search</small>")+"</td>"
+    +(v?'<small><a href="'+esc(v)+'" target="_blank" rel="noopener">Test link</a> '+(l?"· custom":"· original")+(ci?" · "+Math.floor(ci.age)+" of "+HIDE_D+" days":"")+"</small>":"<small>No link: the button opens a Jiji search</small>")+"</td>"
     +'<td class="act"><button class="b '+(off?"g":"r")+'" data-d="'+(off?"relist":"delist")+'" data-k="'+esc(p.n)+'" data-c="'+c+'">'+(off?"Relist":"Delist")+"</button></td></tr>"})});
  $("lap").innerHTML=h;$("cnt").textContent=n+" listings";
  var o=(typeof OFFERS!=="undefined"?OFFERS:[]).concat(typeof AUTO!=="undefined"?AUTO:[]).filter(function(x){return x.src!=="Jumia"});
@@ -314,7 +316,7 @@ function drawAll(){
  o.forEach(function(x){var off=!!drow(x.url,"ALL");
   h+='<tr class="'+(off?"dim":"")+'"><td>'+esc(x.n)+" <small>("+esc(x.c)+")</small></td><td>"+esc(x.now)+'</td><td class="act"><a href="'+esc(x.url)+'" target="_blank" rel="noopener">Open on Jiji</a> <button class="b '+(off?"g":"r")+'" data-d="'+(off?"relist":"delist")+'" data-k="'+esc(x.url)+'" data-c="ALL">'+(off?"Relist":"Delist")+"</button></td></tr>"});
  $("off").innerHTML=o.length?h:"<tr><td>No offers right now.</td></tr>";
- $("stat").textContent="data.js: "+(typeof P!=="undefined"?P.length+" laptops":"NOT LOADED")+" · database: "+DEL.length+" delisted, "+ADD.length+" added, "+LINKS.length+" links, "+EDITS.length+" edited";
+ $("stat").textContent="site: "+(typeof P!=="undefined"?P.length+" laptops":"NOT LOADED")+" · database: "+DEL.length+" delisted, "+ADD.length+" added, "+LINKS.length+" links, "+EDITS.length+" edited";
  h="<tr><th>Laptop</th><th>Prices</th><th>Email</th><th></th></tr>";
  ADD.forEach(function(a){var p=a.data,pr=p.pr||{};
   h+="<tr><td>"+esc(p.n)+"</td><td>"+(pr.GH?"GH₵"+pr.GH:"")+" "+(pr.NG?"₦"+pr.NG:"")+"</td><td>"+(a.notified_at?'<span class="tag">sent</span>':'<button class="b x" data-test="'+a.id+'">Send test to me</button> <button class="b" data-notify="'+a.id+'">Email ALL subscribers</button>')+'</td><td><button class="b r" data-rm="'+a.id+'">Remove</button></td></tr>'});
@@ -322,10 +324,12 @@ function drawAll(){
 
 document.addEventListener("click",async function(e){var t=e.target;
  if(t.dataset.t){document.querySelectorAll(".tabs button").forEach(function(b){b.classList.toggle("on",b===t)});
-  ["lap","edit","new","add","off","blog"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});$("ptitle").textContent=PT[t.dataset.t][0];$("psub").textContent=PT[t.dataset.t][1];return}
+  ["lap","edit","new","add","off","chk","blog"].forEach(function(k){$("t-"+k).classList.toggle("hide",k!==t.dataset.t)});$("ptitle").textContent=PT[t.dataset.t][0];$("psub").textContent=PT[t.dataset.t][1];return}
+ if(t.dataset.keep){t.disabled=true;await startClock(t.dataset.k,t.dataset.c);say("Kept live. The 14 days start again.");draw();return}
  if(t.dataset.d){t.disabled=true;var k=t.dataset.k,c=t.dataset.c,del=t.dataset.d==="delist",r=del?await sb.from("delisted").insert({key:k,country:c}).select():await sb.from("delisted").delete().eq("key",k).eq("country",c);
   if(r.error){say(r.error.message);t.disabled=false;return}
   if(del)DEL=DEL.concat(r.data);else DEL=DEL.filter(function(d){return!(d.key===k&&d.country===c)});
+  if(!del&&c!=="ALL")await startClock(k,c);
   say(del?"Delisted. Gone from the site.":"Relisted");draw();return}
  if(t.dataset.rm){if(!confirm("Remove this laptop from the site?"))return;var r2=await sb.from("added").delete().eq("id",t.dataset.rm);say(r2.error?r2.error.message:"Removed");await load();return}
  if(t.dataset.test){t.disabled=true;var ft=await sb.functions.invoke("notify",{body:{id:t.dataset.test,test:true}});say(ft.error?"Failed: "+await fnMsg(ft.error):"Test email sent to you");t.disabled=false;return}
@@ -337,13 +341,61 @@ document.addEventListener("change",async function(e){var t=e.target;if(!t.datase
  if(!u){r=await sb.from("links").delete().eq("key",k).eq("country",c);if(!r.error)LINKS=LINKS.filter(function(l){return!(l.key===k&&l.country===c)})}
  else{if(!DOM[c].test(u)){say("Link must start with https://"+(c==="GH"?"jiji.com.gh/":"jiji.ng/"));return}
   r=await sb.from("links").upsert({key:k,country:c,url:u},{onConflict:"key,country"}).select();if(!r.error)LINKS=LINKS.filter(function(l){return!(l.key===k&&l.country===c)}).concat(r.data)}
- say(r.error?r.error.message:(u?"Link saved. Live now.":"Link removed"));if(!r.error)draw()});
+ if(!r.error)await startClock(k,c);
+ say(r.error?r.error.message:(u?"Link saved. Live now. The 14 days start again.":"Link removed"));if(!r.error)draw()});
 
-/* ---------- Edit listings: changes are saved as small "patches" in the edits table; live.js lays them over data.js ---------- */
+/* ---------- 14-day timer: the "Needs check" tab ----------
+   Every listing with a specific Jiji ad link (ends in .html) has a start date in the "checks" table.
+   Day 12: it appears in Needs check. Day 14, or REPORT_HIDE visitors pressing "Sold out?": the site hides that ad (live.js does this).
+   Keep NEED_D, HIDE_D and REPORT_HIDE the same as HIDE and REPORT_HIDE in live.js. Run timers.sql once so the tables exist. */
+var NEED_D=12,HIDE_D=14,REPORT_HIDE=3;
+function ts(v){return Date.parse(String(v).replace(/(\.\d{3})\d+/,"$1"))}
+function isAd(u){return/\.html(\?.*)?$/i.test(u||"")}
+function eurl(p,c){var l=linkOf(p.n,c);if(l)return l.url;var b=p.url&&p.url.Jiji;return b&&DOM[c].test(b)?b:""}
+function chkOf(k,c){return CHK.filter(function(r){return r.key===k&&r.country===c})[0]}
+function repN(k,c,u,t){var seen={},n=0;REP.forEach(function(r){if(r.key===k&&r.country===c&&r.url===u&&ts(r.created_at)>t&&!seen[r.visitor]){seen[r.visitor]=1;n++}});return n}
+function chkInfo(p,c){var u=eurl(p,c);if(!isAd(u))return null;var k=chkOf(p.n,c);if(!k||k.url!==u)return null;var t=ts(k.checked_at);if(isNaN(t))return null;
+ var age=(Date.now()-t)/864e5,n=repN(p.n,c,u,t),gone=age>=HIDE_D||(REPORT_HIDE>0&&n>=REPORT_HIDE);
+ return{u:u,age:age,n:n,gone:gone,why:age>=HIDE_D?HIDE_D+" days passed":n+" visitors reported it sold",due:gone||age>=NEED_D||n>0}}
+/* start (or restart) the 14 days for one listing: used by Keep live, Relist, pasting a new link. A link that is not a specific ad has no timer. */
+async function startClock(k,c){if(!CHKOK)return;
+ var x=basePs().filter(function(y){return y.p.n===k})[0],u=x?eurl(x.p,c):"",r;
+ if(!isAd(u)){r=await sb.from("checks").delete().eq("key",k).eq("country",c);if(!r.error)CHK=CHK.filter(function(z){return!(z.key===k&&z.country===c)})}
+ else{r=await sb.from("checks").upsert({key:k,country:c,url:u,checked_at:new Date().toISOString()},{onConflict:"key,country"}).select();
+  if(!r.error)CHK=CHK.filter(function(z){return!(z.key===k&&z.country===c)}).concat(r.data)}
+ if(r.error)say("Timer: "+r.error.message)}
+/* Runs on every load. A listing with no timer yet gets a random start day within the last 12 days, so the first batch does not all come due together.
+   A listing whose link changed is a new ad, so its clock starts now. */
+async function seedChecks(){if(!CHKOK||seedChecks.busy)return;seedChecks.busy=true;
+ try{var rows=[],now=Date.now();
+  basePs().forEach(function(x){var p=eff(x.p);(p.cn||["GH","NG"]).forEach(function(c){
+   if(isDel(p.n,c))return;var u=eurl(p,c);if(!isAd(u))return;var k=chkOf(p.n,c);if(k&&k.url===u)return;
+   rows.push({key:p.n,country:c,url:u,checked_at:new Date(k?now:now-Math.random()*NEED_D*864e5).toISOString()})})});
+  if(!rows.length)return;
+  var r=await sb.from("checks").upsert(rows,{onConflict:"key,country"}).select();
+  if(r.error){say("Timer setup: "+r.error.message);return}
+  CHK=CHK.filter(function(z){return!rows.some(function(w){return w.key===z.key&&w.country===z.country})}).concat(r.data)}
+ finally{seedChecks.busy=false}}
+function drawChk(){var box=$("chk"),msg=$("chkmsg"),nb=$("chkn");
+ if(!CHKOK){msg.innerHTML="Timers are not set up yet. Run <b>timers.sql</b> once in the Supabase SQL editor, then reload this page.";box.innerHTML="";nb.classList.add("hide");return}
+ var rows=[];
+ basePs().forEach(function(x){var p=eff(x.p);(p.cn||["GH","NG"]).forEach(function(c){if(isDel(p.n,c))return;var i=chkInfo(p,c);if(i&&i.due)rows.push({p:p,c:c,i:i})})});
+ rows.sort(function(a,b){return(b.i.gone-a.i.gone)||(b.i.age-a.i.age)});
+ nb.textContent=rows.length;nb.classList.toggle("hide",!rows.length);
+ msg.textContent=CHK.length+" listings have a timer. A listing shows here from day "+NEED_D+", and the site hides it at day "+HIDE_D+" or when "+REPORT_HIDE+" different visitors report it sold. Keep live restarts the "+HIDE_D+" days and clears the reports.";
+ var h="<tr><th>Laptop</th><th>Status</th><th>Link</th><th></th></tr>";
+ rows.forEach(function(r){var p=r.p,c=r.c,i=r.i;
+  h+="<tr><td><b>"+esc(p.n)+"</b><br><small>"+esc(p.c)+" · "+(c==="GH"?"Ghana":"Nigeria")+"</small></td>"
+   +"<td>"+(i.gone?'<span class="tag off">Hidden on the site</span><br><small>'+esc(i.why)+"</small>":'<span class="tag" style="background:var(--warnb);color:var(--warnt)">Needs check</span><br><small>'+Math.floor(i.age)+" days old"+(i.n?" · "+i.n+" reported sold":"")+"</small>")+"</td>"
+   +'<td><a href="'+esc(i.u)+'" target="_blank" rel="noopener">Open on Jiji</a></td>'
+   +'<td class="act"><button class="b g" data-keep="1" data-k="'+esc(p.n)+'" data-c="'+c+'">Keep live</button><button class="b r" data-d="delist" data-k="'+esc(p.n)+'" data-c="'+c+'">Delist</button></td></tr>'});
+ box.innerHTML=rows.length?h:"<tr><td>Nothing needs a check right now.</td></tr>"}
+
+/* ---------- Edit listings: changes are saved as small "patches" in the edits table; live.js lays them over the original listing ---------- */
 var EKEY=null;
 function editOf(k){return EDITS.filter(function(e){return e.key===k})[0]}
 function eff(p){var e=editOf(p.n),o={},k;for(k in p)o[k]=p[k];if(e&&e.data)for(k in e.data)o[k]=e.data[k];return o}
-function basePs(){var seen={},out=[];(typeof P!=="undefined"?P:[]).forEach(function(p){out.push({p:p,src:"data.js"});seen[p.n]=1});
+function basePs(){var seen={},out=[];(typeof P!=="undefined"?P:[]).forEach(function(p){out.push({p:p,src:"main list"});seen[p.n]=1});
  ADD.forEach(function(a){if(a.data&&a.data.n&&!seen[a.data.n]){out.push({p:a.data,src:"added by us"});seen[a.data.n]=1}});return out}
 function money(c,v){return v?(c==="GH"?"GH₵":"₦")+Number(v).toLocaleString():""}
 function drawEdit(){var q=$("eq").value.toLowerCase(),n=0,h="<tr><th>Laptop</th><th>Specs</th><th>Prices</th><th></th></tr>";
@@ -365,7 +417,7 @@ function openEdit(k){var x=basePs().filter(function(y){return y.p.n===k})[0];if(
   +'<div><label>Nigeria price (₦) <small>empty = not sold in Nigeria</small></label><input id="epng" type="number" inputmode="numeric" min="1" value="'+esc(pr.NG||"")+'"></div>'
   +'<div class="full"><label>Pros (one per line)</label><textarea id="epro" rows="5">'+esc((p.pro||[]).join("\n"))+'</textarea></div>'
   +'<div class="full"><label>Cons (one per line)</label><textarea id="econ" rows="5">'+esc((p.con||[]).join("\n"))+"</textarea></div></div>"
-  +'<p><button class="b g" id="esave">Save changes</button> '+(editOf(k)?'<button class="b r" id="erevert">Revert to data.js</button> ':"")+'<button class="b x" id="ecancel2">Cancel</button></p>';
+  +'<p><button class="b g" id="esave">Save changes</button> '+(editOf(k)?'<button class="b r" id="erevert">Revert to original</button> ':"")+'<button class="b x" id="ecancel2">Cancel</button></p>';
  $("eform").innerHTML=h;$("elist").classList.add("hide");$("eform").classList.remove("hide");window.scrollTo(0,0)}
 function closeEdit(){EKEY=null;$("eform").classList.add("hide");$("eform").innerHTML="";$("elist").classList.remove("hide")}
 function same(f,a,b){if(f==="u"||f==="cn"){a=(a||[]).slice().sort();b=(b||[]).slice().sort()}return JSON.stringify(a)===JSON.stringify(b)}
@@ -388,13 +440,13 @@ async function saveEdit(){
  else r=await sb.from("edits").delete().eq("key",EKEY);
  btn.disabled=false;
  if(r.error){say(r.error.message);return}
- say(Object.keys(patch).length?"Saved. Live on the site now.":"No changes from data.js");await load();closeEdit()}
+ say(Object.keys(patch).length?"Saved. Live on the site now.":"No changes from the original");await load();closeEdit()}
 document.addEventListener("click",async function(e){var t=e.target;
  if(t.dataset&&t.dataset.e){openEdit(t.dataset.e);return}
  if(t.id==="ecancel"||t.id==="ecancel2"){closeEdit();return}
  if(t.id==="esave"){saveEdit();return}
- if(t.id==="erevert"){if(!confirm("Remove all edits for this laptop and go back to the data.js version?"))return;t.disabled=true;
-  var r=await sb.from("edits").delete().eq("key",EKEY);t.disabled=false;if(r.error){say(r.error.message);return}say("Reverted to data.js");await load();closeEdit()}});
+ if(t.id==="erevert"){if(!confirm("Remove all edits for this laptop and go back to the original version?"))return;t.disabled=true;
+  var r=await sb.from("edits").delete().eq("key",EKEY);t.disabled=false;if(r.error){say(r.error.message);return}say("Reverted to original");await load();closeEdit()}});
 $("eq").oninput=drawEdit;
 
 /* ---------- look and feel: page titles, stat cards, light/dark switch ---------- */
@@ -402,6 +454,7 @@ var PT={lap:["Laptops","Delist a laptop, or paste the Jiji link its “Buy on Ji
  edit:["Edit listings","Change specs, prices, categories, pros and cons. Live on the site in seconds."],
  "new":["Add laptop","Add a new laptop. It appears on the site straight away."],
  add:["Added by us","Laptops added from this page. Send the email alert or remove them."],
+ chk:["Needs check","Listings with a specific Jiji ad that are due a look. Keep live restarts their 14 days; Delist removes them."],
  off:["Offers","Specific Jiji listings. Delist an offer when the ad is sold."],
  blog:["Blog","Write and publish articles. They show on /blog straight away."]};
 function setStats(){var v={sl:typeof P!=="undefined"?P.length:"–",sd:DEL.length,sa:ADD.length,sk:LINKS.length,se:EDITS.length};
@@ -425,7 +478,8 @@ $("save").onclick=async function(){
  var p={n:n,c:$("c").value,s:s,u:u,pr:pr,cn:cn,pro:lines("pro"),con:lines("con")};
  $("save").disabled=true;
  var r=await sb.from("added").insert({data:p});
- if(!r.error){var ls=[];if(gh&&ug)ls.push({key:n,country:"GH",url:ug});if(ng&&un)ls.push({key:n,country:"NG",url:un});if(ls.length)await sb.from("links").upsert(ls,{onConflict:"key,country"})}
+ if(!r.error){var ls=[];if(gh&&ug)ls.push({key:n,country:"GH",url:ug});if(ng&&un)ls.push({key:n,country:"NG",url:un});if(ls.length)await sb.from("links").upsert(ls,{onConflict:"key,country"});
+  var cr=ls.filter(function(l){return isAd(l.url)}).map(function(l){return{key:l.key,country:l.country,url:l.url,checked_at:new Date().toISOString()}});if(cr.length&&CHKOK)await sb.from("checks").upsert(cr,{onConflict:"key,country"})}
  $("save").disabled=false;say(r.error?r.error.message:"Added. Live on the site now.");
  if(!r.error){document.querySelectorAll("#t-new input:not([type=checkbox]),#t-new textarea").forEach(function(i){i.value=""});document.querySelectorAll("#t-new select").forEach(function(i){if(i.id!=="c")i.selectedIndex=0});
   document.querySelectorAll("#cats input").forEach(function(i){i.checked=false});[].forEach.call(document.querySelectorAll("[id$=o].hide"),function(){});await load()}};
@@ -456,7 +510,8 @@ function drawBlog(){
   +(p.published?'<a href="/blog/'+esc(p.slug)+'" target="_blank" rel="noopener">View</a> ':"")+'<button class="b" data-pe="'+esc(p.id)+'">Edit</button> <button class="b r" data-pd="'+esc(p.id)+'">Delete</button></td></tr>'});
  $("btab").innerHTML=BP.length?h:"<tr><td>No articles written here yet. Press “New article”.</td></tr>";
  $("bcnt").textContent=BP.length+(BP.length===1?" article":" articles")}
-function prev(){var t=$("pmd"),v=$("pprev");if(!t||!v)return;v.innerHTML=$("pfmt").checked?t.value:md(t.value)}
+var PVCSS="<style>body{font:15px/1.65 system-ui,sans-serif;color:#222;margin:10px 14px}h2{font-size:21px;margin:22px 0 8px}h3{font-size:17px;margin:18px 0 6px}ul,ol{padding-left:22px}.warn{background:#fff3cf;color:#7a5600;padding:4px 14px;border-radius:14px;margin:12px 0}.btn{display:inline-block;padding:10px 16px;border-radius:12px;background:#111;color:#fff;text-decoration:none;font-weight:700;margin:0 8px 8px 0}code{background:#eee;padding:1px 6px;border-radius:6px}img{max-width:100%}</style>";
+function prev(){var t=$("pmd"),v=$("pprev");if(!t||!v)return;v.srcdoc=PVCSS+($("pfmt").checked?t.value:md(t.value))}
 function thumb(){var v=$("pi").value.trim(),i=$("pthumb");i.onerror=function(){i.classList.add("hide")};if(!v){i.classList.add("hide");return}i.src=/^(https?:|\/|data:)/.test(v)?v:"/"+v;i.classList.remove("hide")}
 function tool(k){var t=$("pmd");if(!t)return;var a=t.selectionStart,b=t.selectionEnd,v=t.value,sel=v.slice(a,b),pre={h2:"## ",h3:"### ",ul:"- ",ol:"1. ",note:"> "};
  if(pre[k]){var s=a?v.lastIndexOf("\n",a-1)+1:0,blk=v.slice(s,b).split("\n").map(function(l){return pre[k]+l}).join("\n");t.value=v.slice(0,s)+blk+v.slice(b);t.focus();t.setSelectionRange(s,s+blk.length)}
@@ -482,7 +537,7 @@ function openPost(id){
   +'<textarea id="pmd" rows="16">'+esc(src)+'</textarea>'
   +'<p class="mut" style="font-size:13px;margin:8px 0">Blank line = new paragraph. <code>## Heading</code> · <code>### Subheading</code> · <code>- bullet</code> · <code>1. numbered</code> · <code>**bold**</code> · <code>[text](link)</code> · <code>&gt; note box</code> · <code>[[Button text|/all]]</code></p>'
   +'<label class="chip"><input type="checkbox" id="pfmt"'+(html?" checked":"")+'> Write in HTML instead (advanced)</label>'
-  +'<label style="margin-top:14px">Preview <small>close to how it looks on the site</small></label><div class="pv"><div id="pprev"></div></div></div></div>'
+  +'<label style="margin-top:14px">Preview <small>close to how it looks on the site</small></label><div class="pv"><iframe id="pprev" sandbox="" title="Preview" style="width:100%;height:460px;border:0;background:#fff;border-radius:10px"></iframe></div></div></div>'
   +'<p style="margin-bottom:0"><button class="b g" id="bsave">Save article</button> <label class="chip" style="margin:0 8px"><input type="checkbox" id="ppub"'+(!r||r.published?" checked":"")+'> Published on the site</label> '+(r?'<button class="b r" data-pd="'+esc(r.id)+'">Delete</button> ':"")+'<button class="b x" id="bcancel2">Cancel</button></p>';
  $("blist").classList.add("hide");$("bform").classList.remove("hide");prev();thumb();window.scrollTo(0,0)}
 function closePost(){PID=null;$("bform").classList.add("hide");$("bform").innerHTML="";$("blist").classList.remove("hide")}
@@ -524,10 +579,10 @@ document.addEventListener("change",async function(e){var t=e.target;
  if(t.id==="pfile"){var f=t.files[0];if(!f)return;say("Uploading…");
   try{$("pi").value=await upImg(f);thumb();say("Image uploaded")}catch(x){say("Upload failed: "+(x.message||x))}t.value=""}});
 
-/* find data.js: try next to this page, then the site root. Works on the live site and when this file is opened from a folder. */
+/* load the laptop list: try next to this page, then the site root. */
 function loadJs(srcs,ok,done){var i=0;(function next(){if(ok())return done(true);if(i>=srcs.length)return done(false);var s=document.createElement("script");s.src=srcs[i++]+"?t="+Date.now();s.onload=next;s.onerror=next;document.head.appendChild(s)})()}
 function boot(){loadJs(["data.js","/data.js"],function(){return typeof P!=="undefined"},function(got){
  loadJs(["offers-auto.js","/offers-auto.js"],function(){return typeof AUTO!=="undefined"||!got},function(){start()})})}
-$("pick").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{(0,eval)(String(r.result));$("pickbox").classList.add("hide");buildForm();draw()}catch(e){fail("that file is not a valid data.js: "+e.message)}};r.readAsText(f)};
+$("pick").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{(0,eval)(String(r.result));$("pickbox").classList.add("hide");buildForm();draw()}catch(e){fail("that file is not a valid laptop list: "+e.message)}};r.readAsText(f)};
 boot();
 </script></body></html>
